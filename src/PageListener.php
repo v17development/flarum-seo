@@ -145,6 +145,7 @@ class PageListener
     {
         $applicationName = $this->settings->get('forum_title');
         $applicationDescription = $this->settings->get('forum_description');
+        $applicationFavicon = $this->settings->get('favicon_path');
 
         // Add application name
         $this->setMetaTag('application-name', $applicationName);
@@ -153,9 +154,12 @@ class PageListener
         // Robots, follow please! :)
         $this->setMetaTag('robots', 'index, follow');
 
-        // Image
-        $this->setMetaPropertyTag('og:image', 'https://www.devnl.nl/assets/logo-large.png');
-        $this->setSchemaJson('image', 'https://www.devnl.nl/assets/logo-large.png');
+        // Image, using the favicon for now
+        if($applicationFavicon !== null)
+        {
+            $this->setMetaPropertyTag('og:image', $this->applicationUrl . '/assets/' . $applicationFavicon);
+            $this->setSchemaJson('image', $this->applicationUrl . '/assets/' . $applicationFavicon);
+        }
 
         // Add application information
         $this->setSchemaJson('publisher', [
