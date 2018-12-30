@@ -315,7 +315,7 @@ class PageListener
             ->setMetaTag('twitter:description', $description)
             ->setSchemaJson("description", $description);
 
-        if($this->requestType === 'd')
+        if($this->requestType === 'd/')
         {
             $this->setSchemaJson("headline", $description);
         }
