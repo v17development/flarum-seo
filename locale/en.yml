@@ -1,0 +1,4 @@
+jaspervriends-flarum-seo:
+  forum:
+    profile_title: "Profile of {username}"
+    profile_description: "Profile of {username} | {discussion_count} discussions | {comment_count} posts"

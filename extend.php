@@ -3,9 +3,11 @@
 namespace JasperVriends\FlarumSeo;
 
 use Flarum\Extend;
+use Extend\Locales;
 use Illuminate\Contracts\Events\Dispatcher;
 
 return [
     (new Extend\Frontend('forum'))
-        ->content(Inject::class)
+        ->content(PageListener::class),
+    new Extend\Locales(__DIR__ . '/locale')
 ];
