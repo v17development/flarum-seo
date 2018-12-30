@@ -1,0 +1,29 @@
+{
+    "name": "jaspervriends/flarum-seo",
+    "description": "Good SEO for your Flarum",
+    "type": "flarum-extension",
+    "authors": [
+        {
+            "name": "Jasper Vriends",
+            "email": "jasper@v17.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "JasperVriends\\FlarumSeo\\": "src/"
+        }
+    },
+    "require": {
+        "flarum/core": "^0.1.0-beta.8"
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Good SEO",
+            "icon": {
+                "name": "far fa-comments",
+                "backgroundColor": "#1569bf",
+                "color": "#ffffff"
+            }
+        }
+    }
+}
