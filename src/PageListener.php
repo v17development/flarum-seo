@@ -111,24 +111,29 @@ class PageListener
     private function determine()
     {
         // Request type
-        $this->requestType = substr($this->serverRequest->getUri()->getPath(), 1, 1);
+        $this->requestType = substr($this->serverRequest->getUri()->getPath(), 1, 2);
 
         // Query params
         $queryParams = $this->serverRequest->getQueryParams();
 
         // User profile page
-        if($this->requestType === 'u') {
+        if($this->requestType === 'u/') {
             new Profile($this, $this->userRepository, isset($queryParams['username']) ? $queryParams['username'] : false);
         }
 
         // Tag page
-        else if($this->requestType === 't') {
+        else if($this->requestType === 't/') {
             new Tag($this,isset($queryParams['slug']) ? $queryParams['slug'] : false);
         }
 
         // Discussion page
-        else if($this->requestType === 'd') {
+        else if($this->requestType === 'd/') {
             new Discussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
+        }
+
+        // Home page
+        else if($this->requestType === "") {
+            $this->setDescription($this->settings->get('forum_description'));
         }
     }
 
@@ -144,6 +149,9 @@ class PageListener
         // Add application name
         $this->setMetaTag('application-name', $applicationName);
         $this->setMetaPropertyTag('og:site_name', $applicationName);
+
+        // Robots, follow please! :)
+        $this->setMetaTag('robots', 'index, follow');
 
         // Image
         $this->setMetaPropertyTag('og:image', 'https://www.devnl.nl/assets/logo-large.png');

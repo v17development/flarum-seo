@@ -1,6 +1,6 @@
 {
     "name": "jaspervriends/flarum-seo",
-    "description": "Good SEO for your Flarum",
+    "description": "Adds SEO tags for your Flarum forum",
     "type": "flarum-extension",
     "authors": [
         {
@@ -18,10 +18,10 @@
     },
     "extra": {
         "flarum-extension": {
-            "title": "Good SEO",
+            "title": "Flarum SEO",
             "icon": {
-                "name": "far fa-comments",
-                "backgroundColor": "#1569bf",
+                "name": "fas fa-check",
+                "backgroundColor": "#0072ff",
                 "color": "#ffffff"
             }
         }

@@ -85,20 +85,21 @@ class Discussion
     private function createTags()
     {
         // Update ld-json
-        $this->parent->setSchemaJson('@type', "DiscussionForumPosting");
+        $this->parent
+            ->setSchemaJson('@type', "DiscussionForumPosting")
 
-        // Set page type article
-        $this->parent->setMetaPropertyTag('og:type', 'article');
+            // Set page type article
+            ->setMetaPropertyTag('og:type', 'article');
 
         // Get posted on and Last posted on
         $postedOn = $this->discussion->getAttribute('created_at');
         $lastPostedOn = $this->firstPost !== null ? $this->firstPost->getAttribute('edited_at') : $this->discussion->getAttribute('last_posted_at');
 
         // Set short description
-        $this->parent->setTitle($this->discussion->getAttribute('title'));
-        $this->parent->setPublishedOn($this->discussion->getAttribute('created_at'));
-
-        $this->parent->setDescription($this->firstPost->getAttribute('content'));
+        $this->parent
+            ->setTitle($this->discussion->getAttribute('title'))
+            ->setPublishedOn($this->discussion->getAttribute('created_at'))
+            ->setDescription($this->firstPost->getAttribute('content'));
 
         // Add updated
         if($postedOn != $lastPostedOn)
