@@ -4,7 +4,7 @@
  * www.vriends.co - GitHub @jaspervriends
  */
 
-namespace JasperVriends\FlarumSeo;
+namespace JasperVriends\FlarumSeo\Listeners;
 
 // FlarumSEO classes
 use JasperVriends\FlarumSeo\Managers\Discussion;
@@ -147,17 +147,23 @@ class PageListener
         $applicationDescription = $this->settings->get('forum_description');
         $applicationFavicon = $this->settings->get('favicon_path');
 
-        // Add application name
-        $this->setMetaTag('application-name', $applicationName);
-        $this->setMetaPropertyTag('og:site_name', $applicationName);
 
-        // Robots, follow please! :)
-        $this->setMetaTag('robots', 'index, follow');
+        $this
+            // Add application name
+            ->setMetaTag('application-name', $applicationName)
+            ->setMetaPropertyTag('og:site_name', $applicationName)
+
+            // Robots, follow please! :)
+            ->setMetaTag('robots', 'index, follow')
+
+            // Twitter card
+            ->setMetaTag('twitter:card', 'summary');
 
         // Image, using the favicon for now
         if($applicationFavicon !== null)
         {
             $this->setMetaPropertyTag('og:image', $this->applicationUrl . '/assets/' . $applicationFavicon);
+            $this->setMetaTag('twitter:image', $this->applicationUrl . '/assets/' . $applicationFavicon);
             $this->setSchemaJson('image', $this->applicationUrl . '/assets/' . $applicationFavicon);
         }
 

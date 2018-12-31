@@ -7,7 +7,7 @@ namespace JasperVriends\FlarumSeo\Managers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Discussion\DiscussionRepository;
-use JasperVriends\FlarumSeo\PageListener;
+use JasperVriends\FlarumSeo\Listeners\PageListener;
 
 /**
  * Class DiscussionTagManager
@@ -102,7 +102,7 @@ class Discussion
             ->setDescription($this->firstPost->getAttribute('content'));
 
         // Add updated
-        if($postedOn != $lastPostedOn)
+        if($lastPostedOn !== null)
         {
             $this->parent->setUpdatedOn($lastPostedOn);
         }

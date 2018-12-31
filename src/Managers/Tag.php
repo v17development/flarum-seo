@@ -9,7 +9,7 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\Tags\TagRepository;
 
-use JasperVriends\FlarumSeo\PageListener;
+use JasperVriends\FlarumSeo\Listeners\PageListener;
 
 
 /**

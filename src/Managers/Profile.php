@@ -9,7 +9,7 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\User\UserRepository;
 
-use JasperVriends\FlarumSeo\PageListener;
+use JasperVriends\FlarumSeo\Listeners\PageListener;
 
 /**
  * Class ProfileManager
