@@ -36,6 +36,6 @@ This extension will work with the following extensions enabled or disabled. All 
 - Schema.org SEO standards (most used by Search engines)
   - WebPage https://schema.org/WebPage
   - QAPage (default) https://schema.org/QAPage
-  - DiscussionForumPosting (when Question-Answer is disabled) https://schema.org/DiscussionForumPosting
+  - DiscussionForumPosting (when Question-Answer SEO results are disabled) https://schema.org/DiscussionForumPosting
   - CollectionPage https://schema.org/CollectionPage
   - ProfilePage https://schema.org/ProfilePage
