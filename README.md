@@ -15,6 +15,12 @@ By default, this extension creates an Question Answer result in Google and other
 
 This can be heavy for your server. When this makes your forum slow, you can turn back to the default SEO and check if that helps. The only way (right now) is to go to your ``database``, then the table ``settings``, and add the key 'disable_fancy_discussion_seo' with the value ``1``.
 
+### Works with
+This extension will work with the following extensions enabled or disabled. All extensions are not required, but it will work together if they are installed and enabled:
+- *Flarum likes* of **Flarum** https://github.com/flarum/likes
+- *Flarum tags* of **Flarum** https://github.com/flarum/tags
+- *Selected Post Best answer* of **WiwatSrt** https://discuss.flarum.org/d/3868-select-post-best-answer
+
 ### Using following SEO methods:
 - Default HTML meta tags:
   - application-name
