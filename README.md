@@ -13,7 +13,7 @@ While I'm still working on this plugin and I still wait for the results to show 
 ### Default: Question-Answer results for discussions
 By default, this extension creates an Question Answer result in Google and other supported search engines using the QAPage schema.org tags. However, this setting will load all posts with usernames and likes. There is no caching for this yet. 
 
-This can be heavy for your server. When this makes your forum slow, you can turn back to the default SEO and check if that helps. The only way (right now) is to go to your ``database``, then the table ``settings``, and add the key 'disable_fancy_discussion_seo' with the value ``1``.
+This can be heavy for your server. When this makes your forum slow, you can turn back to the default SEO and check if that helps. The only way (right now) is to go to your ``database``, then the table ``settings``, and add the key ``disable_fancy_discussion_seo`` with the value ``1``.
 
 ### Works with
 This extension will work with the following extensions enabled or disabled. All extensions are not required, but it will work together if they are installed and enabled:
@@ -21,6 +21,9 @@ This extension will work with the following extensions enabled or disabled. All 
 - *Flarum tags* of **Flarum** https://github.com/flarum/tags
 - *Selected Post Best answer* of **WiwatSrt** https://discuss.flarum.org/d/3868-select-post-best-answer
 - *Sitemap* of **Flagrow** https://discuss.flarum.org/d/14941-flagrow-sitemap
+
+Potential it should look like this, after Google reindex your site. This could take a while before Google or any other crawler does this. The following screenshots are in Dutch, but you get the concept:
+![Preview](https://i.ibb.co/Ld7dVVC/preview.png)
 
 ### Using following SEO methods:
 - Default HTML meta tags:
