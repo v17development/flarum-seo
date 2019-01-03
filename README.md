@@ -20,11 +20,13 @@ This extension will work with the following extensions enabled or disabled. All 
 - *Flarum likes* of **Flarum** https://github.com/flarum/likes
 - *Flarum tags* of **Flarum** https://github.com/flarum/tags
 - *Selected Post Best answer* of **WiwatSrt** https://discuss.flarum.org/d/3868-select-post-best-answer
+- *Sitemap* of **Flagrow** https://discuss.flarum.org/d/14941-flagrow-sitemap
 
 ### Using following SEO methods:
 - Default HTML meta tags:
   - application-name
   - description
+- Adds robots.txt to your forum, when Sitemap extension of Flagrow is enabled, the link to your sitemap.xml will appear in the robots.txt
 - The Open Graph protocol (for social media, http://ogp.me):
   - og:type
   - og:title
