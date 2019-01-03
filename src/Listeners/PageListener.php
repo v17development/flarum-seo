@@ -9,6 +9,7 @@ namespace JasperVriends\FlarumSeo\Listeners;
 // FlarumSEO classes
 use JasperVriends\FlarumSeo\Managers\Discussion;
 use JasperVriends\FlarumSeo\Managers\Profile;
+use JasperVriends\FlarumSeo\Managers\QADiscussion;
 use JasperVriends\FlarumSeo\Managers\Tag;
 
 // Flarum classes
@@ -34,6 +35,7 @@ class PageListener
     protected $settings;
     protected $discussionRepository;
     protected $userRepository;
+    protected $enabled_extensions;
 
     // Document
     protected $flarumDocument;
@@ -51,8 +53,12 @@ class PageListener
         '@type' => 'WebPage'
     ];
 
+    protected $schemaBreadcrumb = [];
+
     // Meta data with property tags
     protected $metaProperty;
+
+    protected $discussionType = 1; // Special Google results as default, check check readme for different results
 
     /**
      * PageListener constructor.
@@ -77,6 +83,12 @@ class PageListener
 
         // Set forum base URL
         $this->applicationUrl = $this->config['url']; // Set site url
+
+        // List enabled extensions
+        $this->enabled_extensions = json_decode($this->settings->get("extensions_enabled"), true);
+
+        // Fancy SEO question-answer?
+        $this->discussionType = $this->settings->get("disable_fancy_discussion_seo") === null ? 2 : 1;
 
         // Settings debug settings: var_dump($this->settings->all());exit;
     }
@@ -126,9 +138,14 @@ class PageListener
             new Tag($this,isset($queryParams['slug']) ? $queryParams['slug'] : false);
         }
 
-        // Discussion page
-        else if($this->requestType === 'd/') {
+        // Default SEO (no fancy QA layout)
+        else if($this->requestType === 'd/' && $this->discussionType === 1) {
             new Discussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
+        }
+
+        // QuestionAnswer page
+        else if($this->requestType === 'd/' && $this->discussionType === 2) {
+            new QADiscussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // Home page
@@ -202,7 +219,14 @@ class PageListener
      */
     private function writeSchemesOrgJson()
     {
-        return '<script type="application/ld+json">' . json_encode($this->schemaArray, true) . '</script>';
+        $show = [];
+        $show[] = $this->schemaArray;
+
+        if(count($this->schemaBreadcrumb) > 0) {
+            $show[] = $this->schemaBreadcrumb;
+        }
+
+        return '<script type="application/ld+json">' . json_encode($show, true) . '</script>';
     }
 
     /**
@@ -239,6 +263,43 @@ class PageListener
         $this->schemaArray[$key] = $value;
 
         return $this;
+    }
+
+    /**
+     * @param $discussion
+     */
+    public function setSchemaBreadcrumb($discussion)
+    {
+        $tags = $discussion->getAttribute("tags");
+        $list = [];
+
+        // Foreach tags
+        $number = 0;
+        foreach ($tags as $tag)
+        {
+            $number++;
+            $list = [
+                '@type' => 'ListItem',
+                'name' => $tag->getAttribute('name'),
+                'item' => $this->applicationUrl . '/t/' . $tag->getAttribute('slug'),
+                'position' => $number
+            ];
+        }
+
+        $this->schemaBreadcrumb = [
+            "@context" => "http://schema.org",
+            "@type" => "BreadcrumbList",
+            "itemListElement" => $list
+        ];
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function extensionEnabled($name)
+    {
+        return in_array($name, $this->enabled_extensions);
     }
 
     /**
