@@ -103,7 +103,7 @@ class QADiscussion
     private function createTags()
     {
         // Set current URL
-        $url = '/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug');
+        $url = $this->parent->getApplicationPath('/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug'));
 
         // Update ld-json
         $this->parent
