@@ -25,10 +25,10 @@ This can be heavy for your server. When this makes your forum slow, you can turn
 
 ## Works with
 This extension will work with the following extensions enabled or disabled. All extensions are not required, but it will work together if they are installed and enabled:
-- *Flarum likes* of **Flarum** https://github.com/flarum/likes
-- *Flarum tags* of **Flarum** https://github.com/flarum/tags
-- *Selected Post Best answer* of **WiwatSrt** https://discuss.flarum.org/d/3868-select-post-best-answer
-- *Sitemap* of **Flagrow** https://discuss.flarum.org/d/14941-flagrow-sitemap
+- *Flarum likes* created by **Flarum** https://github.com/flarum/likes
+- *Flarum tags* created by **Flarum** https://github.com/flarum/tags
+- *Selected Post Best answer* created by **WiwatSrt** https://discuss.flarum.org/d/3868-select-post-best-answer
+- *Sitemap* created by **Flagrow** https://discuss.flarum.org/d/14941-flagrow-sitemap
 
 ## How do the results look like in Google?
 Potential it should look like this, after Google reindex your site. This could take a while before Google or any other crawler does this. The following screenshots are in Dutch, but you get the concept:
