@@ -9,7 +9,7 @@ While I'm still working on this plugin and I still wait for the results to show 
 ## Installation
 If you like to install this extension, run the following command:
 ```
-composer require jaspervriends/flarum-seo
+composer require v17development/flarum-seo
 ```
 
 ## Adding SEO tags to the following pages:
