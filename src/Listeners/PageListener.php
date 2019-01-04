@@ -1,16 +1,11 @@
 <?php
-/**
- * Created by Jasper Vriends
- * www.vriends.co - GitHub @jaspervriends
- */
-
-namespace JasperVriends\FlarumSeo\Listeners;
+namespace V17Development\FlarumSeo\Listeners;
 
 // FlarumSEO classes
-use JasperVriends\FlarumSeo\Managers\Discussion;
-use JasperVriends\FlarumSeo\Managers\Profile;
-use JasperVriends\FlarumSeo\Managers\QADiscussion;
-use JasperVriends\FlarumSeo\Managers\Tag;
+use V17Development\FlarumSeo\Managers\Discussion;
+use V17Development\FlarumSeo\Managers\Profile;
+use V17Development\FlarumSeo\Managers\QADiscussion;
+use V17Development\FlarumSeo\Managers\Tag;
 
 // Flarum classes
 use Flarum\Frontend\Document;
@@ -23,7 +18,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class PageListener
- * @package JasperVriends\FlarumSeo
+ * @package V17Development\FlarumSeo\Listeners
  */
 class PageListener
 {
@@ -226,7 +221,28 @@ class PageListener
             $show[] = $this->schemaBreadcrumb;
         }
 
+        $show[] = $this->addSearchBar();
+
         return '<script type="application/ld+json">' . json_encode($show, true) . '</script>';
+    }
+
+    /**
+     * Add the potential search bar
+     *
+     * @return array
+     */
+    private function addSearchBar()
+    {
+        return [
+            '@context' => 'http://schema.org',
+            '@type' => 'WebSite',
+            'url' => $this->applicationUrl . '/',
+            'potentialAction' => [
+                "@type" => "SearchAction",
+                "target" => $this->applicationUrl . '/?q={search_term_string}',
+                "query-input" => 'required name=search_term_string'
+            ]
+        ];
     }
 
     /**

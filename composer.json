@@ -1,16 +1,16 @@
 {
-    "name": "jaspervriends/flarum-seo",
+    "name": "v17development/flarum-seo",
     "description": "Adds SEO tags for your Flarum forum",
     "type": "flarum-extension",
     "authors": [
         {
-            "name": "Jasper Vriends",
+            "name": "Jasper Vriends - V17 Development",
             "email": "jasper@v17.nl"
         }
     ],
     "autoload": {
         "psr-4": {
-            "JasperVriends\\FlarumSeo\\": "src/"
+            "V17Development\\FlarumSeo\\": "src/"
         }
     },
     "require": {

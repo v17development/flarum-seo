@@ -1,18 +1,18 @@
 <?php
 
-namespace JasperVriends\FlarumSeo;
+namespace V17Development\FlarumSeo;
 
 use Flarum\Extend;
 use Extend\Locales;
 use Extend\Routes;
 use Illuminate\Contracts\Events\Dispatcher;
-use JasperVriends\FlarumSeo\Controller\Robots;
-use JasperVriends\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Controller\Robots;
+use V17Development\FlarumSeo\Listeners\PageListener;
 
 return [
     (new Extend\Frontend('forum'))
         ->content(PageListener::class),
     (new Extend\Routes('forum'))
-        ->get('/robots.txt', 'jaspervriends-flarum-seo', Robots::class),
+        ->get('/robots.txt', 'v17development-flarum-seo', Robots::class),
     new Extend\Locales(__DIR__ . '/locale')
 ];

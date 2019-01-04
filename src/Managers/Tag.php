@@ -1,20 +1,16 @@
 <?php
-/**
- * Created by Jasper Vriends
- * www.vriends.co - GitHub @jaspervriends
- */
-namespace JasperVriends\FlarumSeo\Managers;
+namespace V17Development\FlarumSeo\Managers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\Tags\TagRepository;
 
-use JasperVriends\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Listeners\PageListener;
 
 
 /**
- * Class ProfileManager
- * @package JasperVriends\FlarumSeo\Managers
+ * Class Tag
+ * @package V17Development\FlarumSeo\Managers
  */
 class Tag
 {

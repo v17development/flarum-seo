@@ -1,19 +1,15 @@
 <?php
-/**
- * Created by Jasper Vriends
- * www.vriends.co - GitHub @jaspervriends
- */
-namespace JasperVriends\FlarumSeo\Managers;
+namespace V17Development\FlarumSeo\Managers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\User\UserRepository;
 
-use JasperVriends\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Listeners\PageListener;
 
 /**
- * Class ProfileManager
- * @package JasperVriends\FlarumSeo\Managers
+ * Class Profile
+ * @package V17Development\FlarumSeo\Managers
  */
 class Profile
 {
@@ -58,12 +54,12 @@ class Profile
         $joinedAt = (new \DateTime($this->user->getAttribute('joined_at')))->format("c");
 
         // Profile title
-        $profileTitle = $this->translator->trans("jaspervriends-flarum-seo.forum.profile_title", [
+        $profileTitle = $this->translator->trans("v17development-flarum-seo.forum.profile_title", [
             '{username}' => $this->user->getAttribute('username'),
         ]);
 
         // Profile description
-        $profileDescription = $this->translator->trans("jaspervriends-flarum-seo.forum.profile_description", [
+        $profileDescription = $this->translator->trans("v17development-flarum-seo.forum.profile_description", [
             '{username}' => $this->user->getAttribute('username'),
             '{discussion_count}' => $this->user->getAttribute('discussion_count'),
             '{comment_count}' => $this->user->getAttribute('comment_count')
@@ -98,6 +94,6 @@ class Profile
             ->setUrl('/u/' . $this->user->getAttribute('username'))
 
             // Canonical url
-            ->setCanonicalUrl('/u/' . ($this->isCanonical ? $this->user->getAttribute('username') : $this->user->getAttribute('id')));
+            ->setCanonicalUrl('/u/' . $this->user->getAttribute('username'));
     }
 }

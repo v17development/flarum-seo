@@ -1,17 +1,13 @@
 <?php
-/**
- * Created by Jasper Vriends
- * www.vriends.co - GitHub @jaspervriends
- */
-namespace JasperVriends\FlarumSeo\Managers;
+namespace V17Development\FlarumSeo\Managers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Discussion\DiscussionRepository;
-use JasperVriends\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Listeners\PageListener;
 
 /**
  * Class QADiscussion
- * @package JasperVriends\FlarumSeo\Managers
+ * @package V17Development\FlarumSeo\Managers
  */
 class QADiscussion
 {

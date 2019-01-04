@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by Jasper Vriends
- * www.vriends.co - GitHub @jaspervriends
- */
-
-namespace JasperVriends\FlarumSeo\Controller;
+namespace V17Development\FlarumSeo\Controller;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 
@@ -16,7 +11,7 @@ use Zend\Diactoros\Response;
 
 /**
  * Class Robots
- * @package JasperVriends\FlarumSeo\Controller
+ * @package V17Development\FlarumSeo\Controller
  */
 class Robots implements RequestHandlerInterface
 {
