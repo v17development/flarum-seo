@@ -18,7 +18,7 @@
     },
     "extra": {
         "flarum-extension": {
-            "title": "Flarum SEO",
+            "title": "SEO",
             "icon": {
                 "name": "fas fa-check",
                 "backgroundColor": "#0072ff",
