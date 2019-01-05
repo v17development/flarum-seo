@@ -79,7 +79,8 @@ class QADiscussion
             $this->posts = $this->discussion->posts()->get()->getDictionary();
 
             // Get first post
-            $this->firstPost = array_shift($this->discussion->firstPost()->get()->getDictionary());
+            $discussionFirstPost = $this->discussion->firstPost()->get()->getDictionary();
+            $this->firstPost = array_shift($discussionFirstPost);
 
             // First post not found
             if ($this->posts === null) {
