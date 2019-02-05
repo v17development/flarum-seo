@@ -1,4 +1,4 @@
-![](https://img.shields.io/github/issues/v17development/flarum-seo.svg) ![](https://img.shields.io/github/forks/v17development/flarum-seo.svg) ![](https://img.shields.io/github/stars/v17development/flarum-seo.svg) ![](https://img.shields.io/github/license/v17development/flarum-seo.svg) ![](https://img.shields.io/packagist/v/v17development/flarum-seo.svg)
+![](https://img.shields.io/github/issues/v17development/flarum-seo.svg) ![](https://img.shields.io/github/forks/v17development/flarum-seo.svg) ![](https://img.shields.io/github/stars/v17development/flarum-seo.svg) ![](https://img.shields.io/github/license/v17development/flarum-seo.svg) ![](https://img.shields.io/packagist/v/v17development/flarum-seo.svg) ![](https://img.shields.io/github/contributors/v17development/flarum-seo.svg)
 
 # Flarum SEO
 First Flarum extension that add SEO tags to your Flarum forum.
