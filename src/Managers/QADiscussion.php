@@ -100,7 +100,8 @@ class QADiscussion
     private function createTags()
     {
         // Set current URL
-        $url = $this->parent->getApplicationPath('/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug'));
+        $fullUrl = $this->parent->getApplicationPath('/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug'));
+        $url = '/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug');
 
         // Update ld-json
         $this->parent
@@ -117,7 +118,7 @@ class QADiscussion
         $this->parent
             ->setTitle($this->discussion->getAttribute('title'))
             ->setPublishedOn($this->discussion->getAttribute('created_at'))
-            ->setDescription($this->firstPost->getAttribute('content'));
+            ->setDescription($this->firstPost->getAttribute('contentHtml'));
 
         // Add updated
         if ($lastPostedOn !== null) {
@@ -131,7 +132,7 @@ class QADiscussion
         $mainEntity = [
             '@type' => 'Question',
             'name' => $this->discussion->getAttribute('title'),
-            'text' => $this->firstPost->getAttribute('content'),
+            'text' => $this->firstPost->getAttribute('contentHtml'),
             'dateCreated' => $this->acceptableDate($this->firstPost->getAttribute('created_at')),
             'author' => [
                 "@type" => "Person",
@@ -157,9 +158,9 @@ class QADiscussion
             // Temp post
             $tempPost = [
                 '@type' => 'Answer',
-                'text' => $post->getAttribute('content'),
+                'text' => $post->getAttribute('contentHtml'),
                 'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
-                'url' => $url . '/' . $post->getAttribute('number'),
+                'url' => $fullUrl . '/' . $post->getAttribute('number'),
                 'author' => [
                     "@type" => "Person",
                     "name" => $this->getUserName($post->getAttribute('user_id'))
@@ -169,6 +170,8 @@ class QADiscussion
             // Upvote/like count
             if ($this->enableLikes) {
                 $tempPost['upvoteCount'] = count($post->getAttribute('likes'));
+            }else{
+                $tempPost['upvoteCount'] = 0; // Always 0 (to be sure)
             }
 
             // Current answer is the accepted answer

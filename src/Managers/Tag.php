@@ -37,8 +37,14 @@ class Tag
             $tag = $this->tagRepository->getIdForSlug($tag);
         }
 
-        // Find tag
-        $this->tag = $this->tagRepository->findOrFail($tag);
+        try {
+            // Find tag
+            $this->tag = $this->tagRepository->findOrFail($tag);
+        }
+        catch (\Exception $e) {
+            // Do nothing. It just did not work
+            return false;
+        }
 
         // Create tags
         $this->createTags();

@@ -85,6 +85,12 @@ class PageListener
         // Fancy SEO question-answer?
         $this->discussionType = $this->settings->get("disable_fancy_discussion_seo") === null ? 2 : 1;
 
+        // When Flarum likes is disabled, then automatically index as default discussion page
+        if(!$this->extensionEnabled("flarum-likes"))
+        {
+            $this->discussionType = 1;
+        }
+
         // Settings debug settings: var_dump($this->settings->all());exit;
     }
 
@@ -389,6 +395,7 @@ class PageListener
      */
     public function setDescription($description)
     {
+        $description = strip_tags($description);
         $description = trim(preg_replace('/\s+/', ' ', substr($description, 0, 157))) . (strlen($description) > 157 ? '...' : '');
 
         $this

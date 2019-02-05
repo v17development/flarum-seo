@@ -95,7 +95,7 @@ class Discussion
         $this->parent
             ->setTitle($this->discussion->getAttribute('title'))
             ->setPublishedOn($this->discussion->getAttribute('created_at'))
-            ->setDescription($this->firstPost->getAttribute('content'));
+            ->setDescription($this->firstPost->getAttribute('contentHtml'));
 
         // Add updated
         if($lastPostedOn !== null)
