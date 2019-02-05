@@ -12,6 +12,12 @@ If you like to install this extension, run the following command:
 composer require v17development/flarum-seo
 ```
 
+## Updating
+If you like to update the package:
+```
+composer update v17development/flarum-seo
+```
+
 ## Adding SEO tags to the following pages:
 - Home page
 - Tags page (if extension is enabled)
