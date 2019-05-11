@@ -199,11 +199,10 @@ class PageListener
      */
     private function finish()
     {
-
-        // Add OG meta property tags
-        $this->flarumDocument->head[] = implode("\n", array_merge($this->flarumDocument->head, array_map(function ($content, $name) {
-            return '<meta property="'.e($name).'" content="'.e($content).'">';
-        }, $this->metaProperty, array_keys($this->metaProperty))));
+        // Write meta property tags
+        foreach ($this->metaProperty as $name => $content) {
+            $this->flarumDocument->head[] = '<meta property="'.e($name).'" content="'.e($content).'">';
+        }
 
         // Add canonical url
         if($this->canonicalUrl !== null)
