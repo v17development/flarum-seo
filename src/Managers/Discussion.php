@@ -60,7 +60,9 @@ class Discussion
             }
 
             // Find first post
-            $this->firstPost = array_shift($this->discussion->firstPost()->get()->getDictionary());
+            $post = $this->discussion->firstPost()->get()->getDictionary();
+
+            $this->firstPost = array_shift($post);
 
             // First post not found
             if($this->firstPost === null) {

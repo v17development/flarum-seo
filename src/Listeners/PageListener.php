@@ -395,7 +395,7 @@ class PageListener
     public function setDescription($description)
     {
         $description = strip_tags($description);
-        $description = trim(preg_replace('/\s+/', ' ', substr($description, 0, 157))) . (strlen($description) > 157 ? '...' : '');
+        $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
 
         $this
             ->setMetaPropertyTag('og:description', $description)
