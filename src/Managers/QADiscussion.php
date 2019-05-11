@@ -117,8 +117,12 @@ class QADiscussion
         // Set short description
         $this->parent
             ->setTitle($this->discussion->getAttribute('title'))
-            ->setPublishedOn($this->discussion->getAttribute('created_at'))
-            ->setDescription($this->firstPost->getAttribute('contentHtml'));
+            ->setPublishedOn($this->discussion->getAttribute('created_at'));
+
+        // Set discussion description, only when a first post exists
+        if($this->firstPost !== null) {
+            $this->parent->setDescription($this->firstPost->getAttribute('contentHtml'));
+        }
 
         // Add updated
         if ($lastPostedOn !== null) {
@@ -132,11 +136,11 @@ class QADiscussion
         $mainEntity = [
             '@type' => 'Question',
             'name' => $this->discussion->getAttribute('title'),
-            'text' => $this->firstPost->getAttribute('contentHtml'),
-            'dateCreated' => $this->acceptableDate($this->firstPost->getAttribute('created_at')),
+            'text' => $this->firstPost !== null ? $this->firstPost->getAttribute('contentHtml') : '',
+            'dateCreated' => $this->acceptableDate($this->discussion->getAttribute('created_at')),
             'author' => [
                 "@type" => "Person",
-                "name" => $this->getUserName($this->firstPost->getAttribute('user_id'))
+                "name" => $this->getUserName($this->discussion->getAttribute('user_id'))
             ],
             'answerCount' => count($this->posts) - 1
         ];
