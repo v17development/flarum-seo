@@ -3,6 +3,7 @@ namespace V17Development\FlarumSeo\Listeners;
 
 // FlarumSEO classes
 use V17Development\FlarumSeo\Managers\Discussion;
+use V17Development\FlarumSeo\Managers\Page;
 use V17Development\FlarumSeo\Managers\Profile;
 use V17Development\FlarumSeo\Managers\QADiscussion;
 use V17Development\FlarumSeo\Managers\Tag;
@@ -137,6 +138,11 @@ class PageListener
         // Tag page
         else if($this->requestType === 't/') {
             new Tag($this,isset($queryParams['slug']) ? $queryParams['slug'] : false);
+        }
+
+        // Friends Of Flarum pages
+        else if($this->requestType === 'p/') {
+            new Page($this, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // Default SEO (no fancy QA layout)

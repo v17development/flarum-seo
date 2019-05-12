@@ -1,10 +1,7 @@
 <?php
 namespace V17Development\FlarumSeo\Managers;
 
-use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\Discussion\DiscussionRepository;
 use Flarum\Tags\TagRepository;
-
 use V17Development\FlarumSeo\Listeners\PageListener;
 
 

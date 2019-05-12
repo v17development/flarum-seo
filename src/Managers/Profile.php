@@ -1,7 +1,6 @@
 <?php
 namespace V17Development\FlarumSeo\Managers;
 
-use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\User\UserRepository;
 
