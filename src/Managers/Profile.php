@@ -74,6 +74,12 @@ class Profile
             ->setSchemaJson('name', $this->user->getAttribute('username'))
             ->setSchemaJson('dateCreated', $joinedAt);
 
+        // Add avatar
+        if($this->user->getAttribute('avatar_url') !== null)
+        {
+            $this->parent->setImage($this->user->getAttribute('avatar_url'));
+        }
+
         // Add bio if exists
         if($this->user->getAttribute('bio') !== null)
         {

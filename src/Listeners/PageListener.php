@@ -109,11 +109,11 @@ class PageListener
         // Current Server Request
         $this->serverRequest = $serverRequestInterface;
 
-        // Check out type of page
-        $this->determine();
-
         // Default site tags
         $this->setSiteTags();
+
+        // Check out type of page
+        $this->determine();
 
         // Finish process
         $this->finish();
@@ -186,9 +186,7 @@ class PageListener
         // Image, using the favicon for now
         if($applicationFavicon !== null)
         {
-            $this->setMetaPropertyTag('og:image', $this->applicationUrl . '/assets/' . $applicationFavicon);
-            $this->setMetaTag('twitter:image', $this->applicationUrl . '/assets/' . $applicationFavicon);
-            $this->setSchemaJson('image', $this->applicationUrl . '/assets/' . $applicationFavicon);
+            $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
         }
 
         // Add application information
@@ -451,5 +449,19 @@ class PageListener
             ->setSchemaJson('dateModified', $date);
 
         return $this;
+    }
+
+    /**
+     * Set page image
+     *
+     * @param $imagePath
+     * @return PageListener
+     */
+    public function setImage($imagePath)
+    {
+        return $this
+            ->setMetaPropertyTag('og:image', $imagePath)
+            ->setMetaTag('twitter:image', $imagePath)
+            ->setSchemaJson('image', $imagePath);
     }
 }
