@@ -170,6 +170,7 @@ class PageListener
         $applicationName = $this->settings->get('forum_title');
         $applicationDescription = $this->settings->get('forum_description');
         $applicationFavicon = $this->settings->get('favicon_path');
+        $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
 
 
         $this
@@ -184,7 +185,10 @@ class PageListener
             ->setMetaTag('twitter:card', 'summary');
 
         // Image, using the favicon for now
-        if($applicationFavicon !== null)
+        if($applicationSeoSocialMediaImage !== null)
+        {
+            $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
+        }else if($applicationFavicon !== null)
         {
             $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
         }

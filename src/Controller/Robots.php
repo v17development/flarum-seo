@@ -31,8 +31,12 @@ class Robots implements RequestHandlerInterface
      */
     private function output()
     {
-        $output  = "User-agent: *";
-        $output .= PHP_EOL . "Allow: /";
+        $output = '';
+
+        if($this->settings->get('seo_allow_all_bots') !== '0') {
+            $output .= "User-agent: *";
+            $output .= PHP_EOL . "Allow: /" . PHP_EOL;
+        }
 
         // Get extensions enabled
         $extensionsEnabled = json_decode($this->settings->get('extensions_enabled'), true);
@@ -42,7 +46,12 @@ class Robots implements RequestHandlerInterface
         {
             $url = app('flarum.config')['url'];
 
-            $output .= PHP_EOL . PHP_EOL . "Sitemap: ". $url ."/sitemap.xml";
+            $output .= PHP_EOL . "Sitemap: ". $url ."/sitemap.xml" . PHP_EOL;
+        }
+
+        // Custom robots txt
+        if($this->settings->get('seo_robots_text') !== null && $this->settings->get('seo_robots_text') !== "") {
+            $output .= $this->settings->get('seo_robots_text');
         }
 
         return $output;

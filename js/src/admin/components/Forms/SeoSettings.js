@@ -6,7 +6,8 @@ import Alert from 'flarum/components/Alert';
 import Select from 'flarum/components/Select';
 import Switch from 'flarum/components/Switch';
 import UploadImageButton from 'flarum/components/UploadImageButton';
-import CrawlPostSettings from "../Modals/CrawlPostSettings";
+import CrawlPostModal from "../Modals/CrawlPostModal";
+import RobotsModal from "../Modals/RobotsModal";
 
 export default class SeoSettings extends Component {
     init() {
@@ -23,6 +24,10 @@ export default class SeoSettings extends Component {
         this.fields.forEach(key => this.values[key] = m.prop(settings[key]));
 
         this.allowBotsValue = settings.seo_allow_all_bots !== "0";
+
+        // Cheat 'seo_social_media_imageUrl'
+        // Todo: Find a better way
+        app.forum.data.attributes.seo_social_media_imageUrl = app.forum.attribute('baseUrl') + '/assets/' + app.data.settings.seo_social_media_image_path;
     }
 
     // Create the form
@@ -60,7 +65,7 @@ export default class SeoSettings extends Component {
                             Button.component({
                                 className: 'Button',
                                 children: 'Setup post crawl settings',
-                                onclick: () => app.modal.show(new CrawlPostSettings())
+                                onclick: () => app.modal.show(new CrawlPostModal())
                             })
                         ]
                     })}
@@ -72,7 +77,7 @@ export default class SeoSettings extends Component {
                                 Expecting a square image. Recommended size is 1200x1200 pixels. Otherwise use a landscape image, recommended size is 1200x630.<br /><br />This image will be used by Social Media when a user shares a page on your website (Facebook, Twitter, Reddit).
                             </div>,
                             UploadImageButton.component({
-                                name: 'seo_social_media_image',
+                                name: 'seo_social_media_image'
                             })
                         ]
                     })}
@@ -92,12 +97,14 @@ export default class SeoSettings extends Component {
                                 children: 'Allow all bots & crawl full site directory',
                             }),
                             <div style="height: 5px;"></div>,
-                            Button.component({
-                                className: 'Button',
-                                children: 'Edit robots.txt',
-                                loading: this.saving,
-                                onclick: () => app.modal.show(new CrawlPostSettings())
-                            })
+                            <div>
+                                {Button.component({
+                                    className: 'Button',
+                                    children: 'Edit robots.txt content',
+                                    loading: this.saving,
+                                    onclick: () => app.modal.show(new RobotsModal())
+                                })} <a href={app.forum.attribute('baseUrl') + "/robots.txt"} target="_blank" className="robots-link">Open robots.txt <i className="fas fa-external-link-alt"></i></a>
+                            </div>
                         ]
                     })}
                 </form>

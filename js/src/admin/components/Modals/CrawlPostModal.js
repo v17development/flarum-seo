@@ -4,7 +4,7 @@ import FieldSet from 'flarum/components/FieldSet';
 import Switch from 'flarum/components/Switch';
 import saveSettings from 'flarum/utils/saveSettings';
 
-export default class CrawlPostSettings extends Modal {
+export default class CrawlPostModal extends Modal {
     init()
     {
         super.init();
@@ -18,10 +18,6 @@ export default class CrawlPostSettings extends Modal {
     title() {
         return 'Post crawl settings';
     }
-
-    // className() {
-    //     return 'Modal--small';
-    // }
 
     content() {
         return (
