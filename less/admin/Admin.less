@@ -1,14 +1,26 @@
 .FlarumSEO {
     padding-top: 20px;
 
+    .hidden {
+        display: none;
+    }
+
+    .pull-right {
+        float: right;
+    }
+
     .seo-header {
         margin-bottom: 15px;
 
         h2 {
-            margin-bottom: 5px;
+            margin-bottom: 25px;
             margin-top: 0;
             font-weight: 400;
             font-size: 22px;
+        }
+
+        .clear {
+            clear: both;
         }
     }
 
@@ -18,6 +30,64 @@
 
         i, svg {
             margin-left: 10px;
+        }
+    }
+
+    .seo-check-table {
+        width: 100%;
+        margin-top: 30px;
+
+        thead {
+            tr {
+                background: #e8ecf3;
+
+                td {
+                    font-weight: bold;
+                    padding: 10px 10px;
+                    color: #667e9c;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    padding: 15px 10px;
+
+                    &.row-passed, &.row-warning {
+                        padding: 10px 20px;
+                        font-weight: 500;
+                        text-transform: uppercase;
+                        vertical-align: top;
+
+                        i, svg {
+                            width: 20px;
+                            margin-right: 5px;
+                        }
+                    }
+
+                    &.row-warning {
+                        background: #ffffb6;
+                        color: #8a4c00;
+                    }
+
+                    &.row-passed {
+                        background: #abf5ab;
+                        color: #0c730c;
+                    }
+
+                    .row-not-passed-error {
+                        display: block;
+                        color: #c10c0c;
+                        padding: 10px 0 0;
+                        font-size: 14px;
+
+                        .button-container {
+                            margin-top: 15px;
+                        }
+                    }
+                }
+            }
         }
     }
 }

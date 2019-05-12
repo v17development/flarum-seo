@@ -1,10 +1,27 @@
 import { extend } from 'flarum/extend';
 import AdminNav from 'flarum/components/AdminNav';
 import AdminLinkButton from 'flarum/components/AdminLinkButton';
-import AdminPage from "./components/AdminPage";
+import SettingsPage from "./components/SettingsPage";
+import AdminHome from "./components/AdminHome";
 
 export default function() {
-    app.routes.seo = { path: '/seo', component: AdminPage.component() };
+    // Route to settings
+    app.routes.seoSettings = {
+        path: '/seo/settings',
+        component: SettingsPage.component()
+    };
+
+    // Route to a single setting
+    app.routes.seoSingleSetting = {
+        path: '/seo/setting/:setting',
+        component: SettingsPage.component()
+    };
+
+    // Main page
+    app.routes.seo = {
+        path: '/seo',
+        component: AdminHome.component()
+    };
 
     app.extensionSettings['v17development-flarum-seo'] = () => m.route(app.route('seo'));
 

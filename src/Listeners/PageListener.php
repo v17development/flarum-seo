@@ -172,7 +172,6 @@ class PageListener
         $applicationFavicon = $this->settings->get('favicon_path');
         $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
 
-
         $this
             // Add application name
             ->setMetaTag('application-name', $applicationName)
@@ -184,11 +183,13 @@ class PageListener
             // Twitter card
             ->setMetaTag('twitter:card', 'summary');
 
-        // Image, using the favicon for now
+        // Use social media image
         if($applicationSeoSocialMediaImage !== null)
         {
             $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
-        }else if($applicationFavicon !== null)
+        }
+        // Fallback to the favicon
+        else if($applicationFavicon !== null)
         {
             $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
         }

@@ -28,6 +28,17 @@ export default class SeoSettings extends Component {
         // Cheat 'seo_social_media_imageUrl'
         // Todo: Find a better way
         app.forum.data.attributes.seo_social_media_imageUrl = app.forum.attribute('baseUrl') + '/assets/' + app.data.settings.seo_social_media_image_path;
+
+        this.showField = 'all';
+
+        // Single field
+        if(m.route.param('setting') !== undefined) {
+            this.showField = m.route.param('setting');
+
+            if(this.showField === 'discussion-post' && typeof settings.seo_reviewed_post_crawler === "undefined") {
+                this.saveSingleSetting('seo_reviewed_post_crawler', 1);
+            }
+        }
     }
 
     // Create the form
@@ -41,6 +52,7 @@ export default class SeoSettings extends Component {
                 <form onsubmit={this.onsubmit.bind(this)} className="BasicsPage">
                     {FieldSet.component({
                         label: app.translator.trans('core.admin.basics.forum_description_heading'),
+                        className: this.showField !== 'all' && this.showField !== 'description' ? 'hidden' : '',
                         children: [
                             <div className="helpText">
                                 {app.translator.trans('core.admin.basics.forum_description_text')}
@@ -58,6 +70,7 @@ export default class SeoSettings extends Component {
 
                     {FieldSet.component({
                         label: 'Discussion post crawl settings',
+                        className: this.showField !== 'all' && this.showField !== 'discussion-post' ? 'hidden' : '',
                         children: [
                             <div className="helpText">
                                 This is an important setting about crawling your discussion posts in search results.
@@ -72,6 +85,7 @@ export default class SeoSettings extends Component {
 
                     {FieldSet.component({
                         label: 'Social media image',
+                        className: this.showField !== 'all' && this.showField !== 'social-media' ? 'hidden' : '',
                         children: [
                             <div className="helpText">
                                 Expecting a square image. Recommended size is 1200x1200 pixels. Otherwise use a landscape image, recommended size is 1200x630.<br /><br />This image will be used by Social Media when a user shares a page on your website (Facebook, Twitter, Reddit).
@@ -84,6 +98,7 @@ export default class SeoSettings extends Component {
 
                     {FieldSet.component({
                         label: 'Edit robots.txt',
+                        className: this.showField !== 'all' && this.showField !== 'robots' ? 'hidden' : '',
                         children: [
                             <div className="helpText">
                                 You can edit your robot.txt here. Please note, writing nonsense could result that crawlers won't visit your site.<br />
@@ -107,6 +122,24 @@ export default class SeoSettings extends Component {
                             </div>
                         ]
                     })}
+
+                    {FieldSet.component({
+                        label: 'Updated this setting?',
+                        className: this.showField === 'all' ? 'hidden' : '',
+                        children: [
+                            <div className="helpText">
+                                When you think you're ready, click the button below to re-check the status of this setting.
+                            </div>,
+                            Button.component({
+                                className: 'Button',
+                                icon: 'fas fa-sync',
+                                children: 'Back to overview and re-check',
+                                loading: this.saving,
+                                onclick: () => m.route(app.route('seo'))
+                            })
+                        ]
+                    })}
+
                 </form>
             </div>
         );
@@ -151,6 +184,27 @@ export default class SeoSettings extends Component {
 
         let data = app.data.settings;
         data.seo_allow_all_bots = value;
+
+        saveSettings(data)
+            .then(() => {
+                app.alerts.show(this.successAlert = new Alert({type: 'success', children: app.translator.trans('core.admin.basics.saved_message')}));
+            })
+            .catch(() => {})
+            .then(() => {
+                this.saving = false;
+                m.redraw();
+            });
+    }
+
+    // Save allow bots
+    saveSingleSetting(setting, value)
+    {
+        if (this.saving) return;
+
+        this.saving = true;
+
+        let data = app.data.settings;
+        data[setting] = value;
 
         saveSettings(data)
             .then(() => {
