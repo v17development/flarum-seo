@@ -35,7 +35,7 @@ class Robots implements RequestHandlerInterface
         $output .= PHP_EOL . "Allow: /";
 
         // Get extensions enabled
-        $extensionsEnabled = json_decode($this->settings->get('extensions_enabled'));
+        $extensionsEnabled = json_decode($this->settings->get('extensions_enabled'), true);
 
         // If sitemap extension is enabled, add sitemap.xml
         if (in_array('flagrow-sitemap', $extensionsEnabled))
