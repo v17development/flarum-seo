@@ -95,6 +95,7 @@ export default class SeoSettings extends Component {
                             Button.component({
                                 className: 'Button',
                                 children: 'Edit robots.txt',
+                                loading: this.saving,
                                 onclick: () => app.modal.show(new CrawlPostSettings())
                             })
                         ]
