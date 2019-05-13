@@ -13,6 +13,10 @@ export default class CrawlPostModal extends Modal {
         this.startValue = this.value;
         this.closeText = 'Close';
         this.loading = false;
+
+        if(typeof app.data.settings.seo_reviewed_post_crawler === "undefined") {
+            this.saveReviewedPostCrawler();
+        }
     }
 
     title() {
@@ -24,7 +28,7 @@ export default class CrawlPostModal extends Modal {
             <div>
                 <div className="Modal-body">
                     <div className="Form">
-                        <b>Read this dialog carefully.</b> This function will only be executed on a page refresh on a discussion. You can enable this feature.
+                        <b>Read this dialog carefully.</b> This function will only be executed on a page refresh on a discussion. You can always change this option later.
 
                         <div style="padding: 10px 0;">
                             <b style="display: block; padding-bottom: 10px;"><span style="display: inline-block; width: 25px;"><i className="fas fa-check"></i></span>Only index the main post (default)</b>
@@ -90,6 +94,20 @@ export default class CrawlPostModal extends Modal {
         saveSettings(data).then(
             this.onsaved.bind(this)
         );
+    }
+
+    // Save post crawler reviewed
+    saveReviewedPostCrawler() {
+        this.loading = true;
+
+        let data = app.data.settings;
+        data.seo_reviewed_post_crawler = true;
+
+        saveSettings(data).then(() => {
+            this.loading = false;
+            m.redraw();
+        });
+
     }
 
     onsaved() {

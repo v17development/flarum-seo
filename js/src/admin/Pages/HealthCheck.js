@@ -3,10 +3,13 @@ import SeoSettings from "../components/Forms/SeoSettings";
 import Button from 'flarum/components/Button';
 import Dropdown from 'flarum/components/Dropdown';
 import Header from "../components/Header";
+import Alert from 'flarum/components/Alert';
+import saveSettings from 'flarum/utils/saveSettings';
 
 export default class HealthCheck extends Page {
     init() {
         this.settings = app.data.settings;
+        this.saving = false;
     }
 
     view() {
@@ -32,6 +35,7 @@ export default class HealthCheck extends Page {
                         {this.hasSitemap()}
                         {this.registeredSearchEngines()}
                         {this.robotsTxt()}
+                        {this.reviewAgain()}
                         </tbody>
                     </table>
                 </div>
@@ -169,6 +173,43 @@ export default class HealthCheck extends Page {
         );
     }
 
+    // Review again
+    reviewAgain()
+    {
+        let passed = true;
+
+        // Set current date
+        let nextReviewDate = new Date();
+
+        // Check if previous review date exists
+        if(typeof app.data.settings.seo_review_settings === "undefined") {
+            passed = false;
+        }else{
+            // Ok, it exists. Set the review date
+            nextReviewDate = new Date(app.data.settings.seo_review_settings * 1000);
+        }
+
+        // Date passed?
+        if(passed && Math.floor(Date.now() / 1000) > app.data.settings.seo_review_settings) {
+            passed = false;
+        }
+
+        return (
+            <tr>
+                <td>
+                    Review your SEO settings every two months. Next review needed on <b>{nextReviewDate.toDateString()}</b>
+                    {this.notPassedError(passed, 'It is time to re-review your SEO settings.', 'Ok! I reviewed them!', () => {
+                        let now = new Date();
+                        let nextDate = Math.floor(new Date(now.getFullYear(), now.getMonth() + 2, 1) / 1000);
+
+                        this.saveSingleSetting('seo_review_settings', nextDate);
+                    })}
+                </td>
+                {this.passed(passed)}
+            </tr>
+        );
+    }
+
     // Get setting URL
     getSettingUrl(setting = '')
     {
@@ -218,12 +259,38 @@ export default class HealthCheck extends Page {
                 <div className="button-container">
                     {Button.component({
                         className: 'Button',
-                        onclick: () => m.route(url),
+                        onclick: () => {
+                            if(typeof url === 'string') {
+                                m.route(url);
+                            }else{
+                                url();
+                            }
+                        },
                         children: buttonText
                     })}
-                    {/*<a href={ '#/seo/' + (url ? 'setting/' + url : 'settings') } className="Button">{buttonText}</a>*/}
                 </div>
             </div>
         );
+    }
+
+    // Save
+    saveSingleSetting(setting, value)
+    {
+        if (this.saving) return;
+
+        this.saving = true;
+
+        let data = app.data.settings;
+        data[setting] = value;
+
+        saveSettings(data)
+            .then(() => {
+                app.alerts.show(this.successAlert = new Alert({type: 'success', children: app.translator.trans('core.admin.basics.saved_message')}));
+            })
+            .catch(() => {})
+            .then(() => {
+                this.saving = false;
+                m.redraw();
+            });
     }
 }

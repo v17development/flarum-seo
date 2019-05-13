@@ -34,10 +34,6 @@ export default class SeoSettings extends Component {
         // Single field
         if(m.route.param('setting') !== undefined) {
             this.showField = m.route.param('setting');
-
-            if(this.showField === 'discussion-post' && typeof settings.seo_reviewed_post_crawler === "undefined") {
-                this.saveSingleSetting('seo_reviewed_post_crawler', 1);
-            }
         }
     }
 
