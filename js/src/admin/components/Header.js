@@ -40,7 +40,7 @@ export default class Header extends Component {
                             Button.component({
                                 className: 'Button',
                                 onclick: () => m.route(app.route('seoSSL')),
-                                icon: 'fas fa-search',
+                                icon: 'fas fa-shield-alt',
                                 children: 'Set up SSL'
                             })
                         ]

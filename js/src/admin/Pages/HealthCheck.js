@@ -77,7 +77,7 @@ export default class HealthCheck extends Page {
             <tr>
                 <td>
                     Your site has a secure connection available (SSL/TLS)
-                    {this.notPassedError(passed, 'Your website is not set to use SSL/TLS as default transport layer. Most search engines won\'t index your website if you have no secure connection available.', 'How to set up SSL', this.getSettingUrl('discussion-post'))}
+                    {this.notPassedError(passed, 'Your website is not set to use SSL/TLS as default transport layer. Most search engines won\'t index your website if you have no secure connection available.', 'How to set up SSL', app.route('seoSSL'))}
                 </td>
                 {this.passed(passed)}
             </tr>

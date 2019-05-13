@@ -5,6 +5,7 @@ import SettingsPage from "./Pages/SettingsPage";
 import Sitemap from "./Pages/Sitemap";
 import HealthCheck from "./Pages/HealthCheck";
 import RegisterToSearchEngines from "./Pages/RegisterToSearchEngines";
+import SSLPage from "./Pages/SSLPage";
 
 export default function() {
     // Main page
@@ -37,6 +38,13 @@ export default function() {
         component: RegisterToSearchEngines.component()
     };
 
+    // Add an secure connection
+    app.routes.seoSSL = {
+        path: '/seo/ssl',
+        component: SSLPage.component()
+    };
+
+    // Quick access settings from extensions tab
     app.extensionSettings['v17development-seo'] = () => m.route(app.route('seo'));
 
     extend(AdminNav.prototype, 'items', items => {
