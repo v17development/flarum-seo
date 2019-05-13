@@ -45,9 +45,7 @@ export default class SeoSettings extends Component {
     view() {
         return (
             <div style="padding-bottom: 250px;">
-                <p>This page contains some other settings from around the admin area. However, it's good to have a good overview about these settings. Do not forget to do the SEO check.</p>
-
-                <p>Check all your settings when you first setup this extensions. Maintain them to get the best search results.</p>
+                {this.infoText()}
 
                 <form onsubmit={this.onsubmit.bind(this)} className="BasicsPage">
                     {FieldSet.component({
@@ -85,7 +83,7 @@ export default class SeoSettings extends Component {
 
                     {FieldSet.component({
                         label: 'Social media image',
-                        className: this.showField !== 'all' && this.showField !== 'social-media' ? 'hidden' : '',
+                        className: 'social-media-uploader ' + (this.showField !== 'all' && this.showField !== 'social-media' ? 'hidden' : ''),
                         children: [
                             <div className="helpText">
                                 Expecting a square image. Recommended size is 1200x1200 pixels. Otherwise use a landscape image, recommended size is 1200x630.<br /><br />This image will be used by Social Media when a user shares a page on your website (Facebook, Twitter, Reddit).
@@ -141,6 +139,22 @@ export default class SeoSettings extends Component {
                     })}
 
                 </form>
+            </div>
+        );
+    }
+
+    infoText()
+    {
+        if(this.showField !== 'all')
+        {
+            return;
+        }
+
+        return (
+            <div>
+                <p>This page contains some other settings from around the admin area. However, it's good to have a good overview about these settings. Do not forget to do the SEO check.</p>
+
+                <p>Check all your settings when you first setup this extensions. Maintain them to get the best search results.</p>
             </div>
         );
     }

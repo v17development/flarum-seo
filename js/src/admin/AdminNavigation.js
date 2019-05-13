@@ -1,11 +1,19 @@
 import { extend } from 'flarum/extend';
 import AdminNav from 'flarum/components/AdminNav';
 import AdminLinkButton from 'flarum/components/AdminLinkButton';
-import SettingsPage from "./components/SettingsPage";
-import AdminHome from "./components/AdminHome";
+import SettingsPage from "./Pages/SettingsPage";
+import Sitemap from "./Pages/Sitemap";
+import HealthCheck from "./Pages/HealthCheck";
+import RegisterToSearchEngines from "./Pages/RegisterToSearchEngines";
 
 export default function() {
-    // Route to settings
+    // Main page
+    app.routes.seo = {
+        path: '/seo',
+        component: HealthCheck.component()
+    };
+
+    // Route to all settings
     app.routes.seoSettings = {
         path: '/seo/settings',
         component: SettingsPage.component()
@@ -17,13 +25,19 @@ export default function() {
         component: SettingsPage.component()
     };
 
-    // Main page
-    app.routes.seo = {
-        path: '/seo',
-        component: AdminHome.component()
+    // Sitemap information
+    app.routes.seoSitemap = {
+        path: '/seo/sitemap',
+        component: Sitemap.component()
     };
 
-    app.extensionSettings['v17development-flarum-seo'] = () => m.route(app.route('seo'));
+    // Registered forum to search engines
+    app.routes.seoSearchEngines = {
+        path: '/seo/search-engines',
+        component: RegisterToSearchEngines.component()
+    };
+
+    app.extensionSettings['v17development-seo'] = () => m.route(app.route('seo'));
 
     extend(AdminNav.prototype, 'items', items => {
         items.add(

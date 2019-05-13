@@ -54,7 +54,7 @@
                 td {
                     padding: 15px 10px;
 
-                    &.row-passed, &.row-warning {
+                    &.row-passed, &.row-warning, &.row-must {
                         padding: 10px 20px;
                         font-weight: 500;
                         text-transform: uppercase;
@@ -64,6 +64,11 @@
                             width: 20px;
                             margin-right: 5px;
                         }
+                    }
+
+                    &.row-must {
+                        background: #ffb6b6;
+                        color: #8a0000;
                     }
 
                     &.row-warning {
@@ -88,6 +93,12 @@
                     }
                 }
             }
+        }
+    }
+
+    .social-media-uploader {
+        img {
+            max-width: 100%;
         }
     }
 }
