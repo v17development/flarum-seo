@@ -40,7 +40,7 @@ export default class SeoSettings extends Component {
     // Create the form
     view() {
         return (
-            <div style="padding-bottom: 250px;">
+            <div>
                 {this.infoText()}
 
                 <form onsubmit={this.onsubmit.bind(this)} className="BasicsPage">

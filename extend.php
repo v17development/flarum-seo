@@ -16,7 +16,7 @@ return [
         ->content(PageListener::class),
     (new Extend\Frontend('admin'))
         ->js(__DIR__.'/js/dist/admin.js')
-        ->css(__DIR__.'/less/admin/admin.less'),
+        ->css(__DIR__ . '/less/Admin.less'),
     (new Extend\Routes('forum'))
         ->get('/robots.txt', 'v17development-flarum-seo', Robots::class),
     (new Extend\Routes('api'))
