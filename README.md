@@ -20,11 +20,7 @@ composer update v17development/flarum-seo
 - Tags page (if extension is enabled)
 - Discussion page
 - User profile
-
-## Default: Question-Answer results for discussions
-By default, this extension creates an Question Answer result for discussions in Google and other supported search engines using the QAPage schema.org tags. Check the screenshot below how that looks like. However, this setting will load all posts with usernames and likes. There is no caching for this yet. 
-
-This can be heavy for your server. When this makes your forum slow, you can turn back to the default SEO and check if that helps. The only way (right now) is to go to your ``database``, then the table ``settings``, and add the key ``disable_fancy_discussion_seo`` with the value ``1``.
+- Pages page (if extension is enabled)
 
 ## Works with
 This extension will work with the following extensions enabled or disabled. All extensions are not required, but it will work together if they are installed and enabled:
@@ -35,7 +31,7 @@ This extension will work with the following extensions enabled or disabled. All 
 - *Pages* created by **FriendsOfFlarum** https://discuss.flarum.org/d/18301-friendsofflarum-pages
 
 ## How do the results look like in Google?
-Potential it should look like this, after Google reindex your site. This could take a while before Google or any other crawler does this. The following screenshots are in Dutch, but you get the concept:
+Potential it could look like this, after Google reindex your site. This could take a while before Google or any other crawler does this. The following screenshots are in Dutch, but you get the concept:
 ![How it looks like](https://i.ibb.co/BtwR4Zn/preview.png)
 
 ## How long will changes take effect?
