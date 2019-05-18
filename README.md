@@ -1,10 +1,7 @@
-![](https://img.shields.io/github/issues/v17development/flarum-seo.svg) ![](https://img.shields.io/github/forks/v17development/flarum-seo.svg) ![](https://img.shields.io/github/stars/v17development/flarum-seo.svg) ![](https://img.shields.io/github/license/v17development/flarum-seo.svg) ![](https://img.shields.io/packagist/v/v17development/flarum-seo.svg) ![](https://img.shields.io/github/contributors/v17development/flarum-seo.svg)
+![](https://img.shields.io/github/issues/v17development/flarum-seo.svg) [![Total Downloads](https://poser.pugx.org/v17development/flarum-seo/downloads)](https://packagist.org/packages/v17development/flarum-seo) ![](https://img.shields.io/github/stars/v17development/flarum-seo.svg) ![](https://img.shields.io/github/license/v17development/flarum-seo.svg) ![](https://img.shields.io/packagist/v/v17development/flarum-seo.svg)
 
 # Flarum SEO
 First Flarum extension that add SEO tags to your Flarum forum.
-
-## WORK STILL IN PROGRESS
-While I'm still working on this plugin and I still wait for the results to show up in Google, the results in Google by using this plugin are for your own risk.
 
 ## Installation
 If you like to install this extension, run the following command:
@@ -35,6 +32,7 @@ This extension will work with the following extensions enabled or disabled. All 
 - *Flarum tags* created by **Flarum** https://github.com/flarum/tags
 - *Selected Post Best answer* created by **WiwatSrt** https://discuss.flarum.org/d/3868-select-post-best-answer
 - *Sitemap* created by **Flagrow** https://discuss.flarum.org/d/14941-flagrow-sitemap
+- *Pages* created by **FriendsOfFlarum** https://discuss.flarum.org/d/18301-friendsofflarum-pages
 
 ## How do the results look like in Google?
 Potential it should look like this, after Google reindex your site. This could take a while before Google or any other crawler does this. The following screenshots are in Dutch, but you get the concept:
