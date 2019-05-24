@@ -46,7 +46,7 @@ export default class CrawlPostModal extends Modal {
 
                     <div style="display: inline-block;">
                         {Switch.component({
-                            state: this.value,
+                            state: this.value == '1',
                             onchange: (value) => this.change(value),
                             children: 'Crawl all posts (it\'s slower on page refresh, but search results will be better)',
                         })}
