@@ -84,7 +84,7 @@ class PageListener
         $this->enabled_extensions = json_decode($this->settings->get("extensions_enabled"), true);
 
         // Fancy SEO question-answer?
-        $this->discussionType = $this->settings->get("disable_fancy_discussion_seo") === null ? 2 : 1;
+        $this->discussionType = $this->settings->get("seo_post_crawler") === '1' ? 2 : 1;
 
         // When Flarum likes is disabled, then automatically index as default discussion page
         if(!$this->extensionEnabled("flarum-likes"))
