@@ -56,6 +56,9 @@ class Tag
 
         $lastPostedAt = (new \DateTime($this->tag->getAttribute('last_posted_at')))->format("c");
 
+        // The tag plugin does not set page titles... Then we'll do that
+        $this->parent->setPageTitle($this->tag->getAttribute('name'));
+
         $this->parent
             // Add Schema.org metadata: CollectionPage https://schema.org/CollectionPage
             ->setSchemaJson('@type', 'CollectionPage')

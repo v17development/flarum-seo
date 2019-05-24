@@ -469,4 +469,14 @@ class PageListener
             ->setMetaTag('twitter:image', $imagePath)
             ->setSchemaJson('image', $imagePath);
     }
+
+    /**
+     * Set page title
+     *
+     * @param $title
+     */
+    public function setPageTitle($title)
+    {
+        $this->flarumDocument->title = $title;
+    }
 }
