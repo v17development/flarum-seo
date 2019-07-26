@@ -99,7 +99,7 @@ class Discussion
 
         // Set discussion description, only when a first post exists
         if($this->firstPost !== null) {
-            $this->parent->setDescription(\Flarum\Post\CommentPost::getFormatter()->render($this->firstPost->parsedContent));
+            $this->parent->setDescription($this->firstPost->formatContent($this->parent->getServerRequest()));
         }
 
         // Add updated

@@ -482,4 +482,13 @@ class PageListener
     {
         $this->flarumDocument->title = $title;
     }
+
+    /**
+     * Return server request
+     *
+     * @return mixed
+     */
+    public function getServerRequest() {
+        return $this->serverRequest;
+    }
 }

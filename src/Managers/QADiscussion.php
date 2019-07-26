@@ -128,7 +128,7 @@ class QADiscussion
 
         // Set discussion description, only when a first post exists
         if($this->firstPost !== null) {
-            $content = \Flarum\Post\CommentPost::getFormatter()->render($this->firstPost->parsedContent);
+            $content = $this->firstPost->formatContent($this->parent->getServerRequest());
 
             $this->parent->setDescription($content);
         }
@@ -171,7 +171,7 @@ class QADiscussion
             // Temp post
             $tempPost = [
                 '@type' => 'Answer',
-                'text' => \Flarum\Post\CommentPost::getFormatter()->render($post->parsedContent),
+                'text' => $post->formatContent($this->parent->getServerRequest()),
                 'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
                 'url' => $fullUrl . '/' . $post->getAttribute('number'),
                 'author' => [
