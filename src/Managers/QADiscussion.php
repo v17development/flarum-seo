@@ -48,14 +48,20 @@ class QADiscussion
             $this->enableLikes = true;
         }
 
-        // Found discussion and discussion
-        $this->findDiscussion();
+        try {
+            // Found discussion and discussion
+            $this->findDiscussion();
 
-        // Discussion not found
-        if ($this->discussion === null) return;
+            // Discussion not found
+            if ($this->discussion === null) return;
 
-        // Create tags
-        $this->createTags();
+            // Create tags
+            $this->createTags();
+        } catch (\Exception $e) {
+            // Something went wrong, fallback to
+
+            new Discussion($parent, $discussionRepository, $discussionId);
+        }
     }
 
     /**
@@ -118,9 +124,13 @@ class QADiscussion
             ->setTitle($this->discussion->getAttribute('title'))
             ->setPublishedOn($this->discussion->getAttribute('created_at'));
 
+        $content = '';
+
         // Set discussion description, only when a first post exists
         if($this->firstPost !== null) {
-            $this->parent->setDescription($this->firstPost->getAttribute('contentHtml'));
+            $content = \Flarum\Post\CommentPost::getFormatter()->render($this->firstPost->parsedContent);
+
+            $this->parent->setDescription($content);
         }
 
         // Add updated
@@ -135,7 +145,7 @@ class QADiscussion
         $mainEntity = [
             '@type' => 'Question',
             'name' => $this->discussion->getAttribute('title'),
-            'text' => $this->firstPost !== null ? $this->firstPost->getAttribute('contentHtml') : '',
+            'text' => $this->firstPost !== null ? $content : '',
             'dateCreated' => $this->acceptableDate($this->discussion->getAttribute('created_at')),
             'author' => [
                 "@type" => "Person",
@@ -161,7 +171,7 @@ class QADiscussion
             // Temp post
             $tempPost = [
                 '@type' => 'Answer',
-                'text' => $post->getAttribute('contentHtml'),
+                'text' => \Flarum\Post\CommentPost::getFormatter()->render($post->parsedContent),
                 'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
                 'url' => $fullUrl . '/' . $post->getAttribute('number'),
                 'author' => [
@@ -223,7 +233,7 @@ class QADiscussion
         $user = $this->parent->getUser($userId);
 
         // No result
-        if($user === null) return null;
+        if ($user === null) return null;
 
         // Cache found username
         $this->cachedUsernames[$userId] = $user->getAttribute('username');

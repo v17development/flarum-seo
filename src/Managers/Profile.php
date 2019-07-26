@@ -33,14 +33,18 @@ class Profile
         $this->userRepository = $userRepository;
         $this->translator = app('translator');
 
-        // Find user
-        $this->user = is_numeric($username) ? $this->userRepository->findOrFail($username) : $this->userRepository->findByIdentification($username);
+        try {
+            // Find user
+            $this->user = is_numeric($username) ? $this->userRepository->findOrFail($username) : $this->userRepository->findByIdentification($username);
 
-        // Is canonical URL?
-        $this->isCanonical = is_numeric($username);
+            // Is canonical URL?
+            $this->isCanonical = is_numeric($username);
 
-        // Create tags
-        $this->createTags();
+            // Create tags
+            $this->createTags();
+        } catch (\Exception $e) {
+
+        }
     }
 
     /**

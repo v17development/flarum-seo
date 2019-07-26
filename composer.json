@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "flarum/core": "^0.1.0-beta.8",
+        "flarum/core": "^0.1.0-beta.9",
         "ext-json": "*"
     },
     "extra": {

@@ -99,7 +99,7 @@ class Discussion
 
         // Set discussion description, only when a first post exists
         if($this->firstPost !== null) {
-            $this->parent->setDescription($this->firstPost->getAttribute('contentHtml'));
+            $this->parent->setDescription(\Flarum\Post\CommentPost::getFormatter()->render($this->firstPost->parsedContent));
         }
 
         // Add updated
@@ -111,17 +111,21 @@ class Discussion
         // Update topic url
         $this->parent->setUrl('/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug'));
 
-        // Add author to the page meta data
-        $findUser = $this->parent->getUser($this->discussion->getAttribute('user_id'));
+        try {
+            // Add author to the page meta data
+            $findUser = $this->parent->getUser($this->discussion->getAttribute('user_id'));
 
-        // Set author data if found
-        if($findUser !== null) {
-            // author: https://schema.org/author typeof: https://schema.org/Person
-            $this->parent->setSchemaJson('author', [
-                "@type" => "Person",
-                "name" => $findUser->getAttribute('username'),
-                "url" => $this->parent->getApplicationPath('/u/' . $findUser->getAttribute('username'))
-            ]);
+            // Set author data if found
+            if ($findUser !== null) {
+                // author: https://schema.org/author typeof: https://schema.org/Person
+                $this->parent->setSchemaJson('author', [
+                    "@type" => "Person",
+                    "name" => $findUser->getAttribute('username'),
+                    "url" => $this->parent->getApplicationPath('/u/' . $findUser->getAttribute('username'))
+                ]);
+            }
+        } catch (\Exception $e) {
+            // User does not exists anymore
         }
     }
 }
