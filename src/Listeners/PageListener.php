@@ -204,10 +204,13 @@ class PageListener
     }
 
     /**
-     * Finish process and output meta property tags & Schema.org json
+     * Finish process and output language, meta property tags, canonical urls & Schema.org json
      */
     private function finish()
     {
+        // Add language attribute to html tag
+        $this->flarumDocument->language = $this->serverRequest->getAttribute('locale');
+
         // Write meta property tags
         foreach ($this->metaProperty as $name => $content) {
             $this->flarumDocument->head[] = '<meta property="'.e($name).'" content="'.e($content).'">';
