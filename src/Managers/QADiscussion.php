@@ -236,7 +236,7 @@ class QADiscussion
         if ($user === null) return null;
 
         // Cache found username
-        $this->cachedUsernames[$userId] = $user->getAttribute('username');
+        $this->cachedUsernames[$userId] = $user->getAttribute('display_name');
 
         // Return username
         return $this->cachedUsernames[$userId];

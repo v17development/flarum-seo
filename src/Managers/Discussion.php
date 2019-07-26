@@ -120,7 +120,7 @@ class Discussion
                 // author: https://schema.org/author typeof: https://schema.org/Person
                 $this->parent->setSchemaJson('author', [
                     "@type" => "Person",
-                    "name" => $findUser->getAttribute('username'),
+                    "name" => $findUser->getAttribute('display_name'),
                     "url" => $this->parent->getApplicationPath('/u/' . $findUser->getAttribute('username'))
                 ]);
             }

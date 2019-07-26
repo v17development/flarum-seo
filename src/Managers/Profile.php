@@ -58,12 +58,12 @@ class Profile
 
         // Profile title
         $profileTitle = $this->translator->trans("v17development-flarum-seo.forum.profile_title", [
-            '{username}' => $this->user->getAttribute('username'),
+            '{username}' => $this->user->getAttribute('display_name'),
         ]);
 
         // Profile description
         $profileDescription = $this->translator->trans("v17development-flarum-seo.forum.profile_description", [
-            '{username}' => $this->user->getAttribute('username'),
+            '{username}' => $this->user->getAttribute('display_name'),
             '{discussion_count}' => $this->user->getAttribute('discussion_count'),
             '{comment_count}' => $this->user->getAttribute('comment_count')
         ]);
@@ -75,7 +75,7 @@ class Profile
 
             // Add Schema.org metadata: ProfilePage https://schema.org/ProfilePage
             ->setSchemaJson('@type', 'ProfilePage')
-            ->setSchemaJson('name', $this->user->getAttribute('username'))
+            ->setSchemaJson('name', $this->user->getAttribute('display_name'))
             ->setSchemaJson('dateCreated', $joinedAt);
 
         // Add avatar
