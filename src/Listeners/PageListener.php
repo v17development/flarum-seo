@@ -161,6 +161,10 @@ class PageListener
         }
     }
 
+
+    
+
+
     /**
      * Default site meta tags
      * Available for all webpages
@@ -169,9 +173,7 @@ class PageListener
     {
         $applicationName = $this->settings->get('forum_title');
         $applicationDescription = $this->settings->get('forum_description');
-        $applicationFavicon = $this->settings->get('favicon_path');
-        $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
-
+       
         $this
             // Add application name
             ->setMetaTag('application-name', $applicationName)
@@ -183,16 +185,8 @@ class PageListener
             // Twitter card
             ->setMetaTag('twitter:card', 'summary');
 
-        // Use social media image
-        if($applicationSeoSocialMediaImage !== null)
-        {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
-        }
-        // Fallback to the favicon
-        else if($applicationFavicon !== null)
-        {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
-        }
+
+      
 
         // Add application information
         $this->setSchemaJson('publisher', [
@@ -406,6 +400,36 @@ class PageListener
      */
     public function setDescription($description)
     {
+        $applicationFavicon = $this->settings->get('favicon_path');
+        $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
+
+        // Read Post content and Filter image url 
+
+            $pattern = '/(http.*\.)(jpe?g|png|[tg]iff?|svg)/';
+
+                if(preg_match_all($pattern,$description, $matches))
+                {
+                    $contentimg = $matches[0][0];
+                }
+         
+        // Use image from post for social media og:image
+        if($contentimg !== null)
+        {
+            $this->setImage($contentimg);
+        }
+        // Fallback Setting image
+        else {
+            if($applicationSeoSocialMediaImage !== null)
+        {
+            $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
+        }
+        // Fallback to the favicon
+        else if($applicationFavicon !== null)
+        {
+            $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
+        }
+        }
+        // Filter post to description 
         $description = strip_tags($description);
         $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
 
