@@ -161,10 +161,6 @@ class PageListener
         }
     }
 
-
-    
-
-
     /**
      * Default site meta tags
      * Available for all webpages
@@ -400,11 +396,37 @@ class PageListener
      */
     public function setDescription($description)
     {
+
+        $description = strip_tags($description);
+        $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
+
+        $this
+            ->setMetaPropertyTag('og:description', $description)
+
+            ->setMetaTag('description', $description)
+            ->setMetaTag('twitter:description', $description)
+            ->setSchemaJson("description", $description);
+
+        if($this->requestType === 'd/')
+        {
+            $this->setSchemaJson("headline", $description);
+        }
+
+        return $this;
+    }
+
+  /**
+     * Set setogimage
+     *
+     * @param $setogimage
+     * @return PageListener
+     */
+    public function setOgimage($description)
+    {  
         $applicationFavicon = $this->settings->get('favicon_path');
         $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
 
         // Read Post content and Filter image url 
-
             $pattern = '/(http.*\.)(jpe?g|png|[tg]iff?|svg)/';
 
                 if(preg_match_all($pattern,$description, $matches))
@@ -429,24 +451,10 @@ class PageListener
             $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
         }
         }
-        // Filter post to description 
-        $description = strip_tags($description);
-        $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
+        
+        return;
+    } // End setOgimage
 
-        $this
-            ->setMetaPropertyTag('og:description', $description)
-
-            ->setMetaTag('description', $description)
-            ->setMetaTag('twitter:description', $description)
-            ->setSchemaJson("description", $description);
-
-        if($this->requestType === 'd/')
-        {
-            $this->setSchemaJson("headline", $description);
-        }
-
-        return $this;
-    }
 
     /**
      * Set published on
