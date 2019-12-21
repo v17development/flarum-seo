@@ -192,7 +192,7 @@ export default class SeoSettings extends Component {
         this.saving = true;
         this.allowBotsValue = value;
 
-        let data = app.data.settings;
+        let data = {};
         data.seo_allow_all_bots = value;
 
         saveSettings(data)
@@ -213,7 +213,7 @@ export default class SeoSettings extends Component {
 
         this.saving = true;
 
-        let data = app.data.settings;
+        let data = {};
         data[setting] = value;
 
         saveSettings(data)

@@ -88,8 +88,7 @@ class Discussion
             // Set page type article
             ->setMetaPropertyTag('og:type', 'article');
 
-        // Get posted on and Last posted on
-        $postedOn = $this->discussion->getAttribute('created_at');
+        // Get last posted on
         $lastPostedOn = $this->firstPost !== null ? $this->firstPost->getAttribute('edited_at') : $this->discussion->getAttribute('last_posted_at');
 
         // Set short description
@@ -99,7 +98,14 @@ class Discussion
 
         // Set discussion description, only when a first post exists
         if($this->firstPost !== null) {
-            $this->parent->setDescription($this->firstPost->formatContent($this->parent->getServerRequest()));
+            $content = $this->firstPost->formatContent();
+
+            // Set page description
+            $this->parent
+                ->setDescription($content)
+
+                // Set page image
+                ->setImageFromContent($content);
         }
 
         // Add updated

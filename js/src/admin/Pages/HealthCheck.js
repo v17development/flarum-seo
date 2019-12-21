@@ -296,7 +296,7 @@ export default class HealthCheck extends Page {
 
         this.saving = true;
 
-        let data = app.data.settings;
+        let data = {};
         data[setting] = value;
 
         saveSettings(data)

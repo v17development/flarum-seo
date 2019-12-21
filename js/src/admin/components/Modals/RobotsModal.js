@@ -68,7 +68,7 @@ export default class RobotsModal extends Modal {
 
         this.loading = true;
 
-        let data = app.data.settings;
+        let data = {};
         data.seo_robots_text = this.value;
 
         saveSettings(data).then(

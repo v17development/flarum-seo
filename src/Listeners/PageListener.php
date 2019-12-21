@@ -158,6 +158,7 @@ class PageListener
         // Home page
         else if($this->requestType === "") {
             $this->setDescription($this->settings->get('forum_description'));
+            $this->setTitle($this->settings->get('forum_title'));
         }
     }
 
@@ -169,7 +170,9 @@ class PageListener
     {
         $applicationName = $this->settings->get('forum_title');
         $applicationDescription = $this->settings->get('forum_description');
-       
+        $applicationFavicon = $this->settings->get('favicon_path');
+        $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
+
         $this
             // Add application name
             ->setMetaTag('application-name', $applicationName)
@@ -181,9 +184,6 @@ class PageListener
             // Twitter card
             ->setMetaTag('twitter:card', 'summary');
 
-
-      
-
         // Add application information
         $this->setSchemaJson('publisher', [
             "@type" => "Organization",
@@ -191,6 +191,17 @@ class PageListener
             "url" => $this->applicationUrl,
             "description" => $applicationDescription
         ]);
+
+        // Set image
+        if($applicationSeoSocialMediaImage !== null)
+        {
+            $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
+        }
+        // Fallback to the favicon
+        else if($applicationFavicon !== null)
+        {
+            $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
+        }
     }
 
     /**
@@ -391,18 +402,16 @@ class PageListener
     /**
      * Set description
      *
-     * @param $description
+     * @param $content
      * @return PageListener
      */
-    public function setDescription($description)
+    public function setDescription($content)
     {
-
-        $description = strip_tags($description);
+        $description = strip_tags($content);
         $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
 
         $this
             ->setMetaPropertyTag('og:description', $description)
-
             ->setMetaTag('description', $description)
             ->setMetaTag('twitter:description', $description)
             ->setSchemaJson("description", $description);
@@ -415,45 +424,32 @@ class PageListener
         return $this;
     }
 
-  /**
-     * Set setogimage
+    /**
+     * Set setImageFromContent
      *
-     * @param $setogimage
+     * @param $content
      * @return PageListener
      */
-    public function setOgimage($description)
-    {  
-        $applicationFavicon = $this->settings->get('favicon_path');
-        $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
-
-        // Read Post content and Filter image url 
+    public function setImageFromContent($content = null)
+    {
+        // Check post content is not empty
+        if($content !== null) {
+            // Read Post content and filter image url
             $pattern = '/(http.*\.)(jpe?g|png|[tg]iff?|svg)/';
 
-                if(preg_match_all($pattern,$description, $matches))
-                {
-                    $contentimg = $matches[0][0];
+            // Use image from post for social media og:image
+            if (preg_match_all($pattern, $content, $matches) && count($matches) > 0) {
+                $contentImage = $matches[0][0];
+
+                if ($contentImage !== null) {
+                    $this->setImage($contentImage);
+                    return $this;
                 }
-         
-        // Use image from post for social media og:image
-        if($contentimg !== null)
-        {
-            $this->setImage($contentimg);
+            }
         }
-        // Fallback Setting image
-        else {
-            if($applicationSeoSocialMediaImage !== null)
-        {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
-        }
-        // Fallback to the favicon
-        else if($applicationFavicon !== null)
-        {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
-        }
-        }
-        
-        return;
-    } // End setOgimage
+
+        return $this;
+    }
 
 
     /**

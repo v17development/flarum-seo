@@ -105,8 +105,8 @@ class QADiscussion
     private function createTags()
     {
         // Set current URL
-        $fullUrl = $this->parent->getApplicationPath('/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug'));
         $url = '/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug');
+        $fullUrl = $this->parent->getApplicationPath($url);
 
         // Update ld-json
         $this->parent
@@ -128,9 +128,14 @@ class QADiscussion
 
         // Set discussion description, only when a first post exists
         if($this->firstPost !== null) {
-            $content = $this->firstPost->formatContent($this->parent->getServerRequest());
+            $content = $this->firstPost->formatContent();
 
-            $this->parent->setDescription($content);
+            // Set page description
+            $this->parent
+                ->setDescription($content)
+
+                // Set page image
+                ->setImageFromContent($content);
         }
 
         // Add updated
@@ -171,7 +176,7 @@ class QADiscussion
             // Temp post
             $tempPost = [
                 '@type' => 'Answer',
-                'text' => $post->formatContent($this->parent->getServerRequest()),
+                'text' => $post->formatContent(),
                 'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
                 'url' => $fullUrl . '/' . $post->getAttribute('number'),
                 'author' => [
