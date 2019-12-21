@@ -171,6 +171,7 @@ class PageListener
         $applicationName = $this->settings->get('forum_title');
         $applicationDescription = $this->settings->get('forum_description');
         $applicationFavicon = $this->settings->get('favicon_path');
+        $applicationLogo = $this->settings->get('logo_path');
         $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
 
         $this
@@ -189,13 +190,19 @@ class PageListener
             "@type" => "Organization",
             "name" => $applicationName,
             "url" => $this->applicationUrl,
-            "description" => $applicationDescription
+            "description" => $applicationDescription,
+            "logo" => $applicationLogo ? $this->applicationUrl . '/assets/' . $applicationLogo : null
         ]);
 
         // Set image
         if($applicationSeoSocialMediaImage !== null)
         {
             $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
+        }
+        // Fallback to the logo
+        else if($applicationLogo !== null)
+        {
+            $this->setImage($this->applicationUrl . '/assets/' . $applicationLogo);
         }
         // Fallback to the favicon
         else if($applicationFavicon !== null)
