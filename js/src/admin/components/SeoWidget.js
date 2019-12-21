@@ -1,5 +1,4 @@
 import DashboardWidget from 'flarum/components/DashboardWidget';
-import SelectDropdown from 'flarum/components/SelectDropdown';
 import Button from 'flarum/components/Button';
 
 export default class SeoWidget extends DashboardWidget {

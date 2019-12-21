@@ -1,7 +1,5 @@
 import Modal from 'flarum/components/Modal';
 import Button from 'flarum/components/Button';
-import FieldSet from 'flarum/components/FieldSet';
-import Switch from 'flarum/components/Switch';
 import saveSettings from 'flarum/utils/saveSettings';
 
 export default class RobotsModal extends Modal {

@@ -1,6 +1,4 @@
 import Page from 'flarum/components/Page';
-import SeoSettings from "../components/Forms/SeoSettings";
-import Button from 'flarum/components/Button';
 import Header from "../components/Header";
 
 export default class SSLPage extends Page {

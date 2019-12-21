@@ -1,5 +1,4 @@
 import Page from 'flarum/components/Page';
-import SeoSettings from "../components/Forms/SeoSettings";
 import Button from 'flarum/components/Button';
 import saveSettings from 'flarum/utils/saveSettings';
 import Alert from 'flarum/components/Alert';
@@ -75,7 +74,7 @@ export default class RegisterToSearchEngines extends Page {
 
         this.saving = true;
 
-        let data = app.data.settings;
+        let data = {};
         data[setting] = value;
 
         saveSettings(data)
