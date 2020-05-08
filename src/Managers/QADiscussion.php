@@ -37,7 +37,7 @@ class QADiscussion
         $this->discussionId = $discussionId;
 
         // Enable best answer
-        if($this->parent->extensionEnabled('wiwatsrt-best-answer'))
+        if($this->parent->extensionEnabled('fof-best-answer') || $this->parent->extensionEnabled('wiwatsrt-best-answer'))
         {
             $this->enableBestAnswer = true;
         }
