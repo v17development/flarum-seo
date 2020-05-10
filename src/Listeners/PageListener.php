@@ -160,6 +160,7 @@ class PageListener
             $this->setDescription($this->settings->get('forum_description'));
             $this->setKeywords($this->settings->get('forum_keywords'));
             $this->setTitle($this->settings->get('forum_title'));
+            $this->setUrl();
         }
     }
 
@@ -179,6 +180,7 @@ class PageListener
             // Add application name
             ->setMetaTag('application-name', $applicationName)
             ->setMetaPropertyTag('og:site_name', $applicationName)
+            ->setMetaPropertyTag('og:type', 'website')
 
             // Robots, follow please! :)
             ->setMetaTag('robots', 'index, follow')
@@ -350,7 +352,7 @@ class PageListener
      * @param $path
      * @return PageListener
      */
-    public function setUrl($path)
+    public function setUrl($path = '')
     {
         $this->setMetaTag('twitter:url', $this->applicationUrl . $path);
         $this->setMetaPropertyTag('og:url', $this->applicationUrl . $path);
