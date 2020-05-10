@@ -17,6 +17,9 @@
         "flarum/core": "^0.1.0-beta.11",
         "ext-json": "*"
     },
+    "suggest": {
+        "fof/sitemap": "Allows you to generate powerful sitemap.xml files"
+    },
     "extra": {
         "flarum-extension": {
             "title": "SEO",
