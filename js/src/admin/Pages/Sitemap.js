@@ -13,7 +13,7 @@ export default class Sitemap extends Page {
                     <p>The sitemap file is automatically generated and does not need any maintenance.</p>
 
                     <h4>What extension should I install?</h4>
-                    <p>At the moment, <a href="https://discuss.flarum.org/d/14941-flagrow-sitemap" target="_blank">Flagrow Sitemap <i className="fas fa-external-link-alt"></i></a> is the best extension to install for Flarum. We advice you to install and activate this extension.</p>
+                    <p>At the moment, <a href="https://discuss.flarum.org/d/14941-fof-sitemap" target="_blank">FriendsOfFlarum Sitemap <i className="fas fa-external-link-alt"></i></a> is the best extension to install for Flarum. We advice you to install and activate this extension.</p>
 
                     <p>This extension will make sure crawlers will find your forum <b>discussions</b>, <b>tags</b> (when extension is enabled) and <b>Pages</b> extension (when extension is installed and enabled). It will automatically make an sitemap.xml available.</p>
 

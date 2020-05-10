@@ -29,6 +29,7 @@ export default class HealthCheck extends Page {
                         </thead>
                         <tbody>
                         {this.forumDescription()}
+                        {this.forumKeywords()}
                         {this.siteUsesSSL()}
                         {this.discussionPostSet()}
                         {this.socialMediaImage()}
@@ -69,6 +70,23 @@ export default class HealthCheck extends Page {
                     {this.notPassedError(passed, reason, 'Update description', this.getSettingUrl('description'))}
                 </td>
                 {this.passed(passed, 'description')}
+            </tr>
+        );
+    }
+
+    // Forum keywords
+    forumKeywords()
+    {
+        let passed = typeof this.settings.forum_keywords !== "undefined" && this.settings.forum_keywords !== '' ? true : false;
+        let reason = 'You did not set up a forum keywords yet!';
+
+        return (
+            <tr>
+                <td>
+                    Your forum has keywords set up
+                    {this.notPassedError(passed, reason, 'Update keywords', this.getSettingUrl('keywords'))}
+                </td>
+                {this.passed(passed, 'keywords')}
             </tr>
         );
     }
@@ -130,7 +148,7 @@ export default class HealthCheck extends Page {
     {
         let passed = true;
 
-        if(app.data.settings.extensions_enabled.indexOf('flagrow-sitemap') === -1) {
+        if(app.data.settings.extensions_enabled.indexOf('flagrow-sitemap') === -1 && app.data.settings.extensions_enabled.indexOf('fof-sitemap') === -1) {
             passed = false;
         }
 
@@ -138,7 +156,7 @@ export default class HealthCheck extends Page {
             <tr>
                 <td>
                     Your forum has a sitemap available
-                    {this.notPassedError(passed, 'It is highly recommended to install the Flagrow sitemap extension!', 'Read more about adding a sitemap', app.route('seoSitemap'))}
+                    {this.notPassedError(passed, 'It is highly recommended to install the FriendsOfFlarum sitemap extension!', 'Read more about adding a sitemap', app.route('seoSitemap'))}
                 </td>
                 {this.passed(passed)}
             </tr>

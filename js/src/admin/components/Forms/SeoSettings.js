@@ -7,6 +7,7 @@ import Switch from 'flarum/components/Switch';
 import UploadImageButton from 'flarum/components/UploadImageButton';
 import CrawlPostModal from "../Modals/CrawlPostModal";
 import RobotsModal from "../Modals/RobotsModal";
+import countKeywords from '../../utils/countKeywords';
 
 export default class SeoSettings extends Component {
     init() {
@@ -15,12 +16,13 @@ export default class SeoSettings extends Component {
         this.fields = [
             'forum_title',
             'forum_description',
+            'forum_keywords',
             'seo_allow_all_bots'
         ];
         this.values = {};
 
         const settings = app.data.settings;
-        this.fields.forEach(key => this.values[key] = m.prop(settings[key]));
+        this.fields.forEach(key => this.values[key] = m.prop(settings[key] || ""));
 
         this.allowBotsValue = settings.seo_allow_all_bots !== "0";
 
@@ -50,7 +52,23 @@ export default class SeoSettings extends Component {
                             <div className="helpText">
                                 {app.translator.trans('core.admin.basics.forum_description_text')}
                             </div>,
-                            <textarea className="FormControl" value={this.values.forum_description()} oninput={m.withAttr('value', this.values.forum_description)}/>,
+                            <textarea className="FormControl" value={this.values.forum_description()} oninput={m.withAttr('value', this.values.forum_description)}/>
+                        ]
+                    })}
+
+                    {FieldSet.component({
+                        label: "Forum keywords",
+                        className: this.showField !== 'all' && this.showField !== 'keywords' ? 'hidden' : '',
+                        children: [
+                            <div className="helpText">
+                                {"Enter one or more keywords that describes your forum."}
+                            </div>,
+                            <textarea className="FormControl" value={this.values.forum_keywords()} oninput={m.withAttr('value', this.values.forum_keywords)} placeholder="Add a few keywords" />,
+                            <div className="helpText" style={{
+                                color: countKeywords(this.values.forum_keywords()) == false ? "red" : null
+                            }}>
+                                <b>Note: Separate keywords with a comma.</b> Example: <i>flarum, web development, forum, apples, security</i>
+                            </div>,
                             Button.component({
                                 type: 'submit',
                                 className: 'Button Button--primary',

@@ -158,6 +158,7 @@ class PageListener
         // Home page
         else if($this->requestType === "") {
             $this->setDescription($this->settings->get('forum_description'));
+            $this->setKeywords($this->settings->get('forum_keywords'));
             $this->setTitle($this->settings->get('forum_title'));
         }
     }
@@ -429,6 +430,24 @@ class PageListener
         }
 
         return $this;
+    }
+
+    /**
+     * Set page keywords
+     * 
+     * @param $keywords
+     */
+    public function setKeywords($keywords)
+    {
+        if(!$keywords || $keywords === "") return;
+
+        // Possible array of keywords
+        if(is_array($keywords)) {
+            $keywords = implode(", ", $keywords);
+        }
+
+        // Set keywords meta tag
+        $this->setMetaTag('keywords', $keywords);
     }
 
     /**
