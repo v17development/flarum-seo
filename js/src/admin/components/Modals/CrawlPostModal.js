@@ -36,7 +36,7 @@ export default class CrawlPostModal extends Modal {
 
                         <div style="padding: 10px 0;">
                             <b style="display: block; padding-bottom: 10px;"><span style="display: inline-block; width: 25px;"><i className="fas fa-check-double"></i></span> Index all posts in a discussion (setting enabled)</b>
-                            Search engines will understand the discussions and are even able to show some relevant posts underneath the search results. When you have the extension '<a href="https://flagrow.io/extensions/wiwatsrt/flarum-ext-best-answer" target="_blank">best answer</a>' installed and enabled on your forum, it will mark the discussion as 'answered' on the search results and redirect the user to that specific post. <b>However, depending on your server settings, this can be heavier</b>. It may cost some performance, so it depends on how fast your server is to enable this feature.
+                            Search engines will understand the discussions and are even able to show some relevant posts underneath the search results. When you have the extension '<a href="https://discuss.flarum.org/d/21894-friendsofflarum-best-answer" target="_blank">best answer</a>' installed and enabled on your forum, it will mark the discussion as 'answered' on the search results and redirect the user to that specific post. <b>However, depending on your server settings, this can be heavier</b>. It may cost some performance, so it depends on how fast your server is to enable this feature.
                         </div>
                     </div>
                 </div>

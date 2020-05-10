@@ -867,9 +867,9 @@ function (_Component) {
       children: [m("div", {
         className: "helpText"
       }, "You can edit your robot.txt here. Please note, writing nonsense could result that crawlers won't visit your site.", m("br", null), m("br", null), "When you've ", m("a", {
-        href: "https://discuss.flarum.org/d/14941-flagrow-sitemap",
+        href: "https://discuss.flarum.org/d/14941-fof-sitemap",
         target: "_blank"
-      }, "Flagrow Sitemap"), " installed and enabled, it will be automatically added to your robots.txt"), m("div", {
+      }, "FriendsOfFlarum Sitemap"), " installed and enabled, it will be automatically added to your robots.txt"), m("div", {
         style: "height: 5px;"
       }), flarum_components_Switch__WEBPACK_IMPORTED_MODULE_6___default.a.component({
         state: this.allowBotsValue,
@@ -1164,7 +1164,7 @@ function (_Modal) {
     }, m("i", {
       className: "fas fa-check-double"
     })), " Index all posts in a discussion (setting enabled)"), "Search engines will understand the discussions and are even able to show some relevant posts underneath the search results. When you have the extension '", m("a", {
-      href: "https://flagrow.io/extensions/wiwatsrt/flarum-ext-best-answer",
+      href: "https://discuss.flarum.org/d/21894-friendsofflarum-best-answer",
       target: "_blank"
     }, "best answer"), "' installed and enabled on your forum, it will mark the discussion as 'answered' on the search results and redirect the user to that specific post. ", m("b", null, "However, depending on your server settings, this can be heavier"), ". It may cost some performance, so it depends on how fast your server is to enable this feature."))), m("div", {
       style: "padding: 25px 30px; text-align: center;"

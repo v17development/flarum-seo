@@ -114,7 +114,7 @@ export default class SeoSettings extends Component {
                             <div className="helpText">
                                 You can edit your robot.txt here. Please note, writing nonsense could result that crawlers won't visit your site.<br />
                                 <br />
-                                When you've <a href="https://discuss.flarum.org/d/14941-flagrow-sitemap" target="_blank">Flagrow Sitemap</a> installed and enabled, it will be automatically added to your robots.txt
+                                When you've <a href="https://discuss.flarum.org/d/14941-fof-sitemap" target="_blank">FriendsOfFlarum Sitemap</a> installed and enabled, it will be automatically added to your robots.txt
                             </div>,
                             <div style="height: 5px;"></div>,
                             Switch.component({
