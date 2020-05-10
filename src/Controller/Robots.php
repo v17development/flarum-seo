@@ -42,7 +42,7 @@ class Robots implements RequestHandlerInterface
         $extensionsEnabled = json_decode($this->settings->get('extensions_enabled'), true);
 
         // If sitemap extension is enabled, add sitemap.xml
-        if (in_array('flagrow-sitemap', $extensionsEnabled))
+        if (in_array('fof-sitemap', $extensionsEnabled))
         {
             $url = app('flarum.config')['url'];
 

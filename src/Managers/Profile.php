@@ -101,11 +101,9 @@ class Profile
             ->setDescription($profileDescription)
 
             // Profile URL
-            ->setUrl('/u/' . $this->user->getAttribute('username'));
+            ->setUrl('/u/' . $this->user->getAttribute('username'))
 
-        // Canonical url
-        if($this->isCanonical) {
-            $this->parent->setCanonicalUrl('/u/' . $this->user->getAttribute('username'));
-        }
+            // Canonical url
+            ->setCanonicalUrl('/u/' . $this->user->getAttribute('username'));
     }
 }

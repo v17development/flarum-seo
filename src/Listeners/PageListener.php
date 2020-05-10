@@ -155,12 +155,20 @@ class PageListener
             new QADiscussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
-        // Home page
-        else if($this->requestType === "") {
+        // Home page/discussion overview page
+        else if($this->requestType === "" || $this->requestType === "al") {
             $this->setDescription($this->settings->get('forum_description'));
             $this->setKeywords($this->settings->get('forum_keywords'));
             $this->setTitle($this->settings->get('forum_title'));
             $this->setUrl();
+            $this->setCanonicalUrl('');
+
+            // Update meta tag URL when it's the discussion overview page
+            if($this->requestType === "al" && $this->settings->get('default_route') !== '/all') {
+                $this->setUrl('/all');
+
+                $this->setCanonicalUrl('/all');
+            }
         }
     }
 
@@ -537,6 +545,8 @@ class PageListener
     public function setPageTitle($title)
     {
         $this->flarumDocument->title = $title;
+        
+        return $this;
     }
 
     /**
