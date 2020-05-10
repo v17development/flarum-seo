@@ -72,6 +72,7 @@ class Profile
         $this->parent
             // Page type
             ->setMetaPropertyTag('og:type', 'profile')
+            ->setMetaPropertyTag('profile:username', $this->user->getAttribute('username'))
 
             // Add Schema.org metadata: ProfilePage https://schema.org/ProfilePage
             ->setSchemaJson('@type', 'ProfilePage')
@@ -100,9 +101,11 @@ class Profile
             ->setDescription($profileDescription)
 
             // Profile URL
-            ->setUrl('/u/' . $this->user->getAttribute('username'))
+            ->setUrl('/u/' . $this->user->getAttribute('username'));
 
-            // Canonical url
-            ->setCanonicalUrl('/u/' . $this->user->getAttribute('username'));
+        // Canonical url
+        if($this->isCanonical) {
+            $this->parent->setCanonicalUrl('/u/' . $this->user->getAttribute('username'));
+        }
     }
 }
