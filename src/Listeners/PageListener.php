@@ -235,10 +235,10 @@ class PageListener
             $this->flarumDocument->head[] = '<meta property="'.e($name).'" content="'.e($content).'">';
         }
 
-        // Add canonical url
+        // Override Flarum default canonical url
         if($this->canonicalUrl !== null)
         {
-            $this->flarumDocument->head[] = '<link rel="canonical" href="'. $this->canonicalUrl .'">';
+            $this->flarumDocument->canonicalUrl = $this->canonicalUrl;
         }
 
         // Add schema.org json
@@ -324,6 +324,9 @@ class PageListener
     {
         $tags = $discussion->getAttribute("tags");
         $list = [];
+
+        // Don't add the list, there were no tags
+        if(count($tags) === 0) return;
 
         // Foreach tags
         $number = 0;
