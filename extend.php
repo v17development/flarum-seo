@@ -10,6 +10,7 @@ use V17Development\FlarumSeo\Api\DeleteSocialMediaImageController;
 use V17Development\FlarumSeo\Api\UploadSocialMediaImageController;
 use V17Development\FlarumSeo\Controller\Robots;
 use V17Development\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Listeners\BeforePageRenders;
 
 return [
     (new Extend\Frontend('forum'))
@@ -22,5 +23,8 @@ return [
     (new Extend\Routes('api'))
         ->post('/seo_social_media_image', 'pages.index', UploadSocialMediaImageController::class)
         ->delete('/seo_social_media_image', 'pages.index', DeleteSocialMediaImageController::class),
-    new Extend\Locales(__DIR__ . '/locale')
+
+    new Extend\Locales(__DIR__ . '/locale'),
+
+    new BeforePageRenders()
 ];

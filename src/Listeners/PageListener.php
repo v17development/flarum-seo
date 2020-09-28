@@ -118,9 +118,6 @@ class PageListener
 
         // Check out type of page
         $this->determine();
-
-        // Finish process
-        $this->finish();
     }
 
     /**
@@ -229,7 +226,7 @@ class PageListener
     /**
      * Finish process and output language, meta property tags, canonical urls & Schema.org json
      */
-    private function finish()
+    public function finish()
     {
         // Add language attribute to html tag
         $this->flarumDocument->language = $this->serverRequest->getAttribute('locale');

@@ -3,6 +3,7 @@
 namespace V17Development\FlarumSeo;
 
 use V17Development\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Listeners\BeforePageRenders;
 
 /**
  * FlarumSupport Extender
@@ -28,7 +29,7 @@ class Extend {
      * @param boolean $updatePageTitle Update page title as well
      */
     public static function setTitle(string $title, $updatePageTitle = true) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setTitle");
 
         self::$container->setTitle($title);
 
@@ -45,7 +46,7 @@ class Extend {
      * @param bool $useAsHeadLine Only true if you want to use this as headline
      */
     public static function setDescription(string $description, bool $useAsHeadLine = false) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setDescription");
 
         self::$container->setDescription($description, $useAsHeadLine);
     }
@@ -57,7 +58,7 @@ class Extend {
      * @param bool $addApplicationUrl Adds application before the URL if true
      */
     public static function setUrl(string $url, bool $addApplicationUrl = true) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setUrl");
         
         self::$container->setUrl($url, $addApplicationUrl);
     }
@@ -70,7 +71,7 @@ class Extend {
      * Example: /topic/5-some-title
      */
     public static function setCanonicalUrl(string $path) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setCanonicalUrl");
         
         self::$container->setCanonicalUrl($path);
     }
@@ -83,7 +84,7 @@ class Extend {
      * Example: ["keyword 1", "flarum", "site", "blog"]
      */
     public static function setKeywords(array $keywords) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setKeywords");
         
         self::$container->setKeywords($keywords);
     }
@@ -94,7 +95,7 @@ class Extend {
      * @param string $imageUrl Path to an image
      */
     public static function setImage(string $imageUrl) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setImage");
         
         self::$container->setImage($imageUrl);
     }
@@ -107,7 +108,7 @@ class Extend {
      * Example: 2020-08-22 14:14:00
      */
     public static function setPublishedOn(string $datetime) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setPublishedOn");
         
         self::$container->setPublishedOn($datetime);
     }
@@ -120,7 +121,7 @@ class Extend {
      * Example: 2020-08-25 18:55:00
      */
     public static function setUpdatedOn(string $datetime) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setUpdatedOn");
         
         self::$container->setUpdatedOn($datetime);
     }
@@ -136,7 +137,7 @@ class Extend {
      * - value: "blog"
      */
     public static function setMetaPropertyTag(string $key, $value) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setMetaPropertyTag");
         
         self::$container->setMetaPropertyTag($key, $value);
     }
@@ -152,7 +153,7 @@ class Extend {
      * - value: "index, follow"
      */
     public static function setMetaTag(string $key, $value) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setMetaTag");
         
         self::$container->setMetaTag($key, $value);
     }
@@ -168,9 +169,21 @@ class Extend {
      * - value: "WebPage"
      */
     public static function setSchemaJson(string $key, $value) {
-        if(self::$container === null) $this->throwError("setTitle");
+        if(self::$container === null) self::throwError("setSchemaJson");
         
         self::$container->setSchemaJson($key, $value);
+    }
+
+    /**
+     * Finish and add all parameters
+     * 
+     * Do not call this class
+     */
+    public static function finish($caller) {
+        if(self::$container === null) self::throwError("finish");
+        if(get_class($caller) !== "V17Development\FlarumSeo\Listeners\BeforePageRenders") throw new \Exception("V17Development\FlarumSeo\Extend::finish(..): Do not call this class");
+        
+        self::$container->finish();
     }
 
     /**
