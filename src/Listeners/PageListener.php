@@ -7,6 +7,7 @@ use V17Development\FlarumSeo\Managers\Page;
 use V17Development\FlarumSeo\Managers\Profile;
 use V17Development\FlarumSeo\Managers\QADiscussion;
 use V17Development\FlarumSeo\Managers\Tag;
+use V17Development\FlarumSeo\Extend;
 
 // Flarum classes
 use Flarum\Frontend\Document;
@@ -91,6 +92,9 @@ class PageListener
         {
             $this->discussionType = 1;
         }
+
+        // Initialize SEO extender
+        Extend::init($this);
 
         // Settings debug settings: var_dump($this->settings->all());exit;
     }
@@ -363,11 +367,15 @@ class PageListener
      * @param $path
      * @return PageListener
      */
-    public function setUrl($path = '')
+    public function setUrl($path = '', $addApplicationUrl = true)
     {
-        $this->setMetaTag('twitter:url', $this->applicationUrl . $path);
-        $this->setMetaPropertyTag('og:url', $this->applicationUrl . $path);
-        $this->setSchemaJson("url", $this->applicationUrl . $path);
+        if($addApplicationUrl) {
+            $path = $this->applicationUrl . $path;
+        }
+
+        $this->setMetaTag('twitter:url', $path);
+        $this->setMetaPropertyTag('og:url', $path);
+        $this->setSchemaJson("url", $path);
 
         return $this;
     }
@@ -426,7 +434,7 @@ class PageListener
      * @param $content
      * @return PageListener
      */
-    public function setDescription($content)
+    public function setDescription($content, $headline = false)
     {
         $description = strip_tags($content);
         $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
@@ -437,7 +445,7 @@ class PageListener
             ->setMetaTag('twitter:description', $description)
             ->setSchemaJson("description", $description);
 
-        if($this->requestType === 'd/')
+        if($this->requestType === 'd/' || $headline === true)
         {
             $this->setSchemaJson("headline", $description);
         }
