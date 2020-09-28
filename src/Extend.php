@@ -7,6 +7,9 @@ use V17Development\FlarumSeo\Listeners\BeforePageRenders;
 
 /**
  * FlarumSeo Extender
+ * 
+ * Read more:
+ * https://community.v17.dev/knowledgebase/22-extending-the-seo-extension
  */
 class Extend {
     // SEO container
