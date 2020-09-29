@@ -121,7 +121,7 @@ class QADiscussion
 
         // Set short description
         $this->parent
-            ->setTitle($this->discussion->getAttribute('title'))
+            ->setTitle($this->discussion->getAttribute('title'), true)
             ->setPublishedOn($this->discussion->getAttribute('created_at'));
 
         $content = '';

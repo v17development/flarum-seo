@@ -30,11 +30,12 @@ class Extend {
      * 
      * @param string $title Sets title
      * @param boolean $updatePageTitle Update page title as well
+     * @param bool $useAsHeadLine Only true if you want to use this as headline
      */
-    public static function setTitle(string $title, $updatePageTitle = true) {
+    public static function setTitle(string $title, $updatePageTitle = true, bool $useAsHeadLine = false) {
         if(self::$container === null) self::throwError("setTitle");
 
-        self::$container->setTitle($title);
+        self::$container->setTitle($title, $useAsHeadLine);
 
         // Update page title as well
         if($updatePageTitle) {
@@ -46,12 +47,11 @@ class Extend {
      * Page description
      * 
      * @param string $description The description will automatically be 'dotted' if too long
-     * @param bool $useAsHeadLine Only true if you want to use this as headline
      */
-    public static function setDescription(string $description, bool $useAsHeadLine = false) {
+    public static function setDescription(string $description) {
         if(self::$container === null) self::throwError("setDescription");
 
-        self::$container->setDescription($description, $useAsHeadLine);
+        self::$container->setDescription($description);
     }
 
     /**

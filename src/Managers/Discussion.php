@@ -93,7 +93,7 @@ class Discussion
 
         // Set short description
         $this->parent
-            ->setTitle($this->discussion->getAttribute('title'))
+            ->setTitle($this->discussion->getAttribute('title'), true)
             ->setPublishedOn($this->discussion->getAttribute('created_at'));
 
         // Set discussion description, only when a first post exists

@@ -2,12 +2,18 @@
     "name": "v17development/flarum-seo",
     "description": "Adds SEO tags for your Flarum forum",
     "type": "flarum-extension",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jasper Vriends - V17 Development",
             "email": "jasper@v17.nl"
         }
     ],
+    "support": {
+        "issues": "https://github.com/v17development/flarum-seo/issues",
+        "source": "https://github.com/v17development/flarum-seo",
+        "docs": "https://community.v17.dev/knowledgebase"
+    },
     "autoload": {
         "psr-4": {
             "V17Development\\FlarumSeo\\": "src/"
