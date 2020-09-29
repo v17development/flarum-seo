@@ -414,13 +414,20 @@ class PageListener
      * Set title
      *
      * @param $title
+     * @param $headline
      * @return PageListener
      */
-    public function setTitle($title)
+    public function setTitle($title, $headline = false)
     {
         $this
             ->setMetaPropertyTag('og:title', $title)
             ->setMetaTag('twitter:title', $title);
+
+        // Set headline
+        if($headline === true)
+        {
+            $this->setSchemaJson("headline", $title);
+        }
 
         return $this;
     }
@@ -431,7 +438,7 @@ class PageListener
      * @param $content
      * @return PageListener
      */
-    public function setDescription($content, $headline = false)
+    public function setDescription($content)
     {
         $description = strip_tags($content);
         $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
@@ -441,11 +448,6 @@ class PageListener
             ->setMetaTag('description', $description)
             ->setMetaTag('twitter:description', $description)
             ->setSchemaJson("description", $description);
-
-        if($this->requestType === 'd/' || $headline === true)
-        {
-            $this->setSchemaJson("headline", $description);
-        }
 
         return $this;
     }
