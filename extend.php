@@ -26,5 +26,5 @@ return [
 
     new Extend\Locales(__DIR__ . '/locale'),
 
-    new BeforePageRenders()
+    // new BeforePageRenders()
 ];

@@ -118,6 +118,10 @@ class PageListener
 
         // Check out type of page
         $this->determine();
+
+        // TODO: Move finish function back to BeforePageRenders
+        // After PR and release of BETA 14
+        $this->finish();
     }
 
     /**
