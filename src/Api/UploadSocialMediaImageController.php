@@ -3,8 +3,8 @@ namespace V17Development\FlarumSeo\Api;
 
 use Flarum\Foundation\Application;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\User\AssertPermissionTrait;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Intervention\Image\ImageManager;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -15,7 +15,6 @@ use Flarum\Api\Controller\ShowForumController;
 
 class UploadSocialMediaImageController extends ShowForumController
 {
-    use AssertPermissionTrait;
     /**
      * @var SettingsRepositoryInterface
      */
@@ -37,8 +36,9 @@ class UploadSocialMediaImageController extends ShowForumController
      */
     public function data(ServerRequestInterface $request, Document $document)
     {
-        $this->assertAdmin($request->getAttribute('actor'));
-        $file = array_get($request->getUploadedFiles(), 'seo_social_media_image');
+        $request->getAttribute('actor')->assertAdmin();
+
+        $file = Arr::get($request->getUploadedFiles(), 'seo_social_media_image');
         $tmpFile = tempnam($this->app->storagePath().'/tmp', 'site-image');
         $file->moveTo($tmpFile);
 

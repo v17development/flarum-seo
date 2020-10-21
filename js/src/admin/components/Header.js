@@ -12,39 +12,33 @@ export default class Header extends Component {
                         icon: 'fas fa-cog',
                         buttonClassName: 'Button',
                         menuClassName: "Dropdown-menu--right",
-                        children: [
-                            Button.component({
-                                className: 'Button',
-                                onclick: () => m.route(app.route('seo')),
-                                icon: 'fas fa-heartbeat',
-                                children: 'Health check'
-                            }),
-                            Button.component({
-                                className: 'Button',
-                                onclick: () => m.route(app.route('seoSettings')),
-                                icon: 'fas fa-cogs',
-                                children: 'SEO settings'
-                            }),
-                            Button.component({
-                                className: 'Button',
-                                onclick: () => m.route(app.route('seoSitemap')),
-                                icon: 'fas fa-sitemap',
-                                children: 'Sitemap information'
-                            }),
-                            Button.component({
-                                className: 'Button',
-                                onclick: () => m.route(app.route('seoSearchEngines')),
-                                icon: 'fas fa-search',
-                                children: 'Search engine information'
-                            }),
-                            Button.component({
-                                className: 'Button',
-                                onclick: () => m.route(app.route('seoSSL')),
-                                icon: 'fas fa-shield-alt',
-                                children: 'Set up SSL'
-                            })
-                        ]
-                    })}
+                    }, [
+                        Button.component({
+                            className: 'Button',
+                            onclick: () => m.route.set(app.route('seo')),
+                            icon: 'fas fa-heartbeat',
+                        }, 'Health check'),
+                        Button.component({
+                            className: 'Button',
+                            onclick: () => m.route.set(app.route('seoSettings')),
+                            icon: 'fas fa-cogs',
+                        }, 'SEO settings'),
+                        Button.component({
+                            className: 'Button',
+                            onclick: () => m.route.set(app.route('seoSitemap')),
+                            icon: 'fas fa-sitemap',
+                        }, 'Sitemap information'),
+                        Button.component({
+                            className: 'Button',
+                            onclick: () => m.route.set(app.route('seoSearchEngines')),
+                            icon: 'fas fa-search',
+                        }, 'Search engine information'),
+                        Button.component({
+                            className: 'Button',
+                            onclick: () => m.route.set(app.route('seoSSL')),
+                            icon: 'fas fa-shield-alt',
+                        }, 'Set up SSL')
+                    ])}
                 </div>
 
                 <h2>Search Engine Optimization</h2>

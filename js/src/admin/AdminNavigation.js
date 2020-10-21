@@ -11,41 +11,41 @@ export default function() {
     // Main page
     app.routes.seo = {
         path: '/seo',
-        component: HealthCheck.component()
+        component: HealthCheck
     };
 
     // Route to all settings
     app.routes.seoSettings = {
         path: '/seo/settings',
-        component: SettingsPage.component()
+        component: SettingsPage
     };
 
     // Route to a single setting
     app.routes.seoSingleSetting = {
         path: '/seo/setting/:setting',
-        component: SettingsPage.component()
+        component: SettingsPage
     };
 
     // Sitemap information
     app.routes.seoSitemap = {
         path: '/seo/sitemap',
-        component: Sitemap.component()
+        component: Sitemap
     };
 
     // Registered forum to search engines
     app.routes.seoSearchEngines = {
         path: '/seo/search-engines',
-        component: RegisterToSearchEngines.component()
+        component: RegisterToSearchEngines
     };
 
     // Add an secure connection
     app.routes.seoSSL = {
         path: '/seo/ssl',
-        component: SSLPage.component()
+        component: SSLPage
     };
 
     // Quick access settings from extensions tab
-    app.extensionSettings['v17development-seo'] = () => m.route(app.route('seo'));
+    app.extensionSettings['v17development-seo'] = () => m.route.set(app.route('seo'));
 
     extend(AdminNav.prototype, 'items', items => {
         items.add(
@@ -53,9 +53,8 @@ export default function() {
             AdminLinkButton.component({
                 href: app.route('seo'),
                 icon: 'fas fa-check',
-                children: 'Search Engine Optimization',
                 description: 'Configure your forum\'s SEO settings.',
-            })
+            }, 'Search Engine Optimization')
         );
     });
 }

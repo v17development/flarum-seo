@@ -5,7 +5,7 @@ export default class SSLPage extends Page {
     view() {
         return (
             <div className="FlarumSEO">
-                {Header.component()}
+                <Header />
 
                 <div className="container">
                     <h2>Why do I need an secure connection?</h2>
