@@ -2,7 +2,9 @@ import DashboardWidget from 'flarum/components/DashboardWidget';
 import Button from 'flarum/components/Button';
 
 export default class SeoWidget extends DashboardWidget {
-    init() {
+    oninit(vnode) {
+        super.oninit(vnode);
+
         this.needsReview = false;
 
         if(typeof app.data.settings.seo_review_settings === "undefined") {
@@ -26,12 +28,9 @@ export default class SeoWidget extends DashboardWidget {
 
                 {Button.component({
                     className: '',
-                    children: 'Do the health-check!',
                     icon: 'far fa-thumbs-up',
-                    onclick: () => {
-                        m.route(app.route('seo'));
-                    }
-                })}
+                    onclick: () => m.route.set(app.route('seo'))
+                }, 'Do the health-check!')}
             </div>
         );
     }
