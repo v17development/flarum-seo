@@ -45,7 +45,7 @@ export default function() {
     };
 
     // Quick access settings from extensions tab
-    app.extensionSettings['v17development-seo'] = () => m.route(app.route('seo'));
+    app.extensionSettings['v17development-seo'] = () => m.route.set(app.route('seo'));
 
     extend(AdminNav.prototype, 'items', items => {
         items.add(

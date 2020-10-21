@@ -17,7 +17,8 @@ export default class HealthCheck extends Page {
         <Header />
 
         <div className="container">
-          <p className="seo-intro">A quick SEO-health-check overview. If you have questions, ask your question the official <a href="https://discuss.flarum.org/d/18316-flarum-seo" target="_blank">Flarum forums <i className="fas fa-external-link-alt"/></a>. When you have issues, <a href="https://github.com/v17development/flarum-seo/issues" target="_blank">create a new issue <i className="fas fa-external-link-alt"/></a>. Are you a developer with some free time left? Contribute to the project <a href="https://github.com/v17development/flarum-seo" target="_blank">on GitHub</a> </p>
+          <p className="seo-intro">A quick SEO-health-check overview. If you have questions, ask your question the official <a href="https://discuss.flarum.org/d/18316-flarum-seo" target="_blank">Flarum forums <i className="fas fa-external-link-alt"/></a>. When you have issues, <a href="https://github.com/v17development/flarum-seo/issues" target="_blank">create a new issue <i className="fas fa-external-link-alt"/></a>.</p>
+          <p className="seo-intro">Are you a developer with some free time left? Contribute to the project <a href="https://github.com/v17development/flarum-seo" target="_blank">on GitHub <i className="fas fa-external-link-alt"/></a>. Have you have built a Flarum Extension and you'd like to use the SEO tools from this extension? Please <a href="https://community.v17.dev/knowledgebase/22" target="_blank">read the documentation <i className="fas fa-external-link-alt"/></a>.</p>
 
           <p className="seo-intro">For optimal search engine results, make sure all checks are green.</p>
 

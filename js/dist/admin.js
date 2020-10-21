@@ -180,7 +180,7 @@ __webpack_require__.r(__webpack_exports__);
   }; // Quick access settings from extensions tab
 
   app.extensionSettings['v17development-seo'] = function () {
-    return m.route(app.route('seo'));
+    return m.route.set(app.route('seo'));
   };
 
   Object(flarum_extend__WEBPACK_IMPORTED_MODULE_0__["extend"])(flarum_components_AdminNav__WEBPACK_IMPORTED_MODULE_1___default.a.prototype, 'items', function (items) {
@@ -253,10 +253,19 @@ function (_Page) {
       target: "_blank"
     }, "create a new issue ", m("i", {
       className: "fas fa-external-link-alt"
-    })), ". Are you a developer with some free time left? Contribute to the project ", m("a", {
+    })), "."), m("p", {
+      className: "seo-intro"
+    }, "Are you a developer with some free time left? Contribute to the project ", m("a", {
       href: "https://github.com/v17development/flarum-seo",
       target: "_blank"
-    }, "on GitHub"), " "), m("p", {
+    }, "on GitHub ", m("i", {
+      className: "fas fa-external-link-alt"
+    })), ". Have you have built a Flarum Extension and you'd like to use the SEO tools from this extension? Please ", m("a", {
+      href: "https://community.v17.dev/knowledgebase/22",
+      target: "_blank"
+    }, "read the documentation ", m("i", {
+      className: "fas fa-external-link-alt"
+    })), "."), m("p", {
       className: "seo-intro"
     }, "For optimal search engine results, make sure all checks are green."), m("table", {
       className: "seo-check-table"
@@ -777,8 +786,10 @@ function (_Component) {
 
   var _proto = SeoSettings.prototype;
 
-  _proto.init = function init() {
+  _proto.oninit = function oninit(vnode) {
     var _this = this;
+
+    _Component.prototype.oninit.call(this, vnode);
 
     this.saving = false;
     this.fields = ['forum_title', 'forum_description', 'forum_keywords', 'seo_allow_all_bots'];
@@ -807,103 +818,92 @@ function (_Component) {
       className: "BasicsPage"
     }, flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
       label: app.translator.trans('core.admin.basics.forum_description_heading'),
-      className: this.showField !== 'all' && this.showField !== 'description' ? 'hidden' : '',
-      children: [m("div", {
-        className: "helpText"
-      }, app.translator.trans('core.admin.basics.forum_description_text')), m("textarea", {
-        className: "FormControl",
-        value: this.values.forum_description(),
-        oninput: m.withAttr('value', this.values.forum_description)
-      })]
-    }), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
+      className: this.showField !== 'all' && this.showField !== 'description' ? 'hidden' : ''
+    }, [m("div", {
+      className: "helpText"
+    }, app.translator.trans('core.admin.basics.forum_description_text')), m("textarea", {
+      className: "FormControl",
+      value: this.values.forum_description(),
+      oninput: m.withAttr('value', this.values.forum_description)
+    })]), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
       label: "Forum keywords",
-      className: this.showField !== 'all' && this.showField !== 'keywords' ? 'hidden' : '',
-      children: [m("div", {
-        className: "helpText"
-      }, "Enter one or more keywords that describes your forum."), m("textarea", {
-        className: "FormControl",
-        value: this.values.forum_keywords(),
-        oninput: m.withAttr('value', this.values.forum_keywords),
-        placeholder: "Add a few keywords"
-      }), m("div", {
-        className: "helpText",
-        style: {
-          color: Object(_utils_countKeywords__WEBPACK_IMPORTED_MODULE_10__["default"])(this.values.forum_keywords()) == false ? "red" : null
-        }
-      }, m("b", null, "Note: Separate keywords with a comma."), " Example: ", m("i", null, "flarum, web development, forum, apples, security")), flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
-        type: 'submit',
-        className: 'Button Button--primary',
-        children: app.translator.trans('core.admin.basics.submit_button'),
-        loading: this.saving,
-        disabled: !this.changed()
-      })]
-    }), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
+      className: this.showField !== 'all' && this.showField !== 'keywords' ? 'hidden' : ''
+    }, [m("div", {
+      className: "helpText"
+    }, "Enter one or more keywords that describes your forum."), m("textarea", {
+      className: "FormControl",
+      value: this.values.forum_keywords(),
+      oninput: m.withAttr('value', this.values.forum_keywords),
+      placeholder: "Add a few keywords"
+    }), m("div", {
+      className: "helpText",
+      style: {
+        color: Object(_utils_countKeywords__WEBPACK_IMPORTED_MODULE_10__["default"])(this.values.forum_keywords()) == false ? "red" : null
+      }
+    }, m("b", null, "Note: Separate keywords with a comma."), " Example: ", m("i", null, "flarum, web development, forum, apples, security")), flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
+      type: 'submit',
+      className: 'Button Button--primary',
+      loading: this.saving,
+      disabled: !this.changed()
+    }, app.translator.trans('core.admin.basics.submit_button'))]), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
       label: 'Discussion post crawl settings',
-      className: this.showField !== 'all' && this.showField !== 'discussion-post' ? 'hidden' : '',
-      children: [m("div", {
-        className: "helpText"
-      }, "This is an important setting about crawling your discussion posts in search results."), flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
-        className: 'Button',
-        children: 'Setup post crawl settings',
-        onclick: function onclick() {
-          return app.modal.show(new _Modals_CrawlPostModal__WEBPACK_IMPORTED_MODULE_8__["default"]());
-        }
-      })]
-    }), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
+      className: this.showField !== 'all' && this.showField !== 'discussion-post' ? 'hidden' : ''
+    }, [m("div", {
+      className: "helpText"
+    }, "This is an important setting about crawling your discussion posts in search results."), flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
+      className: 'Button',
+      onclick: function onclick() {
+        return app.modal.show(_Modals_CrawlPostModal__WEBPACK_IMPORTED_MODULE_8__["default"]);
+      }
+    }, 'Setup post crawl settings')]), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
       label: 'Social media image',
-      className: 'social-media-uploader ' + (this.showField !== 'all' && this.showField !== 'social-media' ? 'hidden' : ''),
-      children: [m("div", {
-        className: "helpText"
-      }, "Expecting a square image. Recommended size is 1200x1200 pixels. Otherwise use a landscape image, recommended size is 1200x630.", m("br", null), m("br", null), "This image will be used by Social Media when a user shares a page on your website (Facebook, Twitter, Reddit)."), flarum_components_UploadImageButton__WEBPACK_IMPORTED_MODULE_7___default.a.component({
-        name: 'seo_social_media_image'
-      })]
-    }), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
+      className: 'social-media-uploader ' + (this.showField !== 'all' && this.showField !== 'social-media' ? 'hidden' : '')
+    }, [m("div", {
+      className: "helpText"
+    }, "Expecting a square image. Recommended size is 1200x1200 pixels. Otherwise use a landscape image, recommended size is 1200x630.", m("br", null), m("br", null), "This image will be used by Social Media when a user shares a page on your website (Facebook, Twitter, Reddit)."), flarum_components_UploadImageButton__WEBPACK_IMPORTED_MODULE_7___default.a.component({
+      name: 'seo_social_media_image'
+    })]), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
       label: 'Edit robots.txt',
-      className: this.showField !== 'all' && this.showField !== 'robots' ? 'hidden' : '',
-      children: [m("div", {
-        className: "helpText"
-      }, "You can edit your robot.txt here. Please note, writing nonsense could result that crawlers won't visit your site.", m("br", null), m("br", null), "When you've ", m("a", {
-        href: "https://discuss.flarum.org/d/14941-fof-sitemap",
-        target: "_blank"
-      }, "FriendsOfFlarum Sitemap"), " installed and enabled, it will be automatically added to your robots.txt"), m("div", {
-        style: "height: 5px;"
-      }), flarum_components_Switch__WEBPACK_IMPORTED_MODULE_6___default.a.component({
-        state: this.allowBotsValue,
-        onchange: function onchange(value) {
-          return _this2.saveAllowBots(value);
-        },
-        children: 'Allow all bots & crawl full site directory'
-      }), m("div", {
-        style: "height: 5px;"
-      }), m("div", null, flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
-        className: 'Button',
-        children: 'Edit robots.txt content',
-        loading: this.saving,
-        onclick: function onclick() {
-          return app.modal.show(new _Modals_RobotsModal__WEBPACK_IMPORTED_MODULE_9__["default"]());
-        }
-      }), " ", m("a", {
-        href: app.forum.attribute('baseUrl') + "/robots.txt",
-        target: "_blank",
-        className: "robots-link"
-      }, "Open robots.txt ", m("i", {
-        className: "fas fa-external-link-alt"
-      })))]
-    }), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
+      className: this.showField !== 'all' && this.showField !== 'robots' ? 'hidden' : ''
+    }, [m("div", {
+      className: "helpText"
+    }, "You can edit your robot.txt here. Please note, writing nonsense could result that crawlers won't visit your site.", m("br", null), m("br", null), "When you've ", m("a", {
+      href: "https://discuss.flarum.org/d/14941-fof-sitemap",
+      target: "_blank"
+    }, "FriendsOfFlarum Sitemap"), " installed and enabled, it will be automatically added to your robots.txt"), m("div", {
+      style: "height: 5px;"
+    }), flarum_components_Switch__WEBPACK_IMPORTED_MODULE_6___default.a.component({
+      state: this.allowBotsValue,
+      onchange: function onchange(value) {
+        return _this2.saveAllowBots(value);
+      }
+    }, 'Allow all bots & crawl full site directory'), m("div", {
+      style: "height: 5px;"
+    }), m("div", null, flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
+      className: 'Button',
+      loading: this.saving,
+      onclick: function onclick() {
+        return app.modal.show(_Modals_RobotsModal__WEBPACK_IMPORTED_MODULE_9__["default"]);
+      }
+    }, 'Edit robots.txt content'), " ", m("a", {
+      href: app.forum.attribute('baseUrl') + "/robots.txt",
+      target: "_blank",
+      className: "robots-link"
+    }, "Open robots.txt ", m("i", {
+      className: "fas fa-external-link-alt"
+    })))]), flarum_components_FieldSet__WEBPACK_IMPORTED_MODULE_2___default.a.component({
       label: 'Updated this setting?',
-      className: this.showField === 'all' ? 'hidden' : '',
-      children: [m("div", {
-        className: "helpText"
-      }, "When you think you're ready, click the button below to re-check the status of this setting."), flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
-        className: 'Button',
-        icon: 'fas fa-sync',
-        children: 'Back to overview and re-check',
-        loading: this.saving,
-        onclick: function onclick() {
-          return m.route(app.route('seo'));
-        }
-      })]
-    })));
+      className: this.showField === 'all' ? 'hidden' : ''
+    }, [m("div", {
+      className: "helpText"
+    }, "When you think you're ready, click the button below to re-check the status of this setting."), flarum_components_Button__WEBPACK_IMPORTED_MODULE_3___default.a.component({
+      className: 'Button',
+      icon: 'fas fa-sync',
+      loading: this.saving,
+      onclick: function onclick() {
+        return m.route.set(app.route('seo'));
+      }
+    }, 'Back to overview and re-check')])));
   };
 
   _proto.infoText = function infoText() {
@@ -936,10 +936,9 @@ function (_Component) {
       return settings[key] = _this4.values[key]();
     });
     flarum_utils_saveSettings__WEBPACK_IMPORTED_MODULE_4___default()(settings).then(function () {
-      app.alerts.show(_this4.successAlert = new flarum_components_Alert__WEBPACK_IMPORTED_MODULE_5___default.a({
-        type: 'success',
-        children: app.translator.trans('core.admin.basics.saved_message')
-      }));
+      return app.alerts.show({
+        type: 'success'
+      }, app.translator.trans('core.admin.basics.saved_message'));
     })["catch"](function () {}).then(function () {
       _this4.saving = false;
       m.redraw();
@@ -956,10 +955,9 @@ function (_Component) {
     var data = {};
     data.seo_allow_all_bots = value;
     flarum_utils_saveSettings__WEBPACK_IMPORTED_MODULE_4___default()(data).then(function () {
-      app.alerts.show(_this5.successAlert = new flarum_components_Alert__WEBPACK_IMPORTED_MODULE_5___default.a({
-        type: 'success',
-        children: app.translator.trans('core.admin.basics.saved_message')
-      }));
+      return app.alerts.show({
+        type: 'success'
+      }, app.translator.trans('core.admin.basics.saved_message'));
     })["catch"](function () {}).then(function () {
       _this5.saving = false;
       m.redraw();
@@ -975,10 +973,9 @@ function (_Component) {
     var data = {};
     data[setting] = value;
     flarum_utils_saveSettings__WEBPACK_IMPORTED_MODULE_4___default()(data).then(function () {
-      app.alerts.show(_this6.successAlert = new flarum_components_Alert__WEBPACK_IMPORTED_MODULE_5___default.a({
-        type: 'success',
-        children: app.translator.trans('core.admin.basics.saved_message')
-      }));
+      return app.alerts.show({
+        type: 'success'
+      }, app.translator.trans('core.admin.basics.saved_message'));
     })["catch"](function () {}).then(function () {
       _this6.saving = false;
       m.redraw();
@@ -1113,8 +1110,8 @@ function (_Modal) {
 
   var _proto = CrawlPostModal.prototype;
 
-  _proto.init = function init() {
-    _Modal.prototype.init.call(this);
+  _proto.oninit = function oninit(vnode) {
+    _Modal.prototype.oninit.call(this, vnode);
 
     this.value = typeof app.data.settings.seo_post_crawler === "undefined" ? false : app.data.settings.seo_post_crawler;
     this.startValue = this.value;
@@ -1166,9 +1163,8 @@ function (_Modal) {
       state: this.value == '1',
       onchange: function onchange(value) {
         return _this.change(value);
-      },
-      children: 'Crawl all posts (it\'s slower on page refresh, but search results will be better)'
-    }))), m("div", {
+      }
+    }, 'Crawl all posts (it\'s slower on page refresh, but search results will be better)'))), m("div", {
       style: "padding: 25px 30px; text-align: center;"
     }, this.closeDialogButton()));
   };
@@ -1256,8 +1252,8 @@ function (_Modal) {
 
   var _proto = RobotsModal.prototype;
 
-  _proto.init = function init() {
-    _Modal.prototype.init.call(this);
+  _proto.oninit = function oninit(vnode) {
+    _Modal.prototype.oninit.call(this, vnode);
 
     this.value = typeof app.data.settings.seo_robots_text === "undefined" ? '' : app.data.settings.seo_robots_text;
     this.startValue = this.value;
