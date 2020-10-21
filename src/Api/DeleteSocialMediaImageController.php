@@ -3,7 +3,6 @@ namespace V17Development\FlarumSeo\Api;
 
 use Flarum\Foundation\Application;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\User\AssertPermissionTrait;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,7 +11,6 @@ use Flarum\Api\Controller\AbstractDeleteController;
 
 class DeleteSocialMediaImageController extends AbstractDeleteController
 {
-    use AssertPermissionTrait;
     /**
      * @var SettingsRepositoryInterface
      */
@@ -34,7 +32,8 @@ class DeleteSocialMediaImageController extends AbstractDeleteController
      */
     protected function delete(ServerRequestInterface $request)
     {
-        $this->assertAdmin($request->getAttribute('actor'));
+        $request->getAttribute('actor')->assertAdmin();
+
         $path = $this->settings->get('seo_social_media_image_path');
         $this->settings->set('seo_social_media_image_path', null);
         $uploadDir = new Filesystem(new Local($this->app->publicPath().'/assets'));
