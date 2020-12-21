@@ -29,7 +29,7 @@ export default class SeoWidget extends DashboardWidget {
         {Button.component({
           className: '',
           icon: 'far fa-thumbs-up',
-          onclick: () => m.route.set(app.route('seo'))
+          onclick: () => m.route.set("extension/v17development-seo")
         }, 'Do the health-check!')}
       </div>
     );

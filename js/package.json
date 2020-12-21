@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build": "webpack --mode production",
-    "watch": "webpack --mode development --watch"
+    "start": "webpack --mode development --watch"
   },
   "devDependencies": {
     "webpack": "^4.44.2",

@@ -1,118 +1,118 @@
 .FlarumSEO {
-    padding-top: 20px;
-    padding-bottom: 250px;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 
-    .hidden {
-        display: none;
+  .hidden {
+      display: none;
+  }
+
+  .pull-right {
+      float: right;
+  }
+
+  .seo-menu {
+    background: @control-bg;
+    margin-bottom: 15px;
+
+
+    .Button {
+      padding: 12px 13px;
+      border-radius: 0;
+
+      &.item-selected {
+        background: darken(@control-bg, 10%);
+      }
     }
+  }
 
-    .pull-right {
-        float: right;
+  .seo-intro {
+    line-height: 25px;
+  }
+
+  .robots-link {
+    display: inline-block;
+    margin-left: 15px;
+
+    i, svg {
+      margin-left: 10px;
     }
+  }
 
-    .seo-header {
-        margin-bottom: 15px;
+  .seo-check-table {
+    width: 100%;
+    margin-top: 30px;
 
-        h2 {
-            margin-bottom: 25px;
-            margin-top: 0;
-            font-weight: 400;
-            font-size: 22px;
+    thead {
+      tr {
+        background: #e8ecf3;
+
+        td {
+          font-weight: bold;
+          padding: 10px 10px;
+          color: #667e9c;
         }
-
-        .clear {
-            clear: both;
-        }
+      }
     }
 
-    .seo-intro {
-        line-height: 25px;
-    }
+    tbody {
+      tr {
+        td {
+          padding: 15px 10px;
 
-    .robots-link {
-        display: inline-block;
-        margin-left: 15px;
+          &.row-passed, &.row-warning, &.row-must {
+            padding: 10px 20px;
+            font-weight: 500;
+            text-transform: uppercase;
+            vertical-align: top;
 
-        i, svg {
-            margin-left: 10px;
-        }
-    }
-
-    .seo-check-table {
-        width: 100%;
-        margin-top: 30px;
-
-        thead {
-            tr {
-                background: #e8ecf3;
-
-                td {
-                    font-weight: bold;
-                    padding: 10px 10px;
-                    color: #667e9c;
-                }
+            i, svg {
+              width: 20px;
+              margin-right: 5px;
             }
-        }
+          }
 
-        tbody {
-            tr {
-                td {
-                    padding: 15px 10px;
+          &.row-must {
+            background: #ffb6b6;
+            color: #8a0000;
+          }
 
-                    &.row-passed, &.row-warning, &.row-must {
-                        padding: 10px 20px;
-                        font-weight: 500;
-                        text-transform: uppercase;
-                        vertical-align: top;
+          &.row-warning {
+            background: #ffffb6;
+            color: #8a4c00;
+          }
 
-                        i, svg {
-                            width: 20px;
-                            margin-right: 5px;
-                        }
-                    }
+          &.row-passed {
+            background: #abf5ab;
+            color: #0c730c;
+          }
 
-                    &.row-must {
-                        background: #ffb6b6;
-                        color: #8a0000;
-                    }
+          .row-not-passed-error {
+            display: block;
+            color: #c10c0c;
+            padding: 10px 0 0;
+            font-size: 14px;
 
-                    &.row-warning {
-                        background: #ffffb6;
-                        color: #8a4c00;
-                    }
-
-                    &.row-passed {
-                        background: #abf5ab;
-                        color: #0c730c;
-                    }
-
-                    .row-not-passed-error {
-                        display: block;
-                        color: #c10c0c;
-                        padding: 10px 0 0;
-                        font-size: 14px;
-
-                        .button-container {
-                            margin-top: 15px;
-                        }
-                    }
-                }
+            .button-container {
+              margin-top: 15px;
             }
+          }
         }
+      }
     }
+  }
 
-    .social-media-uploader {
-        img {
-            max-width: 100%;
-        }
+  .social-media-uploader {
+    img {
+      max-width: 100%;
     }
+  }
 }
 
 @media (min-width: 992px) {
-    .FlarumSEO {
-        .container {
-            max-width: 600px;
-            margin: 0;
-        }
+  .FlarumSEO {
+    .FlarumSeoPage-container {
+      max-width: 600px;
+      margin: 0;
     }
+  }
 }

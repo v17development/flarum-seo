@@ -8,6 +8,7 @@ import UploadImageButton from 'flarum/components/UploadImageButton';
 import CrawlPostModal from "../Modals/CrawlPostModal";
 import RobotsModal from "../Modals/RobotsModal";
 import countKeywords from '../../utils/countKeywords';
+import Stream from 'flarum/utils/Stream';
 
 export default class SeoSettings extends Component {
   oninit(vnode) {
@@ -24,7 +25,7 @@ export default class SeoSettings extends Component {
     this.values = {};
 
     const settings = app.data.settings;
-    this.fields.forEach(key => this.values[key] = m.prop(settings[key] || ""));
+    this.fields.forEach(key => this.values[key] = Stream(settings[key] || ""));
 
     this.allowBotsValue = settings.seo_allow_all_bots !== "0";
 
@@ -54,7 +55,13 @@ export default class SeoSettings extends Component {
             <div className="helpText">
               {app.translator.trans('core.admin.basics.forum_description_text')}
             </div>,
-            <textarea className="FormControl" value={this.values.forum_description()} oninput={m.withAttr('value', this.values.forum_description)}/>
+            <textarea className="FormControl" bidi={this.values.forum_description} />,
+            this.showField === "description" && Button.component({
+              type: 'submit',
+              className: 'Button Button--primary',
+              loading: this.saving,
+              disabled: !this.changed()
+            }, app.translator.trans('core.admin.basics.submit_button'))
           ])}
 
           {FieldSet.component({
@@ -64,7 +71,7 @@ export default class SeoSettings extends Component {
             <div className="helpText">
               {"Enter one or more keywords that describes your forum."}
             </div>,
-            <textarea className="FormControl" value={this.values.forum_keywords()} oninput={m.withAttr('value', this.values.forum_keywords)} placeholder="Add a few keywords" />,
+            <textarea className="FormControl" bidi={this.values.forum_keywords} placeholder="Add a few keywords" />,
             <div className="helpText" 
               style={{
                 color: countKeywords(this.values.forum_keywords()) == false ? "red" : null
@@ -139,7 +146,9 @@ export default class SeoSettings extends Component {
               className: 'Button',
               icon: 'fas fa-sync',
               loading: this.saving,
-              onclick: () => m.route.set(app.route('seo'))
+              onclick: () => m.route.set(app.route('extension', {
+                id: 'v17development-seo',
+              }))
             }, 'Back to overview and re-check')
           ])}
         </form>
@@ -189,8 +198,7 @@ export default class SeoSettings extends Component {
   }
 
   // Save allow bots
-  saveAllowBots(value)
-  {
+  saveAllowBots(value) {
     if (this.saving) return;
 
     this.saving = true;
@@ -209,8 +217,7 @@ export default class SeoSettings extends Component {
   }
 
   // Save allow bots
-  saveSingleSetting(setting, value)
-  {
+  saveSingleSetting(setting, value) {
     if (this.saving) return;
 
     this.saving = true;
