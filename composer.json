@@ -5,14 +5,16 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Jasper Vriends - V17 Development",
-            "email": "jasper@v17.nl"
+            "name": "V17 Development",
+            "email": "info@v17.dev"
         }
     ],
+    "homepage": "https://v17.dev/projects/flarum-seo",
     "support": {
+        "forum": "https://discuss.flarum.org/d/18316",
         "issues": "https://github.com/v17development/flarum-seo/issues",
         "source": "https://github.com/v17development/flarum-seo",
-        "docs": "https://community.v17.dev/knowledgebase"
+        "docs": "https://community.v17.dev/knowledgebase/category/flarum-seo"
     },
     "autoload": {
         "psr-4": {
@@ -20,7 +22,7 @@
         }
     },
     "require": {
-        "flarum/core": "^0.1.0-beta.14",
+        "flarum/core": "^0.1.0-beta.15",
         "ext-json": "*"
     },
     "suggest": {
@@ -29,6 +31,7 @@
     "extra": {
         "flarum-extension": {
             "title": "SEO",
+            "category": "feature",
             "icon": {
                 "name": "fas fa-check",
                 "backgroundColor": "#0072ff",

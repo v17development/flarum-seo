@@ -130,38 +130,38 @@ class PageListener
     private function determine()
     {
         // Request type
-        $this->requestType = substr($this->serverRequest->getUri()->getPath(), 1, 2);
+        $routeName = $this->serverRequest->getAttribute('routeName');
 
         // Query params
         $queryParams = $this->serverRequest->getQueryParams();
 
         // User profile page
-        if($this->requestType === 'u/') {
+        if($routeName === 'user') {
             new Profile($this, $this->userRepository, isset($queryParams['username']) ? $queryParams['username'] : false);
         }
 
         // Tag page
-        else if($this->requestType === 't/') {
-            new Tag($this,isset($queryParams['slug']) ? $queryParams['slug'] : false);
+        else if($routeName === 'tag') {
+            new Tag($this, isset($queryParams['slug']) ? $queryParams['slug'] : false);
         }
 
         // Friends Of Flarum pages
-        else if($this->requestType === 'p/') {
+        else if($routeName === 'pages.home') {
             new Page($this, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // Default SEO (no fancy QA layout)
-        else if($this->requestType === 'd/' && $this->discussionType === 1) {
+        else if($routeName === 'discussion' && $this->discussionType === 1) {
             new Discussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // QuestionAnswer page
-        else if($this->requestType === 'd/' && $this->discussionType === 2) {
+        else if($routeName === 'discussion' && $this->discussionType === 2) {
             new QADiscussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // Home page/discussion overview page
-        else if($this->requestType === "" || $this->requestType === "al") {
+        else if($routeName === "default" || $routeName === "index") {
             $this->setDescription($this->settings->get('forum_description'));
             $this->setKeywords($this->settings->get('forum_keywords'));
             $this->setTitle($this->settings->get('forum_title'));
@@ -169,7 +169,7 @@ class PageListener
             $this->setCanonicalUrl('');
 
             // Update meta tag URL when it's the discussion overview page
-            if($this->requestType === "al" && $this->settings->get('default_route') !== '/all') {
+            if($routeName === "default" && $this->settings->get('default_route') !== '/all') {
                 $this->setUrl('/all');
 
                 $this->setCanonicalUrl('/all');

@@ -13,36 +13,32 @@ export default class HealthCheck extends Page {
 
   view() {
     return (
-      <div className="FlarumSEO">
-        <Header />
+      <div>
+        <p className="seo-intro">A quick SEO-health-check overview. If you have questions, ask your question the official <a href="https://discuss.flarum.org/d/18316-flarum-seo" target="_blank">Flarum forums <i className="fas fa-external-link-alt"/></a>. When you have issues, <a href="https://github.com/v17development/flarum-seo/issues" target="_blank">create a new issue <i className="fas fa-external-link-alt"/></a>.</p>
+        <p className="seo-intro">Are you a developer with some free time left? Contribute to the project <a href="https://github.com/v17development/flarum-seo" target="_blank">on GitHub <i className="fas fa-external-link-alt"/></a>. Have you have built a Flarum Extension and you'd like to use the SEO tools from this extension? Please <a href="https://community.v17.dev/knowledgebase/22" target="_blank">read the documentation <i className="fas fa-external-link-alt"/></a>.</p>
 
-        <div className="container">
-          <p className="seo-intro">A quick SEO-health-check overview. If you have questions, ask your question the official <a href="https://discuss.flarum.org/d/18316-flarum-seo" target="_blank">Flarum forums <i className="fas fa-external-link-alt"/></a>. When you have issues, <a href="https://github.com/v17development/flarum-seo/issues" target="_blank">create a new issue <i className="fas fa-external-link-alt"/></a>.</p>
-          <p className="seo-intro">Are you a developer with some free time left? Contribute to the project <a href="https://github.com/v17development/flarum-seo" target="_blank">on GitHub <i className="fas fa-external-link-alt"/></a>. Have you have built a Flarum Extension and you'd like to use the SEO tools from this extension? Please <a href="https://community.v17.dev/knowledgebase/22" target="_blank">read the documentation <i className="fas fa-external-link-alt"/></a>.</p>
+        <p className="seo-intro">For optimal search engine results, make sure all checks are green.</p>
 
-          <p className="seo-intro">For optimal search engine results, make sure all checks are green.</p>
-
-          <table className="seo-check-table">
-            <thead>
-              <tr>
-                <td>Technique</td>
-                <td width="150">Status</td>
-              </tr>
-            </thead>
-            <tbody>
-              {this.forumDescription()}
-              {this.forumKeywords()}
-              {this.siteUsesSSL()}
-              {this.discussionPostSet()}
-              {this.socialMediaImage()}
-              {this.hasSitemap()}
-              {this.registeredSearchEngines()}
-              {this.robotsTxt()}
-              {this.tagsAvailable()}
-              {this.reviewAgain()}
-            </tbody>
-          </table>
-        </div>
+        <table className="seo-check-table">
+          <thead>
+            <tr>
+              <td>Technique</td>
+              <td width="150">Status</td>
+            </tr>
+          </thead>
+          <tbody>
+            {this.forumDescription()}
+            {this.forumKeywords()}
+            {this.siteUsesSSL()}
+            {this.discussionPostSet()}
+            {this.socialMediaImage()}
+            {this.hasSitemap()}
+            {this.registeredSearchEngines()}
+            {this.robotsTxt()}
+            {this.tagsAvailable()}
+            {this.reviewAgain()}
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -102,7 +98,15 @@ export default class HealthCheck extends Page {
       <tr>
         <td>
           Your site has a secure connection available (SSL/TLS)
-          {this.notPassedError(passed, 'Your forum does not force a SSL/TLS connection (a secure connection to your website). Most search engines won\'t index your website or lower your ranking if you have no secure connection available.', 'How to set up SSL', app.route('seoSSL'))}
+          {this.notPassedError(
+            passed, 
+            'Your forum does not force a SSL/TLS connection (a secure connection to your website). Most search engines won\'t index your website or lower your ranking if you have no secure connection available.', 
+            'How to set up SSL', 
+            app.route('extension', {
+              id: 'v17development-seo',
+              page: 'ssl'
+            })
+          )}
         </td>
         {this.passed(passed)}
       </tr>
@@ -158,7 +162,15 @@ export default class HealthCheck extends Page {
       <tr>
         <td>
           Your forum has a sitemap available
-          {this.notPassedError(passed, 'It is highly recommended to install the FriendsOfFlarum sitemap extension!', 'Read more about adding a sitemap', app.route('seoSitemap'))}
+          {this.notPassedError(
+            passed, 
+            'It is highly recommended to install the FriendsOfFlarum sitemap extension!', 
+            'Read more about adding a sitemap',
+            app.route('extension', {
+              id: 'v17development-seo',
+              page: 'sitemap'
+            })
+          )}
         </td>
         {this.passed(passed)}
       </tr>
@@ -200,7 +212,15 @@ export default class HealthCheck extends Page {
       <tr>
         <td>
           Register your forum to search engines
-          {this.notPassedError(passed, 'You will need to review this to pass.', 'More information', app.route('seoSearchEngines'))}
+          {this.notPassedError(
+            passed, 
+            'You will need to review this to pass.', 
+            'More information', 
+            app.route('extension', {
+              id: 'v17development-seo',
+              page: 'search-engines'
+            })
+          )}
         </td>
         {this.passed(passed)}
       </tr>
@@ -248,10 +268,14 @@ export default class HealthCheck extends Page {
   getSettingUrl(setting = '')
   {
     if(setting === '') {
-      return app.route('seoSettings');
+      return app.route('extension', {
+        id: 'v17development-seo',
+      });
     }
 
-    return app.route('seoSingleSetting', {
+    return app.route('extension', {
+      id: 'v17development-seo',
+      page: 'settings',
       setting: setting
     });
   }

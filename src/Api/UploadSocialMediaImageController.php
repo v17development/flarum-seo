@@ -1,7 +1,6 @@
 <?php
 namespace V17Development\FlarumSeo\Api;
 
-use Flarum\Foundation\Application;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
@@ -12,6 +11,7 @@ use League\Flysystem\MountManager;
 use Psr\Http\Message\ServerRequestInterface;
 use Tobscure\JsonApi\Document;
 use Flarum\Api\Controller\ShowForumController;
+use Flarum\Foundation\Paths;
 
 class UploadSocialMediaImageController extends ShowForumController
 {
@@ -19,17 +19,19 @@ class UploadSocialMediaImageController extends ShowForumController
      * @var SettingsRepositoryInterface
      */
     protected $settings;
+
     /**
-     * @var Application
+     * @var Paths
      */
-    protected $app;
+    protected $paths;
+
     /**
      * @param SettingsRepositoryInterface $settings
      */
-    public function __construct(SettingsRepositoryInterface $settings, Application $app)
+    public function __construct(SettingsRepositoryInterface $settings, Paths $paths)
     {
         $this->settings = $settings;
-        $this->app = $app;
+        $this->paths = $paths;
     }
     /**
      * {@inheritdoc}
@@ -39,12 +41,12 @@ class UploadSocialMediaImageController extends ShowForumController
         $request->getAttribute('actor')->assertAdmin();
 
         $file = Arr::get($request->getUploadedFiles(), 'seo_social_media_image');
-        $tmpFile = tempnam($this->app->storagePath().'/tmp', 'site-image');
+        $tmpFile = tempnam($this->paths->storage.'/tmp', 'site-image');
         $file->moveTo($tmpFile);
 
         $mount = new MountManager([
             'source' => new Filesystem(new Local(pathinfo($tmpFile, PATHINFO_DIRNAME))),
-            'target' => new Filesystem(new Local($this->app->publicPath().'/assets')),
+            'target' => new Filesystem(new Local($this->paths->public.'/assets')),
         ]);
 
         if (($path = $this->settings->get('seo_social_media_image_path')) && $mount->has($file = "target://$path")) {
