@@ -9,7 +9,7 @@ export default class DoFollowListModal extends Modal {
 
     this.domainDoFollowList = [];
 
-    this.baseUrl = app.forum.data.attributes.baseUrl.replace("http://", "").replace("https", "");
+    this.baseUrl = this.getDomainFromBase();
     this.domainDoFollowList = typeof app.data.settings.seo_dofollow_domains === "undefined" ? Stream([]) : Stream(JSON.parse(app.data.settings.seo_dofollow_domains));
 
     this.startValue = this.domainDoFollowList;
@@ -22,6 +22,15 @@ export default class DoFollowListModal extends Modal {
 
   title() {
     return 'Do-follow list';
+  }
+
+  // Get domain from base URL
+  getDomainFromBase() {
+    let url = new URL(app.forum.data.attributes.baseUrl);
+    
+    const hostname = url.hostname.split(".");
+
+    return hostname.slice(Math.max(hostname.length - 2, 0)).join(".");
   }
 
   content() {
