@@ -26,7 +26,8 @@
         "ext-json": "*"
     },
     "conflict": {
-        "zerosonesfun/elint": "*"
+        "zerosonesfun/elint": "*",
+        "franzl/flarum-open-links-in-new-tab": "*"
     },
     "suggest": {
         "fof/sitemap": "Allows you to generate powerful sitemap.xml files"
