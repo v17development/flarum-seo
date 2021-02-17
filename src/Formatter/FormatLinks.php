@@ -41,10 +41,10 @@ class FormatLinks
         $this->settings = $settings;
 
         // Current forum domain
-        $this->internalDomain = parse_url($this->app->url());
+        $this->internalDomain = $this->urlToDomain($this->app->url());
 
         // Define list of domain URLs that are allowed to follow
-        $this->doFollowList = array_merge($this->getDoFollowList(), [$this->app->url()]);
+        $this->doFollowList = array_merge($this->getDoFollowList(), [$this->internalDomain]);
     }
 
     /**
@@ -56,13 +56,13 @@ class FormatLinks
     public function __invoke(Renderer $renderer, $context, $xml, Request $request = null)
     {
         return Utils::replaceAttributes($xml, 'URL', function ($attributes) {
-            $url = parse_url($attributes['url']);
+            $domain = $this->urlToDomain($attributes['url']);
 
             // Do we add a nofollow?
-            $attributes['rel'] = "ugc noopener" . ($this->addNofollow($url) ? " nofollow" : "");
+            $attributes['rel'] = "ugc noopener" . ($this->addNofollow($domain) ? " nofollow" : "");
 
             // Open link in new tab
-            $attributes['target'] = $this->openInNewTab($url) ? "_blank" : "_self";
+            $attributes['target'] = $this->openInNewTab($domain) ? "_blank" : "_self";
 
             return $attributes;
         });
@@ -71,19 +71,19 @@ class FormatLinks
     /**
      * Do we need to add a nofollow to this link?
      * 
-     * @param array $url
+     * @param string $domain
      */
-    private function addNofollow(array $url) {
-        return !isset($url['host']) || !in_array($url['host'], $this->doFollowList);
+    private function addNofollow(string $domain) {
+        return !isset($domain) || !in_array($domain, $this->doFollowList);
     }
 
     /**
      * Is the link an internal link?
      * 
-     * @param array $url
+     * @param string $domain
      */
-    private function openInNewTab(array $url) {
-        return !isset($url['host']) || $this->internalDomain['host'] != $url['host'];
+    private function openInNewTab(string $domain) {
+        return !isset($domain) || $this->internalDomain != $domain;
     }
 
     /**
@@ -92,5 +92,21 @@ class FormatLinks
     public function getDoFollowList()
     {
         return json_decode($this->settings->get("seo_dofollow_domains", []), true) ?? [];
+    }
+
+    /**
+     * Get domain (and strip subdomains, if any)
+     */
+    private function urlToDomain($url) {
+        // Parse URL
+        $url = parse_url($url);
+
+        // Invalid URL
+        if(!isset($url['host'])) {
+            return '';
+        }
+
+        // Strip subdomains
+        return implode('.', array_slice(explode(".", $url['host']), -2, 2, true));
     }
 }
