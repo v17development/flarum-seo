@@ -91,7 +91,7 @@ class FormatLinks
      */
     public function getDoFollowList()
     {
-        return json_decode($this->settings->get("seo_dofollow_domains", []), true) ?? [];
+        return json_decode($this->settings->get("seo_dofollow_domains", ""), true) ?? [];
     }
 
     /**
