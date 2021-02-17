@@ -6,9 +6,11 @@ use Flarum\Extend;
 use Extend\Locales;
 use Extend\Routes;
 use Illuminate\Contracts\Events\Dispatcher;
+use V17Development\FlarumSeo\ConfigureLinks;
 use V17Development\FlarumSeo\Api\DeleteSocialMediaImageController;
 use V17Development\FlarumSeo\Api\UploadSocialMediaImageController;
 use V17Development\FlarumSeo\Controller\Robots;
+use V17Development\FlarumSeo\Formatter\FormatLinks;
 use V17Development\FlarumSeo\Listeners\PageListener;
 use V17Development\FlarumSeo\Listeners\BeforePageRenders;
 
@@ -25,6 +27,10 @@ return [
         ->delete('/seo_social_media_image', 'pages.index', DeleteSocialMediaImageController::class),
 
     new Extend\Locales(__DIR__ . '/locale'),
+    
+    (new Extend\Formatter)
+        ->render(FormatLinks::class)
+        ->configure(ConfigureLinks::class),
 
     // new BeforePageRenders()
 ];

@@ -25,6 +25,9 @@
         "flarum/core": "^0.1.0-beta.15",
         "ext-json": "*"
     },
+    "conflict": {
+        "zerosonesfun/elint": "*"
+    },
     "suggest": {
         "fof/sitemap": "Allows you to generate powerful sitemap.xml files"
     },

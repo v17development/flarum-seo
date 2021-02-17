@@ -188,6 +188,7 @@ class PageListener
         $applicationFavicon = $this->settings->get('favicon_path');
         $applicationLogo = $this->settings->get('logo_path');
         $applicationSeoSocialMediaImage = $this->settings->get('seo_social_media_image_path');
+        $twitterCardLargeSize = $this->settings->get('seo_twitter_card_size', 'large') === 'large';
 
         $this
             // Add application name
@@ -199,7 +200,7 @@ class PageListener
             ->setMetaTag('robots', 'index, follow')
 
             // Twitter card
-            ->setMetaTag('twitter:card', 'summary');
+            ->setMetaTag('twitter:card', $twitterCardLargeSize ? 'summary_large_image' : 'summary');
 
         // Add application information
         $this->setSchemaJson('publisher', [

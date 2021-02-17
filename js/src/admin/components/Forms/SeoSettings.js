@@ -2,13 +2,14 @@ import Component from 'flarum/Component';
 import FieldSet from 'flarum/components/FieldSet';
 import Button from 'flarum/components/Button';
 import saveSettings from 'flarum/utils/saveSettings';
-import Alert from 'flarum/components/Alert';
 import Switch from 'flarum/components/Switch';
 import UploadImageButton from 'flarum/components/UploadImageButton';
 import CrawlPostModal from "../Modals/CrawlPostModal";
 import RobotsModal from "../Modals/RobotsModal";
 import countKeywords from '../../utils/countKeywords';
 import Stream from 'flarum/utils/Stream';
+import DoFollowListModal from '../Modals/DoFollowListModal';
+import Select from 'flarum/components/Select';
 
 export default class SeoSettings extends Component {
   oninit(vnode) {
@@ -20,7 +21,8 @@ export default class SeoSettings extends Component {
       'forum_title',
       'forum_description',
       'forum_keywords',
-      'seo_allow_all_bots'
+      'seo_allow_all_bots',
+      'seo_twitter_card_size'
     ];
     this.values = {};
 
@@ -78,12 +80,50 @@ export default class SeoSettings extends Component {
               }}>
               <b>Note: Separate keywords with a comma.</b> Example: <i>flarum, web development, forum, apples, security</i>
             </div>,
+            this.showField === "keywords" && Button.component({
+              type: 'submit',
+              className: 'Button Button--primary',
+              loading: this.saving,
+              disabled: !this.changed()
+            }, app.translator.trans('core.admin.basics.submit_button'))
+          ])}
+
+          {FieldSet.component({
+              label: 'Twitter card size',
+              className: this.showField !== 'all' ? 'hidden' : ''
+          }, [
+            <div className="helpText">
+              When your forum is shared on Twitter, it will have an image (if a social media image has been set up). This can be a big card with a big image, or a small card (summary) with a smaller image. 
+            </div>,
+            Select.component({
+              options: {
+                'large': 'Large card (large image)',
+                'summary': 'Summary card (smaller image)',
+              },
+              value: this.values.seo_twitter_card_size() || 'large',
+              onchange: (val) => {
+                this.values.seo_twitter_card_size(val);
+                this.hasChanges = true;
+              }
+            }),
             Button.component({
               type: 'submit',
               className: 'Button Button--primary',
               loading: this.saving,
               disabled: !this.changed()
             }, app.translator.trans('core.admin.basics.submit_button'))
+          ])}
+
+          {FieldSet.component({
+              label: 'Social media image',
+              className: 'social-media-uploader ' + (this.showField !== 'all' && this.showField !== 'social-media' ? 'hidden' : '')
+          }, [
+            <div className="helpText">
+              Expecting a square image. Recommended size is 1200x1200 pixels. Otherwise use a landscape image, recommended size is 1200x630.<br /><br />This image will be used by Social Media when a user shares a page on your website (Facebook, Twitter, Reddit).
+            </div>,
+            UploadImageButton.component({
+              name: 'seo_social_media_image'
+            })
           ])}
 
           {FieldSet.component({
@@ -100,15 +140,32 @@ export default class SeoSettings extends Component {
           ])}
 
           {FieldSet.component({
-              label: 'Social media image',
-              className: 'social-media-uploader ' + (this.showField !== 'all' && this.showField !== 'social-media' ? 'hidden' : '')
+            label: 'No-follow links',
+            className: this.showField !== 'all' ? 'hidden' : '',
           }, [
             <div className="helpText">
-              Expecting a square image. Recommended size is 1200x1200 pixels. Otherwise use a landscape image, recommended size is 1200x630.<br /><br />This image will be used by Social Media when a user shares a page on your website (Facebook, Twitter, Reddit).
+              All links to external domains will receive a '<i>nofollow</i>' attribute by default. This will make sure people do not spam your forum with links to other domains in order to get more referrals.
             </div>,
-            UploadImageButton.component({
-              name: 'seo_social_media_image'
-            })
+            <div className="helpText">
+              With this setting you are able to add domains to the 'do-follow' list. For example, you can add <i>flarum.org</i> to make sure links to this website do not receive a 'nofollow' attribute. <a href={"https://community.v17.dev/knowledgebase/36"} target={"_blank"}>Learn more</a>.
+            </div>,
+            <div style="height: 5px;"></div>,
+            <div>
+              {Button.component({
+                className: 'Button',
+                loading: this.saving,
+                onclick: () => app.modal.show(DoFollowListModal)
+              }, 'Open domain do-follow list')}
+            </div>
+          ])}
+
+          {FieldSet.component({
+            label: 'Open external links in new tab',
+            className: this.showField !== 'all' ? 'hidden' : '',
+          }, [
+            <div className="helpText">
+              This extension will also make sure that external links (to other domains) open in a new tab. Currently it is not possible to disable this setting.
+            </div>,
           ])}
 
           {FieldSet.component({
@@ -187,6 +244,11 @@ export default class SeoSettings extends Component {
     const settings = {};
 
     this.fields.forEach(key => settings[key] = this.values[key]());
+
+    // Set twitter card size to large
+    if(settings.seo_twitter_card_size === "") {
+      settings.seo_twitter_card_size = "large";
+    }
 
     saveSettings(settings)
       .then(() => app.alerts.show({type: 'success' },  app.translator.trans('core.admin.basics.saved_message')))
