@@ -2,6 +2,7 @@
 namespace V17Development\FlarumSeo\Managers;
 
 use Flarum\Discussion\DiscussionRepository;
+use Flarum\User\UserRepository;
 use V17Development\FlarumSeo\Listeners\PageListener;
 
 /**
@@ -10,31 +11,47 @@ use V17Development\FlarumSeo\Listeners\PageListener;
  */
 class QADiscussion
 {
-    // Parent and Discussion Repository
+    /**
+     * @var PageListener
+     */
     protected $parent;
+
+    /**
+     * @var DiscussionRepository
+     */
     protected $discussionRepository;
 
+    /**
+     * @var UserRepository
+     */
+    protected $userRepository;
+
     // Current discussion
-    protected $discussionId = null;
-    protected $discussion = null;
     protected $firstPost = null;
     protected $posts = null;
-    protected $cachedUsernames = [];
 
     protected $enableBestAnswer = false;
     protected $enableLikes = false;
 
     /**
+     * @param DiscussionRepository $discussionRepository
+     */
+    public function __construct(
+        DiscussionRepository $discussionRepository,
+        UserRepository $userRepository
+    ) {
+        $this->discussionRepository = $discussionRepository;
+        $this->userRepository = $userRepository;
+    }
+
+    /**
      * Discussion constructor.
      * @param PageListener $parent
-     * @param DiscussionRepository $discussionRepository
      * @param $discussionId
      */
-    public function __construct(PageListener $parent, DiscussionRepository $discussionRepository, $discussionId)
+    public function handle(PageListener $parent, $discussionId)
     {
         $this->parent = $parent;
-        $this->discussionRepository = $discussionRepository;
-        $this->discussionId = $discussionId;
 
         // Enable best answer
         if($this->parent->extensionEnabled('fof-best-answer') || $this->parent->extensionEnabled('wiwatsrt-best-answer'))
@@ -49,63 +66,31 @@ class QADiscussion
         }
 
         try {
-            // Found discussion and discussion
-            $this->findDiscussion();
-
-            // Discussion not found
-            if ($this->discussion === null) return;
-
-            // Create tags
-            $this->createTags();
-        } catch (\Exception $e) {
-            // Something went wrong, fallback to
-
-            new Discussion($parent, $discussionRepository, $discussionId);
-        }
-    }
-
-    /**
-     * Find discussion
-     *
-     * @return bool
-     */
-    private function findDiscussion()
-    {
-        try {
             // Find discussion
-            $this->discussion = $this->discussionRepository->findOrFail($this->discussionId);
-
-            // Discussion not found
-            if ($this->discussion === null) {
-                return false;
-            }
+            $discussion = $this->discussionRepository->findOrFail($discussionId);
 
             // Get all posts
-            $this->posts = $this->discussion->posts()->get()->getDictionary();
+            $this->posts = $discussion->posts()->get()->getDictionary();
 
             // Get first post
-            $discussionFirstPost = $this->discussion->firstPost()->get()->getDictionary();
+            $discussionFirstPost = $discussion->firstPost()->get()->getDictionary();
             $this->firstPost = array_shift($discussionFirstPost);
 
-            // First post not found
-            if ($this->posts === null) {
-                return false;
-            }
+            // Create tags
+            $this->createTags($discussion);
         } catch (\Exception $e) {
             // Do nothing. It just did not work
-            return false;
         }
-
-        return true;
     }
+
 
     /**
      * Create tags
      */
-    private function createTags()
+    private function createTags($discussion)
     {
         // Set current URL
-        $url = '/d/' . $this->discussion->getAttribute('id') . '-' . $this->discussion->getAttribute('slug');
+        $url = '/d/' . $discussion->getAttribute('id') . '-' . $discussion->getAttribute('slug');
         $fullUrl = $this->parent->getApplicationPath($url);
 
         // Update ld-json
@@ -115,14 +100,14 @@ class QADiscussion
             ->setMetaPropertyTag('og:type', 'article');
 
         // Get posted on and Last posted on
-        $lastPostedOn = $this->firstPost !== null ? $this->firstPost->getAttribute('edited_at') : $this->discussion->getAttribute('last_posted_at');
-        $firstPostId = $this->discussion->getAttribute('first_post_id');
-        $bestAnswerId = $this->enableBestAnswer ? $this->discussion->getAttribute('best_answer_post_id') : $this->enableBestAnswer;
+        $lastPostedOn = $this->firstPost !== null ? $this->firstPost->getAttribute('edited_at') : $discussion->getAttribute('last_posted_at');
+        $firstPostId = $discussion->getAttribute('first_post_id');
+        $bestAnswerId = $this->enableBestAnswer ? $discussion->getAttribute('best_answer_post_id') : $this->enableBestAnswer;
 
         // Set short description
         $this->parent
-            ->setTitle($this->discussion->getAttribute('title'), true)
-            ->setPublishedOn($this->discussion->getAttribute('created_at'));
+            ->setTitle($discussion->getAttribute('title'), true)
+            ->setPublishedOn($discussion->getAttribute('created_at'));
 
         $content = '';
 
@@ -149,12 +134,12 @@ class QADiscussion
         // Schema
         $mainEntity = [
             '@type' => 'Question',
-            'name' => $this->discussion->getAttribute('title'),
+            'name' => $discussion->getAttribute('title'),
             'text' => $this->firstPost !== null ? $content : '',
-            'dateCreated' => $this->acceptableDate($this->discussion->getAttribute('created_at')),
+            'dateCreated' => $this->acceptableDate($discussion->getAttribute('created_at')),
             'author' => [
                 "@type" => "Person",
-                "name" => $this->getUserName($this->discussion->getAttribute('user_id'))
+                "name" => $discussion->user() ? $this->getUserName($discussion->user()) : null
             ],
             'answerCount' => count($this->posts) - 1
         ];
@@ -181,7 +166,7 @@ class QADiscussion
                 'url' => $fullUrl . '/' . $post->getAttribute('number'),
                 'author' => [
                     "@type" => "Person",
-                    "name" => $this->getUserName($post->getAttribute('user_id'))
+                    "name" => $post->user() ? $this->getUserName($post->user()) : null
                 ]
             ];
 
@@ -204,12 +189,12 @@ class QADiscussion
         // Flarum tags enabled?
         if ($this->parent->extensionEnabled("flarum-tags"))
         {
-            $this->parent->setSchemaBreadcrumb($this->discussion);
+            $this->parent->setSchemaBreadcrumb($discussion);
         }
 
         $mainEntity['suggestedAnswer'] = $posts;
 
-        // $this->discussion->getAttribute('tags')
+        // $discussion->getAttribute('tags')
 
         $this->parent->setSchemaJson('mainEntity', $mainEntity);
     }
@@ -229,21 +214,9 @@ class QADiscussion
      * @param $userId
      * @return string
      */
-    private function getUserName($userId)
+    private function getUserName($user)
     {
-        // First check local cache
-        if(isset($this->cachedUsernames[$userId])) return $this->cachedUsernames[$userId];
-
-        // Found user?
-        $user = $this->parent->getUser($userId);
-
-        // No result
-        if ($user === null) return null;
-
-        // Cache found username
-        $this->cachedUsernames[$userId] = $user->getAttribute('display_name');
-
         // Return username
-        return $this->cachedUsernames[$userId];
+        return $user->first() ? $user->first()->getAttribute('display_name') : null;
     }
 }

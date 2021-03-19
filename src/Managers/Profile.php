@@ -3,45 +3,55 @@ namespace V17Development\FlarumSeo\Managers;
 
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\User\UserRepository;
-
+use Symfony\Contracts\Translation\TranslatorInterface;
 use V17Development\FlarumSeo\Listeners\PageListener;
 
 /**
- * Class Profile
+ * Profile page
+ * 
  * @package V17Development\FlarumSeo\Managers
  */
 class Profile
 {
-    // Parent and User Repository
+    /**
+     * @var PageListener
+     */
     protected $parent;
-    protected $userRepository;
-    protected $translator;
-
-    // Current profile
-    private $user = null;
-    private $isCanonical = false;
 
     /**
-     * Discussion constructor.
-     * @param PageListener $parent
+     * @var UserRepository
+     */
+    protected $userRepository;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @param UserRepository $userRepository
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(UserRepository $userRepository, TranslatorInterface $translator)
+    {
+        $this->userRepository = $userRepository;
+        $this->translator = $translator;
+    }
+    
+    /**
+     * @param PageListener $parent
      * @param $username
      */
-    public function __construct(PageListener $parent, UserRepository $userRepository, $username)
+    public function handle(PageListener $parent, $username)
     {
         $this->parent = $parent;
-        $this->userRepository = $userRepository;
-        $this->translator = app('translator');
 
         try {
             // Find user
-            $this->user = is_numeric($username) ? $this->userRepository->findOrFail($username) : $this->userRepository->findByIdentification($username);
-
-            // Is canonical URL?
-            $this->isCanonical = is_numeric($username);
+            $user = is_numeric($username) ? $this->userRepository->findOrFail($username) : $this->userRepository->findByIdentification($username);
 
             // Create tags
-            $this->createTags();
+            $this->createTags($user);
         } catch (\Exception $e) {
 
         }
@@ -50,49 +60,48 @@ class Profile
     /**
      * Create tags
      */
-    private function createTags()
+    private function createTags($user)
     {
-        if($this->user === null) return;
+        if($user === null) return;
 
-        $joinedAt = (new \DateTime($this->user->getAttribute('joined_at')))->format("c");
+        $joinedAt = (new \DateTime($user->getAttribute('joined_at')))->format("c");
 
         // Profile title
         $profileTitle = $this->translator->trans("v17development-flarum-seo.forum.profile_title", [
-            '{username}' => $this->user->getAttribute('display_name'),
+            '{username}' => $user->getAttribute('display_name'),
         ]);
 
         // Profile description
         $profileDescription = $this->translator->trans("v17development-flarum-seo.forum.profile_description", [
-            '{username}' => $this->user->getAttribute('display_name'),
-            '{discussion_count}' => $this->user->getAttribute('discussion_count'),
-            '{comment_count}' => $this->user->getAttribute('comment_count')
+            '{username}' => $user->getAttribute('display_name'),
+            '{discussion_count}' => $user->getAttribute('discussion_count'),
+            '{comment_count}' => $user->getAttribute('comment_count')
         ]);
-
 
         $this->parent
             // Page type
             ->setMetaPropertyTag('og:type', 'profile')
-            ->setMetaPropertyTag('profile:username', $this->user->getAttribute('username'))
+            ->setMetaPropertyTag('profile:username', $user->getAttribute('username'))
 
             // Add Schema.org metadata: ProfilePage https://schema.org/ProfilePage
             ->setSchemaJson('@type', 'ProfilePage')
-            ->setSchemaJson('name', $this->user->getAttribute('display_name'))
+            ->setSchemaJson('name', $user->getAttribute('display_name'))
             ->setSchemaJson('dateCreated', $joinedAt);
 
         // Add avatar
-        if($this->user->getAttribute('avatar_url') !== null)
+        if($user->getAttribute('avatar_url') !== null)
         {
-            $this->parent->setImage($this->user->getAttribute('avatar_url'));
+            $this->parent->setImage($user->getAttribute('avatar_url'));
         }
 
         // Add bio if exists
-        if($this->user->getAttribute('bio') !== null)
+        if($user->getAttribute('bio') !== null)
         {
-            $this->parent->setSchemaJson('about', $this->user->getAttribute('bio'));
+            $this->parent->setSchemaJson('about', $user->getAttribute('bio'));
         }
 
         $this->parent
-            ->setSchemaJson('commentCount', $this->user->getAttribute('comment_count'))
+            ->setSchemaJson('commentCount', $user->getAttribute('comment_count'))
 
             // Description
             ->setTitle($profileTitle)
@@ -101,9 +110,9 @@ class Profile
             ->setDescription($profileDescription)
 
             // Profile URL
-            ->setUrl('/u/' . $this->user->getAttribute('username'))
+            ->setUrl('/u/' . $user->getAttribute('username'))
 
             // Canonical url
-            ->setCanonicalUrl('/u/' . $this->user->getAttribute('username'));
+            ->setCanonicalUrl('/u/' . $user->getAttribute('username'));
     }
 }

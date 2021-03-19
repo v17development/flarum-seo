@@ -1,4 +1,4 @@
-import Component from 'flarum/Component';
+import Component from 'flarum/common/Component';
 import FieldSet from 'flarum/components/FieldSet';
 import Button from 'flarum/components/Button';
 import saveSettings from 'flarum/utils/saveSettings';
@@ -63,7 +63,7 @@ export default class SeoSettings extends Component {
               className: 'Button Button--primary',
               loading: this.saving,
               disabled: !this.changed()
-            }, app.translator.trans('core.admin.basics.submit_button'))
+            }, app.translator.trans('core.admin.settings.submit_button'))
           ])}
 
           {FieldSet.component({
@@ -85,7 +85,7 @@ export default class SeoSettings extends Component {
               className: 'Button Button--primary',
               loading: this.saving,
               disabled: !this.changed()
-            }, app.translator.trans('core.admin.basics.submit_button'))
+            }, app.translator.trans('core.admin.settings.submit_button'))
           ])}
 
           {FieldSet.component({
@@ -111,7 +111,7 @@ export default class SeoSettings extends Component {
               className: 'Button Button--primary',
               loading: this.saving,
               disabled: !this.changed()
-            }, app.translator.trans('core.admin.basics.submit_button'))
+            }, app.translator.trans('core.admin.settings.submit_button'))
           ])}
 
           {FieldSet.component({
@@ -251,7 +251,7 @@ export default class SeoSettings extends Component {
     }
 
     saveSettings(settings)
-      .then(() => app.alerts.show({type: 'success' },  app.translator.trans('core.admin.basics.saved_message')))
+      .then(() => app.alerts.show({type: 'success' },  app.translator.trans('core.admin.settings.saved_message')))
       .catch(() => {})
       .then(() => {
         this.saving = false;
@@ -270,7 +270,7 @@ export default class SeoSettings extends Component {
     data.seo_allow_all_bots = value;
 
     saveSettings(data)
-      .then(() => app.alerts.show({type: 'success' },  app.translator.trans('core.admin.basics.saved_message')))
+      .then(() => app.alerts.show({type: 'success' },  app.translator.trans('core.admin.settings.saved_message')))
       .catch(() => {})
       .then(() => {
         this.saving = false;
@@ -288,7 +288,7 @@ export default class SeoSettings extends Component {
     data[setting] = value;
 
     saveSettings(data)
-      .then(() => app.alerts.show({type: 'success' },  app.translator.trans('core.admin.basics.saved_message')))
+      .then(() => app.alerts.show({type: 'success' },  app.translator.trans('core.admin.settings.saved_message')))
       .catch(() => {})
       .then(() => {
         this.saving = false;

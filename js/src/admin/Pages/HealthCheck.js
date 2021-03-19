@@ -342,7 +342,7 @@ export default class HealthCheck extends Page {
 
     saveSettings(data)
       .then(() => {
-        app.alerts.show({type: 'success'}, app.translator.trans('core.admin.basics.saved_message'));
+        app.alerts.show({type: 'success'}, app.translator.trans('core.admin.settings.saved_message'));
       })
       .catch(() => {})
       .then(() => {
