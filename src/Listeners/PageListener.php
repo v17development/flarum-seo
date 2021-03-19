@@ -56,9 +56,6 @@ class PageListener
     // Document
     protected $flarumDocument;
 
-    // Server request data
-    protected $serverRequest;
-
     private $requestType = null;
 
     private $canonicalUrl = null;
@@ -143,30 +140,27 @@ class PageListener
         // Flarum document
         $this->flarumDocument = $flarumDocument;
 
-        // Current Server Request
-        $this->serverRequest = $serverRequestInterface;
-
         // Default site tags
         $this->setSiteTags();
 
         // Check out type of page
-        $this->determine();
+        $this->determine($serverRequestInterface);
 
         // TODO: Move finish function back to BeforePageRenders
         // After PR and release of BETA 14
-        $this->finish();
+        $this->finish($serverRequestInterface);
     }
 
     /**
      * Determine the current page type
      */
-    private function determine()
+    private function determine($serverRequest)
     {
         // Request type
-        $routeName = $this->serverRequest->getAttribute('routeName');
+        $routeName = $serverRequest->getAttribute('routeName');
 
         // Query params
-        $queryParams = $this->serverRequest->getQueryParams();
+        $queryParams = $serverRequest->getQueryParams();
 
         // User profile page
         if($routeName === 'user') {
@@ -264,10 +258,10 @@ class PageListener
     /**
      * Finish process and output language, meta property tags, canonical urls & Schema.org json
      */
-    public function finish()
+    public function finish($serverRequest)
     {
         // Add language attribute to html tag
-        $this->flarumDocument->language = $this->serverRequest->getAttribute('locale');
+        $this->flarumDocument->language = $serverRequest->getAttribute('locale');
 
         // Write meta property tags
         foreach ($this->metaProperty as $name => $content) {
@@ -584,14 +578,5 @@ class PageListener
         $this->flarumDocument->title = $title;
         
         return $this;
-    }
-
-    /**
-     * Return server request
-     *
-     * @return mixed
-     */
-    public function getServerRequest() {
-        return $this->serverRequest;
     }
 }
