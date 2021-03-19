@@ -12,8 +12,6 @@ use V17Development\FlarumSeo\Extend;
 // Flarum classes
 use Flarum\Frontend\Document;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\Discussion\DiscussionRepository;
-use Flarum\User\UserRepository;
 
 // Laravel classes
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,10 +26,31 @@ class PageListener
     protected $config;
     protected $applicationUrl;
 
-    // Settings
+    /**
+     * @var Profile
+     */
+    protected $profileManager;
+
+    /**
+     * @var Tag
+     */
+    protected $tagManager;
+
+    /**
+     * @var Discussion
+     */
+    protected $discussionManager;
+
+    /**
+     * @var QADiscussion
+     */
+    protected $discussionQAManager;
+
+    /**
+     * @var SettingsRepositoryInterface
+     */
     protected $settings;
-    protected $discussionRepository;
-    protected $userRepository;
+
     protected $enabled_extensions;
 
     // Document
@@ -61,19 +80,31 @@ class PageListener
      * PageListener constructor.
      *
      * @param SettingsRepositoryInterface $settings
-     * @param DiscussionRepository $discussionRepository
-     * @param UserRepository $userRepository
+     * @param Profile $profileManager
+     * @param Tag $tagManager
+     * @param Discussion $discussionManager
      */
-    public function __construct(SettingsRepositoryInterface $settings, DiscussionRepository $discussionRepository, UserRepository $userRepository)
-    {
+    public function __construct(
+        SettingsRepositoryInterface $settings,
+        Profile $profileManager,
+        Tag $tagManager,
+        Discussion $discussionManager,
+        QADiscussion $discussionQAManager
+    ) {
         // Get Flarum settings
         $this->settings = $settings;
 
-        // Get Discussion Repository
-        $this->discussionRepository = $discussionRepository;
+        // Set profile page manager
+        $this->profileManager = $profileManager;
 
-        // Get User Repository
-        $this->userRepository = $userRepository;
+        // Set tag page manager
+        $this->tagManager = $tagManager;
+
+        // Set discussion page manager
+        $this->discussionManager = $discussionManager;
+
+        // Set discussionQA manager
+        $this->discussionQAManager = $discussionQAManager;
 
         // Get Flarum config
         $this->config = app('flarum.config');
@@ -137,27 +168,27 @@ class PageListener
 
         // User profile page
         if($routeName === 'user') {
-            new Profile($this, $this->userRepository, isset($queryParams['username']) ? $queryParams['username'] : false);
+            $this->profileManager->handle($this, isset($queryParams['username']) ? $queryParams['username'] : false);
         }
 
         // Tag page
         else if($routeName === 'tag') {
-            new Tag($this, isset($queryParams['slug']) ? $queryParams['slug'] : false);
+            $this->tagManager->handle($this, isset($queryParams['slug']) ? $queryParams['slug'] : false);
         }
 
-        // Friends Of Flarum pages
-        else if($routeName === 'pages.home') {
-            new Page($this, isset($queryParams['id']) ? $queryParams['id'] : false);
-        }
+        // // Friends Of Flarum pages
+        // else if($routeName === 'pages.home') {
+        //     new Page($this, isset($queryParams['id']) ? $queryParams['id'] : false);
+        // }
 
         // Default SEO (no fancy QA layout)
         else if($routeName === 'discussion' && $this->discussionType === 1) {
-            new Discussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
+            $this->discussionManager->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // QuestionAnswer page
         else if($routeName === 'discussion' && $this->discussionType === 2) {
-            new QADiscussion($this, $this->discussionRepository, isset($queryParams['id']) ? $queryParams['id'] : false);
+            $this->discussionQAManager->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // Home page/discussion overview page
@@ -402,17 +433,6 @@ class PageListener
     public function getApplicationPath($path)
     {
         return $this->applicationUrl . $path;
-    }
-
-    /**
-     * Get user data
-     *
-     * @param $userId
-     * @return mixed
-     */
-    public function getUser($userId)
-    {
-        return $this->userRepository->findOrFail($userId);
     }
 
     /**
