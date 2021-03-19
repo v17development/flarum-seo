@@ -10,6 +10,7 @@ use V17Development\FlarumSeo\Managers\Tag;
 use V17Development\FlarumSeo\Extend;
 
 // Flarum classes
+use Flarum\Http\UrlGenerator;
 use Flarum\Frontend\Document;
 use Flarum\Settings\SettingsRepositoryInterface;
 
@@ -23,7 +24,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class PageListener
 {
     // Config
-    protected $config;
     protected $applicationUrl;
 
     /**
@@ -86,10 +86,12 @@ class PageListener
      */
     public function __construct(
         SettingsRepositoryInterface $settings,
+        UrlGenerator $url,
         Profile $profileManager,
         Tag $tagManager,
         Discussion $discussionManager,
-        QADiscussion $discussionQAManager
+        QADiscussion $discussionQAManager,
+        Page $pageManager
     ) {
         // Get Flarum settings
         $this->settings = $settings;
@@ -106,11 +108,11 @@ class PageListener
         // Set discussionQA manager
         $this->discussionQAManager = $discussionQAManager;
 
-        // Get Flarum config
-        $this->config = app('flarum.config');
+        // Set Page manager
+        $this->pageManager = $pageManager;
 
         // Set forum base URL
-        $this->applicationUrl = $this->config['url']; // Set site url
+        $this->applicationUrl = $url->to('forum')->base();
 
         // List enabled extensions
         $this->enabled_extensions = json_decode($this->settings->get("extensions_enabled"), true);
@@ -176,10 +178,10 @@ class PageListener
             $this->tagManager->handle($this, isset($queryParams['slug']) ? $queryParams['slug'] : false);
         }
 
-        // // Friends Of Flarum pages
-        // else if($routeName === 'pages.home') {
-        //     new Page($this, isset($queryParams['id']) ? $queryParams['id'] : false);
-        // }
+        // Friends Of Flarum pages
+        else if($routeName === 'pages.home') {
+            $this->pageManager->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
+        }
 
         // Default SEO (no fancy QA layout)
         else if($routeName === 'discussion' && $this->discussionType === 1) {
