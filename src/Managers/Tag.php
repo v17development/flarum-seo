@@ -13,67 +13,62 @@ class Tag
 {
     // Parent and Tag Repository
     protected $parent;
-    protected $tagRepository;
-
-    // Current tag
-    protected $tag;
 
     /**
-     * Discussion constructor.
+     * @var TagRepository $tagRepository
+     */
+    protected $tagRepository;
+
+    /**
+     * @param TagRepository $tagRepository
+     */
+    public function __construct(TagRepository $tagRepository)
+    {
+        $this->tagRepository = $tagRepository;
+    }
+
+    /**
      * @param PageListener $parent
      * @param $tag
      */
-    public function __construct(PageListener $parent, $tag)
+    public function handle(PageListener $parent, $tagId)
     {
-        $this->parent = $parent;
-        $this->tagRepository = new TagRepository();
-
         // I do support it, but it didn't work
-        if(!is_numeric($tag))
+        if(!is_numeric($tagId))
         {
-            $tag = $this->tagRepository->getIdForSlug($tag);
+            $tagId = $this->tagRepository->getIdForSlug($tagId);
         }
 
         try {
             // Find tag
-            $this->tag = $this->tagRepository->findOrFail($tag);
+            $tag = $this->tagRepository->findOrFail($tagId);
+            
+            if(!method_exists($tag, "getAttribute")) return;
+
+            $lastPostedAt = (new \DateTime($tag->getAttribute('last_posted_at')))->format("c");
+
+            // The tag plugin does not set page titles... Then we'll do that
+            $parent
+                ->setPageTitle($tag->getAttribute('name'))
+                ->setTitle($tag->getAttribute('name'));
+
+            $parent
+                // Add Schema.org metadata: CollectionPage https://schema.org/CollectionPage
+                ->setSchemaJson('@type', 'CollectionPage')
+                ->setSchemaJson('about', $tag->getAttribute('description'))
+                ->setUpdatedOn($lastPostedAt)
+
+                // Tag URL
+                ->setUrl('/t/' . $tag->getAttribute('slug'))
+
+                // Description
+                ->setDescription($tag->getAttribute('description'))
+
+                // Canonical url
+                ->setCanonicalUrl('/t/' . $tag->getAttribute('slug'));
         }
         catch (\Exception $e) {
             // Do nothing. It just did not work
-            return false;
         }
-
-        // Create tags
-        $this->createTags();
-    }
-
-    /**
-     * Create tags
-     */
-    private function createTags()
-    {
-        if(!method_exists($this->tag, "getAttribute")) return;
-
-        $lastPostedAt = (new \DateTime($this->tag->getAttribute('last_posted_at')))->format("c");
-
-        // The tag plugin does not set page titles... Then we'll do that
-        $this->parent
-            ->setPageTitle($this->tag->getAttribute('name'))
-            ->setTitle($this->tag->getAttribute('name'));
-
-        $this->parent
-            // Add Schema.org metadata: CollectionPage https://schema.org/CollectionPage
-            ->setSchemaJson('@type', 'CollectionPage')
-            ->setSchemaJson('about', $this->tag->getAttribute('description'))
-            ->setUpdatedOn($lastPostedAt)
-
-            // Tag URL
-            ->setUrl('/t/' . $this->tag->getAttribute('slug'))
-
-            // Description
-            ->setDescription($this->tag->getAttribute('description'))
-
-            // Canonical url
-            ->setCanonicalUrl('/t/' . $this->tag->getAttribute('slug'));
     }
 }
