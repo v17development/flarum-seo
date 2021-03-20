@@ -27,26 +27,6 @@ class PageListener
     protected $applicationUrl;
 
     /**
-     * @var Profile
-     */
-    protected $profileManager;
-
-    /**
-     * @var Tag
-     */
-    protected $tagManager;
-
-    /**
-     * @var Discussion
-     */
-    protected $discussionManager;
-
-    /**
-     * @var QADiscussion
-     */
-    protected $discussionQAManager;
-
-    /**
      * @var SettingsRepositoryInterface
      */
     protected $settings;
@@ -83,30 +63,10 @@ class PageListener
      */
     public function __construct(
         SettingsRepositoryInterface $settings,
-        UrlGenerator $url,
-        Profile $profileManager,
-        Tag $tagManager,
-        Discussion $discussionManager,
-        QADiscussion $discussionQAManager,
-        Page $pageManager
+        UrlGenerator $url
     ) {
         // Get Flarum settings
         $this->settings = $settings;
-
-        // Set profile page manager
-        $this->profileManager = $profileManager;
-
-        // Set tag page manager
-        $this->tagManager = $tagManager;
-
-        // Set discussion page manager
-        $this->discussionManager = $discussionManager;
-
-        // Set discussionQA manager
-        $this->discussionQAManager = $discussionQAManager;
-
-        // Set Page manager
-        $this->pageManager = $pageManager;
 
         // Set forum base URL
         $this->applicationUrl = $url->to('forum')->base();
@@ -164,27 +124,27 @@ class PageListener
 
         // User profile page
         if($routeName === 'user') {
-            $this->profileManager->handle($this, isset($queryParams['username']) ? $queryParams['username'] : false);
+            resolve(Profile::class)->handle($this, isset($queryParams['username']) ? $queryParams['username'] : false);
         }
 
         // Tag page
         else if($routeName === 'tag') {
-            $this->tagManager->handle($this, isset($queryParams['slug']) ? $queryParams['slug'] : false);
+            resolve(Tag::class)->handle($this, isset($queryParams['slug']) ? $queryParams['slug'] : false);
         }
 
         // Friends Of Flarum pages
         else if($routeName === 'pages.home') {
-            $this->pageManager->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
+            resolve(Page::class)->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // Default SEO (no fancy QA layout)
         else if($routeName === 'discussion' && $this->discussionType === 1) {
-            $this->discussionManager->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
+            resolve(Discussion::class)->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // QuestionAnswer page
         else if($routeName === 'discussion' && $this->discussionType === 2) {
-            $this->discussionQAManager->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
+            resolve(QADiscussion::class)->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
         }
 
         // Home page/discussion overview page
