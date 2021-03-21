@@ -23,8 +23,8 @@ return [
     (new Extend\Routes('forum'))
         ->get('/robots.txt', 'v17development-flarum-seo', Robots::class),
     (new Extend\Routes('api'))
-        ->post('/seo_social_media_image', 'pages.index', UploadSocialMediaImageController::class)
-        ->delete('/seo_social_media_image', 'pages.index', DeleteSocialMediaImageController::class),
+        ->post('/seo_social_media_image', 'seo.socialmedia.upload', UploadSocialMediaImageController::class)
+        ->delete('/seo_social_media_image', 'seo.socialmedia.delete', DeleteSocialMediaImageController::class),
 
     new Extend\Locales(__DIR__ . '/locale'),
     
