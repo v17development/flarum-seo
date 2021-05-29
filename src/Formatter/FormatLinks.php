@@ -21,12 +21,12 @@ class FormatLinks
     protected $settings;
 
     /**
-     * @var internalDomain array
+     * @var string Current domain
      */
-    protected $internalDomain = [];
+    protected $internalDomain = '';
 
     /**
-     * @var urls
+     * @var array List of allowed links to follow
      */
     protected $doFollowList = [];
 
@@ -103,12 +103,12 @@ class FormatLinks
         // Parse URL
         $url = parse_url($url);
 
-        $domain = $url['host'];
-
         // Invalid URL
-        if(!isset($domain)) {
+        if(!isset($url['host'])) {
             return '';
         }
+
+        $domain = $url['host'];
 
         // Strip subdomains if Flarum is not installed in a subdomain
         if (!empty($this->internalDomain) && $this->isSubdomain($domain) && $domain !== $this->internalDomain) {
@@ -118,6 +118,9 @@ class FormatLinks
         return $domain;
     }
 
+    /**
+     * Check if this domain is a subdomain
+     */
     private function isSubdomain($domain) {
         return substr_count($domain, '.') > 1;
     }
