@@ -192,7 +192,10 @@ class QADiscussion
             $this->parent->setSchemaBreadcrumb($discussion);
         }
 
-        $mainEntity['suggestedAnswer'] = $posts;
+        // Only add suggested answers property if there are posts
+        if(count($posts) > 0) {
+            $mainEntity['suggestedAnswer'] = $posts;
+        }
 
         // $discussion->getAttribute('tags')
 

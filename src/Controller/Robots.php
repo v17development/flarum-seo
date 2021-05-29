@@ -3,11 +3,11 @@ namespace V17Development\FlarumSeo\Controller;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 
-use Illuminate\View\Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Laminas\Diactoros\Response;
+use Flarum\Http\UrlGenerator;
 
 /**
  * Class Robots
@@ -16,14 +16,19 @@ use Laminas\Diactoros\Response;
 class Robots implements RequestHandlerInterface
 {
     protected $settings;
+    protected $url;
 
     /**
      * Robots constructor.
      * @param SettingsRepositoryInterface $settings
      */
-    public function __construct(SettingsRepositoryInterface $settings)
+    public function __construct(
+        SettingsRepositoryInterface $settings,
+        UrlGenerator $url
+    )
     {
         $this->settings = $settings;
+        $this->url = $url;
     }
 
     /**
@@ -44,9 +49,7 @@ class Robots implements RequestHandlerInterface
         // If sitemap extension is enabled, add sitemap.xml
         if (in_array('fof-sitemap', $extensionsEnabled))
         {
-            $url = app('flarum.config')['url'];
-
-            $output .= PHP_EOL . "Sitemap: ". $url ."/sitemap.xml" . PHP_EOL;
+            $output .= PHP_EOL . "Sitemap: ". $this->url->to('forum')->base() . "/sitemap.xml" . PHP_EOL;
         }
 
         // Custom robots txt

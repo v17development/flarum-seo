@@ -21,12 +21,12 @@ class FormatLinks
     protected $settings;
 
     /**
-     * @var internalDomain array
+     * @var string Current domain
      */
-    protected $internalDomain = [];
+    protected $internalDomain = '';
 
     /**
-     * @var urls
+     * @var array List of allowed links to follow
      */
     protected $doFollowList = [];
 
@@ -72,7 +72,7 @@ class FormatLinks
 
     /**
      * Do we need to add a nofollow to this link?
-     * 
+     *
      * @param string $domain
      */
     private function addNofollow(string $domain) {
@@ -81,7 +81,7 @@ class FormatLinks
 
     /**
      * Is the link an internal link?
-     * 
+     *
      * @param string $domain
      */
     private function openInNewTab(string $domain) {
@@ -108,7 +108,20 @@ class FormatLinks
             return '';
         }
 
-        // Strip subdomains
-        return implode('.', array_slice(explode(".", $url['host']), -2, 2, true));
+        $domain = $url['host'];
+
+        // Strip subdomains if Flarum is not installed in a subdomain
+        if (!empty($this->internalDomain) && $this->isSubdomain($domain) && $domain !== $this->internalDomain) {
+            $domain = implode('.', array_slice(explode(".", $domain), -2, 2, true));
+        }
+
+        return $domain;
+    }
+
+    /**
+     * Check if this domain is a subdomain
+     */
+    private function isSubdomain($domain) {
+        return substr_count($domain, '.') > 1;
     }
 }
