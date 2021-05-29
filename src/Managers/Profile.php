@@ -1,7 +1,6 @@
 <?php
 namespace V17Development\FlarumSeo\Managers;
 
-use Flarum\Discussion\DiscussionRepository;
 use Flarum\User\UserRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use V17Development\FlarumSeo\Listeners\PageListener;
@@ -68,14 +67,14 @@ class Profile
 
         // Profile title
         $profileTitle = $this->translator->trans("v17development-flarum-seo.forum.profile_title", [
-            '{username}' => $user->getAttribute('display_name'),
+            'username' => $user->getAttribute('display_name'),
         ]);
 
         // Profile description
         $profileDescription = $this->translator->trans("v17development-flarum-seo.forum.profile_description", [
-            '{username}' => $user->getAttribute('display_name'),
-            '{discussion_count}' => $user->getAttribute('discussion_count'),
-            '{comment_count}' => $user->getAttribute('comment_count')
+            'username' => $user->getAttribute('display_name'),
+            'discussion_count' => $user->getAttribute('discussion_count'),
+            'comment_count' => $user->getAttribute('comment_count')
         ]);
 
         $this->parent
