@@ -72,7 +72,7 @@ class FormatLinks
 
     /**
      * Do we need to add a nofollow to this link?
-     * 
+     *
      * @param string $domain
      */
     private function addNofollow(string $domain) {
@@ -81,7 +81,7 @@ class FormatLinks
 
     /**
      * Is the link an internal link?
-     * 
+     *
      * @param string $domain
      */
     private function openInNewTab(string $domain) {
@@ -103,12 +103,22 @@ class FormatLinks
         // Parse URL
         $url = parse_url($url);
 
+        $domain = $url['host'];
+
         // Invalid URL
-        if(!isset($url['host'])) {
+        if(!isset($domain)) {
             return '';
         }
 
-        // Strip subdomains
-        return implode('.', array_slice(explode(".", $url['host']), -2, 2, true));
+        // Strip subdomains if Flarum is not installed in a subdomain
+        if (!empty($this->internalDomain) && $this->isSubdomain($domain) && $domain !== $this->internalDomain) {
+            $domain = implode('.', array_slice(explode(".", $domain), -2, 2, true));
+        }
+
+        return $domain;
+    }
+
+    private function isSubdomain($domain) {
+        return substr_count($domain, '.') > 1;
     }
 }
