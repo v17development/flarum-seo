@@ -181,7 +181,7 @@ export default class SeoSettings extends Component {
             Switch.component({
               state: this.allowBotsValue,
               onchange: (value) => this.saveAllowBots(value),
-            }, 'Allow all bots & crawl full site directory'),
+            }, 'Allow all bots & crawl full site directory (if you enable this Profile Pages will also get Indexed)'),
             <div style="height: 5px;"></div>,
             <div>
               {Button.component({
