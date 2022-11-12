@@ -1,13 +1,9 @@
 <?php
+
 namespace V17Development\FlarumSeo\Listeners;
 
 // FlarumSEO classes
-use V17Development\FlarumSeo\Managers\Discussion;
-use V17Development\FlarumSeo\Managers\Page;
-use V17Development\FlarumSeo\Managers\Profile;
-use V17Development\FlarumSeo\Managers\QADiscussion;
-use V17Development\FlarumSeo\Managers\Tag;
-use V17Development\FlarumSeo\Extend;
+use Flarum\Extension\ExtensionManager;
 
 // Flarum classes
 use Flarum\Http\UrlGenerator;
@@ -16,6 +12,9 @@ use Flarum\Settings\SettingsRepositoryInterface;
 
 // Laravel classes
 use Psr\Http\Message\ServerRequestInterface;
+use V17Development\FlarumSeo\Page\PageDriverInterface;
+use V17Development\FlarumSeo\Page\PageManager;
+use V17Development\FlarumSeo\SeoProperties;
 
 /**
  * Class PageListener
@@ -23,20 +22,26 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class PageListener
 {
-    // Config
-    protected $applicationUrl;
-
     /**
      * @var SettingsRepositoryInterface
      */
     protected $settings;
 
-    protected $enabled_extensions;
+    /**
+     * @var ExtensionManager
+     */
+    protected $extensionManager;
+
+    /**
+     * @var PageManager
+     */
+    protected $pageManager;
+
+    // Config
+    protected $applicationUrl;
 
     // Document
     protected $flarumDocument;
-
-    private $requestType = null;
 
     private $canonicalUrl = null;
 
@@ -57,34 +62,27 @@ class PageListener
      * PageListener constructor.
      *
      * @param SettingsRepositoryInterface $settings
-     * @param Profile $profileManager
-     * @param Tag $tagManager
-     * @param Discussion $discussionManager
+     * @param UrlGenerator $url
+     * @param ExtensionManager $extensions
+     * @param PageManager $pageManager
      */
     public function __construct(
         SettingsRepositoryInterface $settings,
-        UrlGenerator $url
+        UrlGenerator $url,
+        ExtensionManager $extensionManager,
+        PageManager $pageManager
     ) {
         // Get Flarum settings
         $this->settings = $settings;
 
+        // Extension manager
+        $this->extensionManager = $extensionManager;
+
+        // Get page manager
+        $this->pageManager = $pageManager;
+
         // Set forum base URL
         $this->applicationUrl = $url->to('forum')->base();
-
-        // List enabled extensions
-        $this->enabled_extensions = json_decode($this->settings->get("extensions_enabled"), true);
-
-        // Fancy SEO question-answer?
-        $this->discussionType = $this->settings->get("seo_post_crawler") === '1' ? 2 : 1;
-
-        // When Flarum likes is disabled, then automatically index as default discussion page
-        if(!$this->extensionEnabled("flarum-likes"))
-        {
-            $this->discussionType = 1;
-        }
-
-        // Initialize SEO extender
-        Extend::init($this);
 
         // Settings debug settings: var_dump($this->settings->all());exit;
     }
@@ -119,47 +117,29 @@ class PageListener
         // Request type
         $routeName = $serverRequest->getAttribute('routeName');
 
-        // Query params
-        $queryParams = $serverRequest->getQueryParams();
+        // Initialize SEO Properties container
+        $seoPropertiesExtender = new SeoProperties($this);
 
-        // User profile page
-        if($routeName === 'user') {
-            resolve(Profile::class)->handle($this, isset($queryParams['username']) ? $queryParams['username'] : false);
-        }
+        // Filter drivers that require extensions to be enabled
+        $filteredList = array_filter($this->pageManager->getDrivers(), function (PageDriverInterface $driver) {
+            foreach ($driver->extensionDependencies() as $extensionId) {
+                if (!$this->extensionManager->isEnabled($extensionId)) {
+                    return false;
+                }
+            }
 
-        // Tag page
-        else if($routeName === 'tag') {
-            resolve(Tag::class)->handle($this, isset($queryParams['slug']) ? $queryParams['slug'] : false);
-        }
+            return true;
+        });
 
-        // Friends Of Flarum pages
-        else if($routeName === 'pages.home') {
-            resolve(Page::class)->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
-        }
+        // Loop through drivers
+        foreach ($filteredList as $driverClass) {
+            // Resolve driver
+            $driver = resolve($driverClass::class);
 
-        // Default SEO (no fancy QA layout)
-        else if($routeName === 'discussion' && $this->discussionType === 1) {
-            resolve(Discussion::class)->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
-        }
-
-        // QuestionAnswer page
-        else if($routeName === 'discussion' && $this->discussionType === 2) {
-            resolve(QADiscussion::class)->handle($this, isset($queryParams['id']) ? $queryParams['id'] : false);
-        }
-
-        // Home page/discussion overview page
-        else if($routeName === "default" || $routeName === "index") {
-            $this->setDescription($this->settings->get('forum_description'));
-            $this->setKeywords($this->settings->get('forum_keywords'));
-            $this->setTitle($this->settings->get('forum_title'));
-            $this->setUrl();
-            $this->setCanonicalUrl('');
-
-            // Update meta tag URL when it's the discussion overview page
-            if($routeName === "default" && $this->settings->get('default_route') !== '/all') {
-                $this->setUrl('/all');
-
-                $this->setCanonicalUrl('/all');
+            // Check if route should be handled
+            if (in_array($routeName, $driver->handleRoutes()) || count($driver->handleRoutes()) === 0) {
+                // Handle
+                $driver->handle($serverRequest, $seoPropertiesExtender);
             }
         }
     }
@@ -199,18 +179,15 @@ class PageListener
         ]);
 
         // Set image
-        if($applicationSeoSocialMediaImage !== null)
-        {
+        if ($applicationSeoSocialMediaImage !== null) {
             $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
         }
         // Fallback to the logo
-        else if($applicationLogo !== null)
-        {
+        else if ($applicationLogo !== null) {
             $this->setImage($this->applicationUrl . '/assets/' . $applicationLogo);
         }
         // Fallback to the favicon
-        else if($applicationFavicon !== null)
-        {
+        else if ($applicationFavicon !== null) {
             $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
         }
     }
@@ -225,12 +202,11 @@ class PageListener
 
         // Write meta property tags
         foreach ($this->metaProperty as $name => $content) {
-            $this->flarumDocument->head[] = '<meta property="'.e($name).'" content="'.e($content).'">';
+            $this->flarumDocument->head[] = '<meta property="' . e($name) . '" content="' . e($content) . '">';
         }
 
         // Override Flarum default canonical url
-        if($this->canonicalUrl !== null)
-        {
+        if ($this->canonicalUrl !== null) {
             $this->flarumDocument->canonicalUrl = $this->canonicalUrl;
         }
 
@@ -246,7 +222,7 @@ class PageListener
         $show = [];
         $show[] = $this->schemaArray;
 
-        if(count($this->schemaBreadcrumb) > 0) {
+        if (count($this->schemaBreadcrumb) > 0) {
             $show[] = $this->schemaBreadcrumb;
         }
 
@@ -319,12 +295,11 @@ class PageListener
         $list = [];
 
         // Don't add the list, there were no tags
-        if(count($tags) === 0) return;
+        if (count($tags) === 0) return;
 
         // Foreach tags
         $number = 0;
-        foreach ($tags as $tag)
-        {
+        foreach ($tags as $tag) {
             $number++;
             $list = [
                 '@type' => 'ListItem',
@@ -342,15 +317,6 @@ class PageListener
     }
 
     /**
-     * @param $name
-     * @return bool
-     */
-    public function extensionEnabled($name)
-    {
-        return in_array($name, $this->enabled_extensions);
-    }
-
-    /**
      * Current page URL
      *
      * @param $path
@@ -358,7 +324,7 @@ class PageListener
      */
     public function setUrl($path = '', $addApplicationUrl = true)
     {
-        if($addApplicationUrl) {
+        if ($addApplicationUrl) {
             $path = $this->applicationUrl . $path;
         }
 
@@ -405,8 +371,7 @@ class PageListener
             ->setMetaTag('twitter:title', $title);
 
         // Set headline
-        if($headline === true)
-        {
+        if ($headline === true) {
             $this->setSchemaJson("headline", $title);
         }
 
@@ -435,15 +400,15 @@ class PageListener
 
     /**
      * Set page keywords
-     * 
+     *
      * @param $keywords
      */
     public function setKeywords($keywords)
     {
-        if(!$keywords || $keywords === "") return;
+        if (!$keywords || $keywords === "") return;
 
         // Possible array of keywords
-        if(is_array($keywords)) {
+        if (is_array($keywords)) {
             $keywords = implode(", ", $keywords);
         }
 
@@ -460,7 +425,7 @@ class PageListener
     public function setImageFromContent($content = null)
     {
         // Check post content is not empty
-        if($content !== null) {
+        if ($content !== null) {
             // Read Post content and filter image url
             $pattern = '/(?<=src=")((http.*?\.)(jpe?g|png|[tg]iff?|svg))(?=")/';
 
@@ -536,7 +501,7 @@ class PageListener
     public function setPageTitle($title)
     {
         $this->flarumDocument->title = $title;
-        
+
         return $this;
     }
 }
