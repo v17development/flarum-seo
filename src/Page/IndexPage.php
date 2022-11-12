@@ -3,10 +3,7 @@
 namespace V17Development\FlarumSeo\Page;
 
 use Flarum\Settings\SettingsRepositoryInterface;
-use Flarum\Tags\TagRepository;
-use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoProperties;
 
