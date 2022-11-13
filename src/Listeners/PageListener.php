@@ -28,11 +28,6 @@ class PageListener
     protected $settings;
 
     /**
-     * @var ExtensionManager
-     */
-    protected $extensionManager;
-
-    /**
      * @var PageManager
      */
     protected $pageManager;
@@ -69,14 +64,10 @@ class PageListener
     public function __construct(
         SettingsRepositoryInterface $settings,
         UrlGenerator $url,
-        ExtensionManager $extensionManager,
         PageManager $pageManager
     ) {
         // Get Flarum settings
         $this->settings = $settings;
-
-        // Extension manager
-        $this->extensionManager = $extensionManager;
 
         // Get page manager
         $this->pageManager = $pageManager;
@@ -120,27 +111,9 @@ class PageListener
         // Initialize SEO Properties container
         $seoPropertiesExtender = new SeoProperties($this);
 
-        // Filter drivers that require extensions to be enabled
-        $filteredList = array_filter($this->pageManager->getDrivers(), function (PageDriverInterface $driver) {
-            foreach ($driver->extensionDependencies() as $extensionId) {
-                if (!$this->extensionManager->isEnabled($extensionId)) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-
-        // Loop through drivers
-        foreach ($filteredList as $driverClass) {
-            // Resolve driver
-            $driver = resolve($driverClass::class);
-
-            // Check if route should be handled
-            if (in_array($routeName, $driver->handleRoutes()) || count($driver->handleRoutes()) === 0) {
-                // Handle
-                $driver->handle($serverRequest, $seoPropertiesExtender);
-            }
+        // Handle through drivers
+        foreach ($this->pageManager->getDrivers($routeName) as $driverClass) {
+            resolve($driverClass::class)->handle($serverRequest, $seoPropertiesExtender);
         }
     }
 

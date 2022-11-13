@@ -4,5 +4,5 @@ namespace V17Development\FlarumSeo;
 
 interface SeoExtenderManagerInterface
 {
-    public function getDrivers(bool $inverse = false);
+    public function getDrivers(string $routeName = null);
 }
