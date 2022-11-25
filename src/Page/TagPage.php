@@ -86,7 +86,7 @@ class TagPage implements PageDriverInterface
 
                 // Canonical url
                 ->setCanonicalUrl('/t/' . $tag->slug);
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Do nothing. It just did not work
         }
     }
