@@ -8,7 +8,7 @@ use V17Development\FlarumSeo\SeoProperties;
 interface PageDriverInterface
 {
     /**
-     * A list of Flarum extension IDs for extensions that should be enabled for this metric to be applied.
+     * A list of Flarum extension IDs for extensions that should be enabled
      */
     public function extensionDependencies(): array;
 
