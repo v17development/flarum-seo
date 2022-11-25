@@ -33,6 +33,6 @@ return [
         ->configure(ConfigureLinks::class),
 
     (new SEO())
-        ->addDriver('index', IndexPage::class)
-        ->addDriver('tags', TagPage::class)
+        ->addExtender('index', IndexPage::class)
+        ->addExtender('tags', TagPage::class)
 ];
