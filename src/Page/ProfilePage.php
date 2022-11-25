@@ -1,22 +1,17 @@
 <?php
-namespace V17Development\FlarumSeo\Managers;
 
+namespace V17Development\FlarumSeo\Page;
+
+use Flarum\Tags\TagRepository;
 use Flarum\User\UserRepository;
+use Illuminate\Support\Arr;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Page\PageDriverInterface;
+use V17Development\FlarumSeo\SeoProperties;
 
-/**
- * Profile page
- * 
- * @package V17Development\FlarumSeo\Managers
- */
-class Profile
+class ProfilePage implements PageDriverInterface
 {
-    /**
-     * @var PageListener
-     */
-    protected $parent;
-
     /**
      * @var UserRepository
      */
@@ -36,32 +31,35 @@ class Profile
         $this->userRepository = $userRepository;
         $this->translator = $translator;
     }
-    
-    /**
-     * @param PageListener $parent
-     * @param $username
-     */
-    public function handle(PageListener $parent, $username)
+
+    public function extensionDependencies(): array
     {
-        $this->parent = $parent;
+        return [];
+    }
 
-        try {
-            // Find user
-            $user = is_numeric($username) ? $this->userRepository->findOrFail($username) : $this->userRepository->findByIdentification($username);
-
-            // Create tags
-            $this->createTags($user);
-        } catch (\Exception $e) {
-
-        }
+    public function handleRoutes(): array
+    {
+        return ['user'];
     }
 
     /**
-     * Create tags
+     * @param ServerRequestInterface $request
      */
-    private function createTags($user)
-    {
-        if($user === null) return;
+    public function handle(
+        ServerRequestInterface $request,
+        SeoProperties $properties
+    ) {
+        $username = Arr::get($request->getQueryParams(), 'username');
+
+        try {
+            $user = is_numeric($username) ? $this->userRepository->findOrFail($username) : $this->userRepository->findByIdentification($username);
+
+            // Make sure there's a user
+            if ($user === null) return;
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Do nothing. It just did not work
+            return;
+        }
 
         $joinedAt = (new \DateTime($user->getAttribute('joined_at')))->format("c");
 
@@ -77,7 +75,7 @@ class Profile
             'comment_count' => $user->getAttribute('comment_count')
         ]);
 
-        $this->parent
+        $properties
             // Page type
             ->setMetaPropertyTag('og:type', 'profile')
             ->setMetaPropertyTag('profile:username', $user->getAttribute('username'))
@@ -88,18 +86,16 @@ class Profile
             ->setSchemaJson('dateCreated', $joinedAt);
 
         // Add avatar
-        if($user->getAttribute('avatar_url') !== null)
-        {
-            $this->parent->setImage($user->getAttribute('avatar_url'));
+        if ($user->getAttribute('avatar_url') !== null) {
+            $properties->setImage($user->getAttribute('avatar_url'));
         }
 
         // Add bio if exists
-        if($user->getAttribute('bio') !== null)
-        {
-            $this->parent->setSchemaJson('about', $user->getAttribute('bio'));
+        if ($user->getAttribute('bio') !== null) {
+            $properties->setSchemaJson('about', $user->getAttribute('bio'));
         }
 
-        $this->parent
+        $properties
             ->setSchemaJson('commentCount', $user->getAttribute('comment_count'))
 
             // Description
