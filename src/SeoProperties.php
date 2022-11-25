@@ -216,6 +216,6 @@ class SeoProperties
      */
     private static function throwError($caller)
     {
-        throw new \Exception("V17Development\FlarumSeo\SeoProperties::" . $caller . "(..): Container was improperly initialized. Please review Flarum SEO documentation.");
+        throw new \Exception("SeoProperties::" . $caller . "(..): You're doing it wrong, container was improperly initialized. Please review Flarum SEO documentation.");
     }
 }
