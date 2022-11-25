@@ -38,6 +38,9 @@ class PageManager implements SeoExtenderManagerInterface
         $this->extenders[$name] = $extender;
     }
 
+    /**
+     * Get all extenders
+     */
     public function getExtenders(string $routeName = null): array
     {
         return $this->getActiveExtenders()
@@ -47,6 +50,9 @@ class PageManager implements SeoExtenderManagerInterface
             ->toArray();
     }
 
+    /**
+     * Filter on active extenders
+     */
     public function getActiveExtenders(): Collection
     {
         return collect($this->extenders)
