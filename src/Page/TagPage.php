@@ -30,9 +30,6 @@ class TagPage implements PageDriverInterface
         $this->translator = $translator;
     }
 
-    /**
-     * Seo Extender
-     */
     public function extensionDependencies(): array
     {
         return ['flarum-tags'];
@@ -58,36 +55,34 @@ class TagPage implements PageDriverInterface
         }
 
         try {
-            // Find tag
             $tag = $this->tagRepository->findOrFail($tagId);
-
-            if (!method_exists($tag, "getAttribute")) return;
-
-            $lastPostedAt = (new \DateTime($tag->last_posted_at))->format("c");
-
-            // Get Tag description
-            $tagDescription = $tag->description ?? $this->translator->trans('flarum-tags.forum.tag.meta_description_text', ['{tag}' => $tag->name]);
-
-            // The tag plugin does not set page titles... Then we'll do that
-            $properties
-                ->setTitle($tag->name);
-
-            $properties
-                // Add Schema.org metadata: CollectionPage https://schema.org/CollectionPage
-                ->setSchemaJson('@type', 'CollectionPage')
-                ->setSchemaJson('about', $tagDescription)
-                ->setUpdatedOn($lastPostedAt)
-
-                // Tag URL
-                ->setUrl('/t/' . $tag->slug)
-
-                // Description
-                ->setDescription($tagDescription)
-
-                // Canonical url
-                ->setCanonicalUrl('/t/' . $tag->slug);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Do nothing. It just did not work
+            // Do nothing, no model found
+            return;
         }
+
+        $lastPostedAt = (new \DateTime($tag->last_posted_at))->format("c");
+
+        // Get Tag description
+        $tagDescription = $tag->description ?? $this->translator->trans('flarum-tags.forum.tag.meta_description_text', ['{tag}' => $tag->name]);
+
+        // The tag plugin does not set page titles... Then we'll do that
+        $properties
+            ->setTitle($tag->name);
+
+        $properties
+            // Add Schema.org metadata: CollectionPage https://schema.org/CollectionPage
+            ->setSchemaJson('@type', 'CollectionPage')
+            ->setSchemaJson('about', $tagDescription)
+            ->setUpdatedOn($lastPostedAt)
+
+            // Tag URL
+            ->setUrl('/t/' . $tag->slug)
+
+            // Description
+            ->setDescription($tagDescription)
+
+            // Canonical url
+            ->setCanonicalUrl('/t/' . $tag->slug);
     }
 }
