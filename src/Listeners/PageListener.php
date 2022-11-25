@@ -112,8 +112,8 @@ class PageListener
         $seoPropertiesExtender = new SeoProperties($this);
 
         // Handle through drivers
-        foreach ($this->pageManager->getDrivers($routeName) as $driverClass) {
-            resolve($driverClass::class)->handle($serverRequest, $seoPropertiesExtender);
+        foreach ($this->pageManager->getExtenders($routeName) as $extender) {
+            $extender->handle($serverRequest, $seoPropertiesExtender);
         }
     }
 
