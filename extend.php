@@ -11,6 +11,7 @@ use V17Development\FlarumSeo\Formatter\FormatLinks;
 use V17Development\FlarumSeo\Listeners\PageListener;
 use V17Development\FlarumSeo\Extend\SEO;
 use V17Development\FlarumSeo\Page\IndexPage;
+use V17Development\FlarumSeo\Page\PageExtensionPage;
 use V17Development\FlarumSeo\Page\ProfilePage;
 use V17Development\FlarumSeo\Page\TagPage;
 
@@ -37,4 +38,5 @@ return [
         ->addExtender('index', IndexPage::class)
         ->addExtender('profile', ProfilePage::class)
         ->addExtender('tags', TagPage::class)
+        ->addExtender('page_extension', PageExtensionPage::class)
 ];
