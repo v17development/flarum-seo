@@ -12,11 +12,6 @@ use V17Development\FlarumSeo\SeoProperties;
 class TagPage implements PageDriverInterface
 {
     /**
-     * @var TagRepository $tagRepository
-     */
-    protected $tagRepository;
-
-    /**
      * @var TranslatorInterface
      */
     protected $translator;
@@ -24,9 +19,8 @@ class TagPage implements PageDriverInterface
     /**
      * @param TagRepository $tagRepository
      */
-    public function __construct(TagRepository $tagRepository, TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator)
     {
-        $this->tagRepository = $tagRepository;
         $this->translator = $translator;
     }
 
@@ -51,11 +45,11 @@ class TagPage implements PageDriverInterface
 
         // I do support it, but it didn't work
         if (!is_numeric($tagId)) {
-            $tagId = $this->tagRepository->getIdForSlug($tagId);
+            $tagId = resolve(TagRepository::class)->getIdForSlug($tagId);
         }
 
         try {
-            $tag = $this->tagRepository->findOrFail($tagId);
+            $tag = resolve(TagRepository::class)->findOrFail($tagId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Do nothing, no model found
             return;

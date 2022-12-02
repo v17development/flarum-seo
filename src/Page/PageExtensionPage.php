@@ -12,22 +12,15 @@ use V17Development\FlarumSeo\SeoProperties;
 class PageExtensionPage implements PageDriverInterface
 {
     /**
-     * @var PageRepository
-     */
-    protected $pageRepository;
-
-    /**
      * @var TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @param PageRepository $pageRepository
      * @param TranslatorInterface $translator
      */
-    public function __construct(PageRepository $pageRepository, TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator)
     {
-        $this->pageRepository = $pageRepository;
         $this->translator = $translator;
     }
 
@@ -51,7 +44,7 @@ class PageExtensionPage implements PageDriverInterface
         $pageId = Arr::get($request->getQueryParams(), 'id');
 
         try {
-            $page = $this->pageRepository->findOrFail($pageId);
+            $page = resolve(PageRepository::class)->findOrFail($pageId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Do nothing, no model found
             return;
