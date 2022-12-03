@@ -111,13 +111,15 @@ class SeoProperties
     /**
      * Social media image
      *
-     * @param string $imageUrl Path to an image
+     * @param string|null $imageUrl Path to an image
      */
-    public function setImage(string $imageUrl): self
+    public function setImage(?string $imageUrl): self
     {
         if ($this->container === null) self::throwError("setImage");
 
-        $this->container->setImage($imageUrl);
+        if ($imageUrl) {
+            $this->container->setImage($imageUrl);
+        }
 
         return $this;
     }
@@ -209,6 +211,21 @@ class SeoProperties
         $this->container->setSchemaJson($key, $value);
 
         return $this;
+    }
+
+    /**
+     * Returns current application full-path
+     * 
+     * @param string $path
+     */
+    public function withApplicationPath(string $path)
+    {
+        return $this->container->getApplicationPath($path);
+    }
+
+    public function getImageFromContent(?string $content): ?string
+    {
+        return $this->container->getImageFromContent($content);
     }
 
     /**

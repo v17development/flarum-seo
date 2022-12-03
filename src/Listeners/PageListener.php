@@ -12,7 +12,6 @@ use Flarum\Settings\SettingsRepositoryInterface;
 
 // Laravel classes
 use Psr\Http\Message\ServerRequestInterface;
-use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\Page\PageManager;
 use V17Development\FlarumSeo\SeoProperties;
 
@@ -50,8 +49,6 @@ class PageListener
 
     // Meta data with property tags
     protected $metaProperty;
-
-    protected $discussionType = 1; // Special Google results as default, check check readme for different results
 
     /**
      * PageListener constructor.
@@ -390,12 +387,12 @@ class PageListener
     }
 
     /**
-     * Set setImageFromContent
+     * Get image from content
      *
      * @param $content
      * @return PageListener
      */
-    public function setImageFromContent($content = null)
+    public function getImageFromContent(?string $content = null): ?string
     {
         // Check post content is not empty
         if ($content !== null) {
@@ -407,13 +404,12 @@ class PageListener
                 $contentImage = $matches[0][0];
 
                 if ($contentImage !== null) {
-                    $this->setImage($contentImage);
-                    return $this;
+                    return $contentImage;
                 }
             }
         }
 
-        return $this;
+        return null;
     }
 
 
