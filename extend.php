@@ -10,7 +10,8 @@ use V17Development\FlarumSeo\Controller\Robots;
 use V17Development\FlarumSeo\Formatter\FormatLinks;
 use V17Development\FlarumSeo\Listeners\PageListener;
 use V17Development\FlarumSeo\Extend\SEO;
-use V17Development\FlarumSeo\Page\DiscussionSimplePage;
+use V17Development\FlarumSeo\Page\DiscussionBestAnswerPage;
+use V17Development\FlarumSeo\Page\Discussion;
 use V17Development\FlarumSeo\Page\IndexPage;
 use V17Development\FlarumSeo\Page\PageExtensionPage;
 use V17Development\FlarumSeo\Page\ProfilePage;
@@ -40,5 +41,6 @@ return [
         ->addExtender('profile', ProfilePage::class)
         ->addExtender('tags', TagPage::class)
         ->addExtender('page_extension', PageExtensionPage::class)
-        ->addExtender('discussion_simple', DiscussionSimplePage::class)
+        ->addExtender('discussion', Discussion::class)
+        ->addExtender('discussion_best_answer', DiscussionBestAnswerPage::class)
 ];

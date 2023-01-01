@@ -3,6 +3,8 @@
 namespace V17Development\FlarumSeo\Page;
 
 use Flarum\Discussion\DiscussionRepository;
+use Flarum\Extension\ExtensionManager;
+use Flarum\Http\UrlGenerator;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\UserRepository;
 use Illuminate\Support\Arr;
@@ -11,7 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoProperties;
 
-class DiscussionSimplePage implements PageDriverInterface
+class Discussion implements PageDriverInterface
 {
     /**
      * @var SettingsRepositoryInterface
@@ -29,6 +31,16 @@ class DiscussionSimplePage implements PageDriverInterface
     protected $userRepository;
 
     /**
+     * @var ExtensionManager
+     */
+    protected $extensionManager;
+
+    /**
+     * @var UrlGenerator
+     */
+    protected $urlGenerator;
+
+    /**
      * @param SettingsRepositoryInterface $settingsRepositoryInterface
      * @param DiscussionRepository $discussionRepository
      * @param TranslatorInterface $translator
@@ -36,11 +48,15 @@ class DiscussionSimplePage implements PageDriverInterface
     public function __construct(
         SettingsRepositoryInterface $settingsRepositoryInterface,
         DiscussionRepository $discussionRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        ExtensionManager $extensionManager,
+        UrlGenerator $urlGenerator,
     ) {
         $this->settingsRepositoryInterface = $settingsRepositoryInterface;
         $this->discussionRepository = $discussionRepository;
         $this->userRepository = $userRepository;
+        $this->extensionManager = $extensionManager;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function extensionDependencies(): array
@@ -61,9 +77,6 @@ class DiscussionSimplePage implements PageDriverInterface
         ServerRequestInterface $request,
         SeoProperties $properties
     ) {
-        // Advanced discussion tags is set up
-        if ($this->settingsRepositoryInterface->get('seo_post_crawler', 0) == 1) return;
-
         // Get discussion ID from params
         $discussionId = Arr::get($request->getQueryParams(), 'id');
 
@@ -72,6 +85,17 @@ class DiscussionSimplePage implements PageDriverInterface
             $discussion = $this->discussionRepository->findOrFail($discussionId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // Do nothing, no model found
+            return;
+        }
+
+        $tagsEnabled = $this->extensionManager->isEnabled('flarum-tags');
+
+        // Do not continue discussion matches a FriendsOfFlarum BestAnswer discussion (if enabled)
+        if (
+            $this->settingsRepositoryInterface->get('seo_post_crawler', 0) == 1 &&
+            $tagsEnabled &&
+            $discussion->tags()->where('is_qna', true)->count() >= 1
+        ) {
             return;
         }
 
@@ -112,7 +136,7 @@ class DiscussionSimplePage implements PageDriverInterface
         }
 
         // Update topic url
-        $properties->setUrl('/d/' . $discussion->id . '-' . $discussion->slug);
+        $properties->setUrl($this->urlGenerator->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->slug]), false);
 
         try {
             // Add author to the page meta data
@@ -124,11 +148,22 @@ class DiscussionSimplePage implements PageDriverInterface
                 $properties->setSchemaJson('author', [
                     "@type" => "Person",
                     "name" => $user->getDisplayNameAttribute(),
-                    "url" => $properties->withApplicationPath('/u/' . $user->username)
+                    "url" => $this->urlGenerator->to('forum')->route('user', ['username' => $user->username])
                 ]);
             }
         } catch (\Exception $e) {
             // User does not exists anymore
+        }
+
+        // Generate a breadcrum if discussion has tags
+        if ($tagsEnabled && $discussion->tags()->count() >= 1) {
+            $tags = $discussion->tags()->get()->all();
+            $properties->generateSchemaBreadcrumb(array_map(function ($tag) {
+                return [
+                    'name' => $tag->name,
+                    'url' => $this->urlGenerator->to('forum')->route('tag', ['slug' => $tag->slug])
+                ];
+            }, $tags));
         }
     }
 }
