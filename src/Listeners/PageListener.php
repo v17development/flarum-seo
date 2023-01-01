@@ -9,7 +9,7 @@ use Flarum\Extension\ExtensionManager;
 use Flarum\Http\UrlGenerator;
 use Flarum\Frontend\Document;
 use Flarum\Settings\SettingsRepositoryInterface;
-
+use Illuminate\Support\Arr;
 // Laravel classes
 use Psr\Http\Message\ServerRequestInterface;
 use V17Development\FlarumSeo\Page\PageManager;
@@ -257,32 +257,39 @@ class PageListener
     }
 
     /**
-     * @param $discussion
+     * @param array $tagList
+     * @param string $listOrder https://schema.org/ItemListOrderType
      */
-    public function setSchemaBreadcrumb($discussion)
+    public function setSchemaBreadcrumb($tagList = [], $listOrderType = 'ItemListUnordered')
     {
-        $tags = $discussion->getAttribute("tags");
+        // Don't add the list, there were no tags
+        if (count($tagList) === 0) return;
+
         $list = [];
 
-        // Don't add the list, there were no tags
-        if (count($tags) === 0) return;
-
-        // Foreach tags
-        $number = 0;
-        foreach ($tags as $tag) {
-            $number++;
-            $list = [
+        // Loop through all tags
+        foreach ($tagList as $index => $tag) {
+            $list[] = [
                 '@type' => 'ListItem',
-                'name' => $tag->getAttribute('name'),
-                'item' => $this->applicationUrl . '/t/' . $tag->getAttribute('slug'),
-                'position' => $number
+                'position' => ($index + 1),
+                'item' => [
+                    '@type' => Arr::get($tag, 'type', "Thing"),
+                    '@id' => Arr::get($tag, 'url', $this->applicationUrl),
+                    'name' => Arr::get($tag, 'name', "Unknown"),
+                    'url' => Arr::get($tag, 'url', $this->applicationUrl)
+                ]
             ];
         }
+
+        // Empty list
+        if (count($list) === 0) return;
 
         $this->schemaBreadcrumb = [
             "@context" => "http://schema.org",
             "@type" => "BreadcrumbList",
-            "itemListElement" => $list
+            "itemListElement" => $list,
+            "itemListOrder" => $listOrderType,
+            "numberOfItems" => count($list)
         ];
     }
 

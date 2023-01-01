@@ -62,7 +62,7 @@ class DiscussionSimpePage implements PageDriverInterface
         SeoProperties $properties
     ) {
         // Advanced discussion tags is set up
-        if ($this->settingsRepositoryInterface->get('seo_post_crawler', 1) == 2) return;
+        if ($this->settingsRepositoryInterface->get('seo_post_crawler', 0) == 1) return;
 
         // Get discussion ID from params
         $discussionId = Arr::get($request->getQueryParams(), 'id');

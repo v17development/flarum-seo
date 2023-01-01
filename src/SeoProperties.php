@@ -215,7 +215,7 @@ class SeoProperties
 
     /**
      * Returns current application full-path
-     * 
+     *
      * @param string $path
      */
     public function withApplicationPath(string $path)
@@ -226,6 +226,16 @@ class SeoProperties
     public function getImageFromContent(?string $content): ?string
     {
         return $this->container->getImageFromContent($content);
+    }
+
+    /**
+     * Generates a
+     */
+    public function generateSchemaBreadcrumb(array $tags): self
+    {
+        $this->container->setSchemaBreadcrumb($tags);
+
+        return $this;
     }
 
     /**
