@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoProperties;
 
-class DiscussionSimpePage implements PageDriverInterface
+class DiscussionSimplePage implements PageDriverInterface
 {
     /**
      * @var SettingsRepositoryInterface
