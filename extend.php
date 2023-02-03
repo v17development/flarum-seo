@@ -30,11 +30,13 @@ return [
     (new Extend\Frontend('admin'))
         ->js(__DIR__ . '/js/dist/admin.js')
         ->css(__DIR__ . '/less/Admin.less'),
+
     (new Extend\Routes('forum'))
         ->get('/robots.txt', 'v17development-flarum-seo', Robots::class),
+
     (new Extend\Routes('api'))
-        ->post('/seo_social_media_image', 'seo.socialmedia.upload', UploadSocialMediaImageController::class)
-        ->delete('/seo_social_media_image', 'seo.socialmedia.delete', DeleteSocialMediaImageController::class),
+        ->post('/seo_social_media_image', 'seo.socialmedia.upload', ApiControllers\UploadSocialMediaImageController::class)
+        ->delete('/seo_social_media_image', 'seo.socialmedia.delete', ApiControllers\DeleteSocialMediaImageController::class),
 
     new Extend\Locales(__DIR__ . '/locale'),
 
