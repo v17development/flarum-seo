@@ -2,9 +2,14 @@
 
 namespace V17Development\FlarumSeo;
 
+use Flarum\Api\Controller\ShowDiscussionController;
+use Flarum\Api\Serializer\BasicDiscussionSerializer;
+use Flarum\Database\AbstractModel;
+use Flarum\Discussion\Discussion as FlarumDiscussion;
 use Flarum\Extend;
 use V17Development\FlarumSeo\ConfigureLinks;
 use V17Development\FlarumSeo\Api\DeleteSocialMediaImageController;
+use V17Development\FlarumSeo\Api\Serializers\SeoMetaSerializer;
 use V17Development\FlarumSeo\Api\UploadSocialMediaImageController;
 use V17Development\FlarumSeo\Controller\Robots;
 use V17Development\FlarumSeo\Formatter\FormatLinks;
@@ -16,6 +21,7 @@ use V17Development\FlarumSeo\Page\IndexPage;
 use V17Development\FlarumSeo\Page\PageExtensionPage;
 use V17Development\FlarumSeo\Page\ProfilePage;
 use V17Development\FlarumSeo\Page\TagPage;
+use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 
 return [
     (new Extend\Frontend('forum'))
@@ -35,6 +41,19 @@ return [
     (new Extend\Formatter)
         ->render(FormatLinks::class)
         ->configure(ConfigureLinks::class),
+
+    // Seo Meta
+    (new Extend\Model(FlarumDiscussion::class))
+        ->relationship('seoMeta', function (AbstractModel $model) {
+            return $model->hasOne(SeoMeta::class, 'object_id', 'id')
+                ->whereObjectType('discussion');
+        }),
+
+    (new Extend\ApiSerializer(BasicDiscussionSerializer::class))
+        ->hasOne('seoMeta', SeoMetaSerializer::class),
+
+    (new Extend\ApiController(ShowDiscussionController::class))
+        ->addInclude('seoMeta'),
 
     (new SEO())
         ->addExtender('index', IndexPage::class)
