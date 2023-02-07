@@ -1,5 +1,6 @@
 <?php
-namespace V17Development\FlarumSeo\Api;
+
+namespace V17Development\FlarumSeo\Api\Controllers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Support\Str;
@@ -41,20 +42,20 @@ class UploadSocialMediaImageController extends ShowForumController
         $request->getAttribute('actor')->assertAdmin();
 
         $file = Arr::get($request->getUploadedFiles(), 'seo_social_media_image');
-        $tmpFile = tempnam($this->paths->storage.'/tmp', 'site-image');
+        $tmpFile = tempnam($this->paths->storage . '/tmp', 'site-image');
         $file->moveTo($tmpFile);
 
         $mount = new MountManager([
             'source' => new Filesystem(new Local(pathinfo($tmpFile, PATHINFO_DIRNAME))),
-            'target' => new Filesystem(new Local($this->paths->public.'/assets')),
+            'target' => new Filesystem(new Local($this->paths->public . '/assets')),
         ]);
 
         if (($path = $this->settings->get('seo_social_media_image_path')) && $mount->has($file = "target://$path")) {
             $mount->delete($file);
         }
 
-        $uploadName = 'site-image-'.Str::lower(Str::random(8)).'.png';
-        $mount->move('source://'.pathinfo($tmpFile, PATHINFO_BASENAME), "target://$uploadName");
+        $uploadName = 'site-image-' . Str::lower(Str::random(8)) . '.png';
+        $mount->move('source://' . pathinfo($tmpFile, PATHINFO_BASENAME), "target://$uploadName");
         $this->settings->set('seo_social_media_image_path', $uploadName);
         return parent::data($request, $document);
     }

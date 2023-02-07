@@ -1,5 +1,6 @@
 <?php
-namespace V17Development\FlarumSeo\Api;
+
+namespace V17Development\FlarumSeo\Api\Controllers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use League\Flysystem\Adapter\Local;
@@ -38,7 +39,8 @@ class DeleteSocialMediaImageController extends AbstractDeleteController
 
         $path = $this->settings->get('seo_social_media_image_path');
         $this->settings->set('seo_social_media_image_path', null);
-        $uploadDir = new Filesystem(new Local($this->paths->public.'/assets'));
+        $uploadDir = new Filesystem(new Local($this->paths->public . '/assets'));
+
         if ($uploadDir->has($path)) {
             $uploadDir->delete($path);
         }
