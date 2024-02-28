@@ -79,7 +79,7 @@ class PageListener
         // List enabled extensions
         $this->enabled_extensions = json_decode($this->settings->get("extensions_enabled"), true);
 
-        $this->assets = $container->make('flarum-assets');
+        $this->assets = $container->make('filesystem')->disk('flarum-assets');
 
         // Fancy SEO question-answer?
         $this->discussionType = $this->settings->get("seo_post_crawler") === '1' ? 2 : 1;
