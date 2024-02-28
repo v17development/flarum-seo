@@ -14,7 +14,7 @@ import Select from 'flarum/components/Select';
 export default class SeoSettings extends Component {
   oninit(vnode) {
     super.oninit(vnode);
-    
+
     this.saving = false;
 
     this.fields = [
@@ -33,7 +33,7 @@ export default class SeoSettings extends Component {
 
     // Cheat 'seo_social_media_imageUrl'
     // Todo: Find a better way
-    app.forum.data.attributes.seo_social_media_imageUrl = app.forum.attribute('baseUrl') + '/assets/' + app.data.settings.seo_social_media_image_path;
+    app.forum.data.attributes.seo_social_media_imageUrl = app.data.settings.seo_social_media_image_url;
 
     this.showField = 'all';
 
@@ -74,7 +74,7 @@ export default class SeoSettings extends Component {
               {"Enter one or more keywords that describes your forum."}
             </div>,
             <textarea className="FormControl" bidi={this.values.forum_keywords} placeholder="Add a few keywords" />,
-            <div className="helpText" 
+            <div className="helpText"
               style={{
                 color: countKeywords(this.values.forum_keywords()) == false ? "red" : null
               }}>
@@ -93,7 +93,7 @@ export default class SeoSettings extends Component {
               className: this.showField !== 'all' ? 'hidden' : ''
           }, [
             <div className="helpText">
-              When your forum is shared on Twitter, it will have an image (if a social media image has been set up). This can be a big card with a big image, or a small card (summary) with a smaller image. 
+              When your forum is shared on Twitter, it will have an image (if a social media image has been set up). This can be a big card with a big image, or a small card (summary) with a smaller image.
             </div>,
             Select.component({
               options: {
