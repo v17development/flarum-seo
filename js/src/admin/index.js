@@ -2,7 +2,7 @@ import app from 'flarum/app';
 import { extend } from 'flarum/extend';
 import DashboardPage from 'flarum/components/DashboardPage';
 import SeoWidget from "./components/SeoWidget";
-import SettingsPage from './pages/SettingsPage';
+import SettingsPage from './Pages/SettingsPage';
 
 app.initializers.add('v17development-flarum-seo', () => {
   app.extensionData.for('v17development-seo').registerPage(SettingsPage);

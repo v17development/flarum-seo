@@ -27,6 +27,7 @@ class DeleteSocialMediaImageController extends AbstractDeleteController
 
         $path = $this->settings->get('seo_social_media_image_path');
         $this->settings->set('seo_social_media_image_path', null);
+        $this->settings->set('seo_social_media_image_url', null);
 
         if ($this->disk->exists($path)) {
             $this->disk->delete($path);

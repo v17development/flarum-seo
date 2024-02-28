@@ -39,6 +39,7 @@ class UploadSocialMediaImageController extends ShowForumController
         $this->disk->put($uploadName, $file->getStream()->getContents());
 
         $this->settings->set('seo_social_media_image_path', $uploadName);
+        $this->settings->set('seo_social_media_image_url', $this->disk->url($uploadName));
         return parent::data($request, $document);
     }
 }
