@@ -2,6 +2,8 @@
 namespace V17Development\FlarumSeo\Listeners;
 
 // FlarumSEO classes
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Filesystem\Cloud;
 use V17Development\FlarumSeo\Managers\Discussion;
 use V17Development\FlarumSeo\Managers\Page;
 use V17Development\FlarumSeo\Managers\Profile;
@@ -53,6 +55,8 @@ class PageListener
 
     protected $discussionType = 1; // Special Google results as default, check check readme for different results
 
+    protected Cloud $assets;
+
     /**
      * PageListener constructor.
      *
@@ -63,7 +67,8 @@ class PageListener
      */
     public function __construct(
         SettingsRepositoryInterface $settings,
-        UrlGenerator $url
+        UrlGenerator $url,
+        Container $container
     ) {
         // Get Flarum settings
         $this->settings = $settings;
@@ -73,6 +78,8 @@ class PageListener
 
         // List enabled extensions
         $this->enabled_extensions = json_decode($this->settings->get("extensions_enabled"), true);
+
+        $this->assets = $container->make('filesystem')->disk('flarum-assets');
 
         // Fancy SEO question-answer?
         $this->discussionType = $this->settings->get("seo_post_crawler") === '1' ? 2 : 1;
@@ -201,17 +208,17 @@ class PageListener
         // Set image
         if($applicationSeoSocialMediaImage !== null)
         {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
+            $this->setImage($this->assets->url($applicationSeoSocialMediaImage));
         }
         // Fallback to the logo
         else if($applicationLogo !== null)
         {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationLogo);
+            $this->setImage($this->assets->url($applicationLogo));
         }
         // Fallback to the favicon
         else if($applicationFavicon !== null)
         {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
+            $this->setImage($this->assets->url($applicationFavicon));
         }
     }
 
@@ -435,7 +442,7 @@ class PageListener
 
     /**
      * Set page keywords
-     * 
+     *
      * @param $keywords
      */
     public function setKeywords($keywords)
@@ -536,7 +543,7 @@ class PageListener
     public function setPageTitle($title)
     {
         $this->flarumDocument->title = $title;
-        
+
         return $this;
     }
 }
