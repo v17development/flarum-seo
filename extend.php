@@ -35,8 +35,8 @@ return [
         ->get('/robots.txt', 'v17development-flarum-seo', Robots::class),
 
     (new Extend\Routes('api'))
-        ->post('/seo_social_media_image', 'seo.socialmedia.upload', ApiControllers\UploadSocialMediaImageController::class)
-        ->delete('/seo_social_media_image', 'seo.socialmedia.delete', ApiControllers\DeleteSocialMediaImageController::class),
+        ->post('/seo_social_media_image', 'seo.socialmedia.upload', Api\Controllers\UploadSocialMediaImageController::class)
+        ->delete('/seo_social_media_image', 'seo.socialmedia.delete', Api\Controllers\DeleteSocialMediaImageController::class),
 
     new Extend\Locales(__DIR__ . '/locale'),
 
