@@ -10,6 +10,8 @@ use Flarum\Http\UrlGenerator;
 use Flarum\Frontend\Document;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Support\Arr;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Filesystem\Cloud;
 // Laravel classes
 use Psr\Http\Message\ServerRequestInterface;
 use V17Development\FlarumSeo\Page\PageManager;
@@ -50,6 +52,8 @@ class PageListener
     // Meta data with property tags
     protected $metaProperty;
 
+    protected Cloud $assets;
+
     /**
      * PageListener constructor.
      *
@@ -61,7 +65,8 @@ class PageListener
     public function __construct(
         SettingsRepositoryInterface $settings,
         UrlGenerator $url,
-        PageManager $pageManager
+        PageManager $pageManager,
+        Container $container
     ) {
         // Get Flarum settings
         $this->settings = $settings;
@@ -71,6 +76,8 @@ class PageListener
 
         // Set forum base URL
         $this->applicationUrl = $url->to('forum')->base();
+
+        $this->assets = $container->make('filesystem')->disk('flarum-assets');
 
         // Settings debug settings: var_dump($this->settings->all());exit;
     }
@@ -150,15 +157,15 @@ class PageListener
 
         // Set image
         if ($applicationSeoSocialMediaImage !== null) {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationSeoSocialMediaImage);
+            $this->setImage($this->assets->url($applicationSeoSocialMediaImage));
         }
         // Fallback to the logo
         else if ($applicationLogo !== null) {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationLogo);
+            $this->setImage($this->assets->url($applicationLogo));
         }
         // Fallback to the favicon
         else if ($applicationFavicon !== null) {
-            $this->setImage($this->applicationUrl . '/assets/' . $applicationFavicon);
+            $this->setImage($this->assets->url($applicationFavicon));
         }
     }
 
