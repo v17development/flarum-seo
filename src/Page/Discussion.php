@@ -89,12 +89,13 @@ class Discussion implements PageDriverInterface
         }
 
         $tagsEnabled = $this->extensionManager->isEnabled('flarum-tags');
+        $enableBestAnswer = $this->extensionManager->isEnabled('fof-best-answer');
 
         // Do not continue discussion matches a FriendsOfFlarum BestAnswer discussion (if enabled)
         if (
             $this->settingsRepositoryInterface->get('seo_post_crawler', 0) == 1 &&
             $tagsEnabled &&
-            $discussion->tags()->where('is_qna', true)->count() >= 1
+            ($enableBestAnswer && $discussion->tags()->where('is_qna', true)->count() >= 1)
         ) {
             return;
         }

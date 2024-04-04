@@ -102,12 +102,13 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         }
 
         // Fallback to simple discussions for not-answer tags
-        if ($discussion->tags()->where('is_qna', true)->count() === 0) {
+        $enableBestAnswer = $this->extensionManager->isEnabled('fof-best-answer');
+
+        if ($enableBestAnswer && $discussion->tags()->where('is_qna', true)->count() === 0) {
             $this->discussionFallback->handle($request, $properties);
             return;
         }
 
-        $enableBestAnswer = $this->extensionManager->isEnabled('fof-best-answer');
         $enableLikes = $this->extensionManager->isEnabled('flarum-likes');
         $firstPost = $discussion->firstPost()->first();
 
