@@ -61,7 +61,17 @@ class SeoMeta extends AbstractModel
         return self::where([
             'object_type' => $model->getTable(),
             'object_id' => $model->getKey()
-        ])->firstOrNull();
+        ])->first();
+    }
+
+    /**
+     * Find the SEO meta of an object from a model
+     * 
+     * @param Model $model The model
+     */
+    public static function buildByModel(Model $model): ?Model
+    {
+        return self::build($model->getTable(), $model->getKey());
     }
 
     /**

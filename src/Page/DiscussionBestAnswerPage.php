@@ -10,6 +10,7 @@ use Flarum\User\UserRepository;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use V17Development\FlarumSeo\Listeners\SeoMetaListeners\DiscussionListener;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
@@ -60,7 +61,7 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         UserRepository $userRepository,
         ExtensionManager $extensionManager,
         UrlGenerator $urlGenerator,
-        Discussion $discussionFallback
+        DiscussionPage $discussionFallback
     ) {
         $this->settingsRepositoryInterface = $settingsRepositoryInterface;
         $this->discussionRepository = $discussionRepository;
@@ -111,36 +112,17 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         }
 
         $enableLikes = $this->extensionManager->isEnabled('flarum-likes');
-        $firstPost = $discussion->firstPost()->first();
-
-        if ($firstPost) {
-            $content = $firstPost->formatContent($request);
-        }
 
         // Get seo-meta-date
         $seoMeta = SeoMeta::findByModelOrCreate(
             $discussion,
             // Meta didn't exist yet, create one
-            function (SeoMeta $meta) use ($discussion, $firstPost, $properties, $content) {
-                $meta->title = $discussion->title;
-
-                $meta->created_at = $discussion->created_at;
-
-                $meta->updated_at = $firstPost ? $firstPost->edited_at : $discussion->last_posted_at;
-
-                // Set discussion description and image
-                if ($content) {
-                    // Set page description
-                    $meta->description = $properties->generateDescriptionFromContent($content);
-
-                    // Set page image
-                    if ($image = $properties->getImageFromContent($content)) {
-                        $meta->open_graph_image = $image;
-                        $meta->open_graph_image_source = 'auto';
-                    }
-                }
+            function (SeoMeta $meta) use ($discussion) {
+                resolve(DiscussionListener::class)->updateMeta($meta, $discussion);
             }
         );
+
+        $firstPost = $discussion->firstPost()->first();
 
         // Update ld-json
         $properties
@@ -157,6 +139,10 @@ class DiscussionBestAnswerPage implements PageDriverInterface
 
         // Update topic url
         $properties->setUrl($this->urlGenerator->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->slug]), false);
+
+        if ($firstPost) {
+            $content = $firstPost->formatContent($request);
+        }
 
         // Schema
         $mainEntity = [

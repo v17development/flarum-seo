@@ -6,19 +6,36 @@ use Flarum\Api\Controller\ShowDiscussionController;
 use Flarum\Api\Serializer\BasicDiscussionSerializer;
 use Flarum\Database\AbstractModel;
 use Flarum\Discussion\Discussion as FlarumDiscussion;
+use Flarum\Discussion\Event as DiscussionEvent;
+use Flarum\Post\Event as PostEvent;
 use Flarum\Extend;
 use V17Development\FlarumSeo\ConfigureLinks;
 use V17Development\FlarumSeo\Api\Serializers\SeoMetaSerializer;
 use V17Development\FlarumSeo\Controller\Robots;
 use V17Development\FlarumSeo\Formatter\FormatLinks;
 use V17Development\FlarumSeo\Extend\SEO;
-use V17Development\FlarumSeo\Page\DiscussionBestAnswerPage;
-use V17Development\FlarumSeo\Page\Discussion;
-use V17Development\FlarumSeo\Page\IndexPage;
-use V17Development\FlarumSeo\Page\PageExtensionPage;
-use V17Development\FlarumSeo\Page\ProfilePage;
-use V17Development\FlarumSeo\Page\TagPage;
+use V17Development\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\Listeners\SeoMetaListeners\DiscussionListener;
+use V17Development\FlarumSeo\Listeners\SeoMetaListeners\PostListener;
+use V17Development\FlarumSeo\Listeners\SeoMetaListeners\TagListener;
+use V17Development\FlarumSeo\Page as SeoPage;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
+
+// Listen events
+$events = (new Extend\Event);
+
+// Listen to discussion updates
+$events
+  ->listen(DiscussionEvent\Deleting::class, DiscussionListener::class)
+  ->listen(DiscussionEvent\Started::class, DiscussionListener::class)
+  ->listen(DiscussionEvent\Renamed::class, DiscussionListener::class);
+
+// Listen to post updates
+$events
+  ->listen(PostEvent\Deleting::class, PostListener::class)
+  ->listen(PostEvent\Posted::class, PostListener::class)
+  ->listen(PostEvent\Revised::class, PostListener::class);
+
 
 return [
   (new Extend\Frontend('forum'))
@@ -61,4 +78,7 @@ return [
     ->addExtender('page_extension', SeoPage\PageExtensionPage::class)
     ->addExtender('discussion', SeoPage\DiscussionPage::class)
     ->addExtender('discussion_best_answer', SeoPage\DiscussionBestAnswerPage::class),
+
+  // Add events
+  $events
 ];
