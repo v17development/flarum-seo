@@ -10,11 +10,12 @@ use Flarum\User\UserRepository;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use V17Development\FlarumSeo\Listeners\SeoMetaListeners\DiscussionListener;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
-class Discussion implements PageDriverInterface
+class DiscussionPage implements PageDriverInterface
 {
     /**
      * @var SettingsRepositoryInterface
@@ -104,31 +105,10 @@ class Discussion implements PageDriverInterface
         $seoMeta = SeoMeta::findByModelOrCreate(
             $discussion,
             // Meta didn't exist yet, create one
-            function (SeoMeta $meta) use ($discussion, $properties, $request) {
-                $meta->title = $discussion->title;
-
-                $meta->created_at = $discussion->created_at;
-
-                $firstPost = $discussion->firstPost()->first();
-
-                $meta->updated_at = $firstPost ? $firstPost->edited_at : $discussion->last_posted_at;
-
-                // Set discussion description and image
-                if ($firstPost) {
-                    $content = $firstPost->formatContent($request);
-
-                    // Set page description
-                    $meta->description = $properties->generateDescriptionFromContent($content);
-
-                    // Set page image
-                    if ($image = $properties->getImageFromContent($content)) {
-                        $meta->open_graph_image = $image;
-                        $meta->open_graph_image_source = 'auto';
-                    }
-                }
+            function (SeoMeta $meta) use ($discussion) {
+                resolve(DiscussionListener::class)->updateMeta($meta, $discussion);
             }
         );
-
 
         // Update ld-json
         $properties
