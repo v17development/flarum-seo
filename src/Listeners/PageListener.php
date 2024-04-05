@@ -15,6 +15,7 @@ use Illuminate\Contracts\Filesystem\Cloud;
 // Laravel classes
 use Psr\Http\Message\ServerRequestInterface;
 use V17Development\FlarumSeo\Page\PageManager;
+use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 /**
@@ -368,11 +369,8 @@ class PageListener
      * @param $content
      * @return PageListener
      */
-    public function setDescription($content)
+    public function setDescription($description)
     {
-        $description = strip_tags($content);
-        $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
-
         $this
             ->setMetaPropertyTag('og:description', $description)
             ->setMetaTag('description', $description)
@@ -474,6 +472,75 @@ class PageListener
             ->setMetaPropertyTag('og:image', $imagePath)
             ->setMetaTag('twitter:image', $imagePath)
             ->setSchemaJson('image', $imagePath);
+    }
+
+    /**
+     * Auto set meta tags and data from received SeoMeta object
+     * 
+     * @param SeoMeta $seoMeta
+     * 
+     * @return PageListener
+     */
+    public function generateTagsFromMetaData(SeoMeta $seoMeta): self
+    {
+        // Set title
+        $this->setPageTitle($seoMeta->title);
+
+        $this
+            ->setMetaPropertyTag('og:title', $seoMeta->open_graph_title ?? $seoMeta->title)
+            ->setMetaTag('twitter:title', $seoMeta->twitter_title ?? $seoMeta->title);
+
+        // Description
+        if ($seoMeta->description) {
+            $this
+                ->setMetaTag('description', $seoMeta->description)
+                ->setSchemaJson('description', $seoMeta->description)
+                ->setMetaPropertyTag('og:description', $seoMeta->open_graph_description ?? $seoMeta->description)
+                ->setMetaTag('twitter:description', $seoMeta->twitter_description ?? $seoMeta->description);
+        }
+
+        // Image
+        if ($seoMeta->open_graph_image) {
+            $this
+                ->setMetaPropertyTag('og:image', $seoMeta->open_graph_image)
+                ->setMetaTag('twitter:image', $seoMeta->twitter_image ?? $seoMeta->open_graph_image)
+                ->setSchemaJson('image', $seoMeta->open_graph_image);
+        }
+
+        // Keywords
+        if ($seoMeta->keywords) {
+            $this->setKeywords($seoMeta->keywords);
+        }
+
+        // Published on/created at
+        $this->setPublishedOn($seoMeta->created_at);
+
+        // Updated at
+        if ($seoMeta->updated_at) {
+            $this->setUpdatedOn($seoMeta->updated_at);
+        }
+
+        // Generate robots tags for this page
+        $robotTags = [
+            $seoMeta->robots_noindex ? "noindex" : "index",
+            $seoMeta->robots_nofollow ? "nofollow" : "follow"
+        ];
+
+        if ($seoMeta->robots_noarchive) {
+            $robotTags[] = "noarchive";
+        }
+
+        if ($seoMeta->robots_noimageindex) {
+            $robotTags[] = "noimageindex";
+        }
+
+        if ($seoMeta->robots_nosnippet) {
+            $robotTags[] = "nosnippet";
+        }
+
+        $this->setMetaTag('robots', implode(", ", $robotTags));
+
+        return $this;
     }
 
     /**

@@ -11,6 +11,7 @@ use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
+use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 class Discussion implements PageDriverInterface
@@ -94,13 +95,40 @@ class Discussion implements PageDriverInterface
         // Do not continue discussion matches a FriendsOfFlarum BestAnswer discussion (if enabled)
         if (
             $this->settingsRepositoryInterface->get('seo_post_crawler', 0) == 1 &&
-            $tagsEnabled &&
-            ($enableBestAnswer && $discussion->tags()->where('is_qna', true)->count() >= 1)
+            $tagsEnabled && (!$enableBestAnswer || ($enableBestAnswer && $discussion->tags()->where('is_qna', true)->count() >= 1))
         ) {
             return;
         }
 
-        $firstPost = $discussion->firstPost()->first();
+        // Get seo-meta-date
+        $seoMeta = SeoMeta::findByModelOrCreate(
+            $discussion,
+            // Meta didn't exist yet, create one
+            function (SeoMeta $meta) use ($discussion, $properties, $request) {
+                $meta->title = $discussion->title;
+
+                $meta->created_at = $discussion->created_at;
+
+                $firstPost = $discussion->firstPost()->first();
+
+                $meta->updated_at = $firstPost ? $firstPost->edited_at : $discussion->last_posted_at;
+
+                // Set discussion description and image
+                if ($firstPost) {
+                    $content = $firstPost->formatContent($request);
+
+                    // Set page description
+                    $meta->description = $properties->generateDescriptionFromContent($content);
+
+                    // Set page image
+                    if ($image = $properties->getImageFromContent($content)) {
+                        $meta->open_graph_image = $image;
+                        $meta->open_graph_image_source = 'auto';
+                    }
+                }
+            }
+        );
+
 
         // Update ld-json
         $properties
@@ -109,32 +137,8 @@ class Discussion implements PageDriverInterface
             // Set page type article
             ->setMetaPropertyTag('og:type', 'article');
 
-        // Get last posted on
-        $lastPostedOn = $firstPost !== null ? $firstPost->edited_at : $discussion->last_posted_at;
-
-        // Set short description
-        $properties
-            ->setTitle($discussion->title, true)
-            ->setPublishedOn($discussion->created_at);
-
-        // Set discussion description, only when a first post exists
-        if ($firstPost !== null) {
-            $content = $firstPost->formatContent($request);
-
-            // Set page description
-            $properties
-                ->setDescription($content);
-
-            // Set page image
-            if ($image = $properties->getImageFromContent($content)) {
-                $properties->setImage($image);
-            }
-        }
-
-        // Add updated
-        if ($lastPostedOn !== null) {
-            $properties->setUpdatedOn($lastPostedOn);
-        }
+        // Generate data
+        $properties->generateTagsFromMetaData($seoMeta);
 
         // Update topic url
         $properties->setUrl($this->urlGenerator->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->slug]), false);

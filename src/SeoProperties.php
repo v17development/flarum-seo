@@ -3,6 +3,7 @@
 namespace V17Development\FlarumSeo;
 
 use V17Development\FlarumSeo\Listeners\PageListener;
+use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 
 /**
  * FlarumSeo Properties Extender
@@ -59,6 +60,17 @@ class SeoProperties
         $this->container->setDescription($content);
 
         return $this;
+    }
+
+    /**
+     * Generate page description
+     */
+    public function generateDescriptionFromContent($content): string
+    {
+        $description = strip_tags($content);
+        $description = trim(preg_replace('/\s+/', ' ', mb_substr($description, 0, 157))) . (mb_strlen($description) > 157 ? '...' : '');
+
+        return $description;
     }
 
     /**
@@ -234,6 +246,16 @@ class SeoProperties
     public function generateSchemaBreadcrumb(array $tags): self
     {
         $this->container->setSchemaBreadcrumb($tags);
+
+        return $this;
+    }
+
+    /**
+     * Generate default tags from meta
+     */
+    public function generateTagsFromMetaData(SeoMeta $data)
+    {
+        $this->container->generateTagsFromMetaData($data);
 
         return $this;
     }

@@ -10,7 +10,16 @@ class SeoMeta extends AbstractModel
 {
     protected $table = 'seo_meta';
 
-    protected $fillable = ['object_id', 'object_type'];
+    protected $fillable = [
+        'object_id', 'object_type',
+
+        // Other data
+        'title',
+        'description',
+        'keywords',
+        'created_at',
+        'updated_at'
+    ];
 
     /**
      * {@inheritdoc}
@@ -34,7 +43,7 @@ class SeoMeta extends AbstractModel
      * @param string $objectType Name of the object
      * @param string $objectId ID of the object
      */
-    public static  function findByObjectType(string $objectType, int $objectId): Model
+    public static function findByObjectType(string $objectType, int $objectId): Model
     {
         return self::firstOrCreate([
             'object_type' => $objectType,
@@ -47,7 +56,7 @@ class SeoMeta extends AbstractModel
      * 
      * @param Model $model The model
      */
-    public static  function findOneByModel(Model $model): ?Model
+    public static function findOneByModel(Model $model): ?Model
     {
         return self::where([
             'object_type' => $model->getTable(),
@@ -60,11 +69,27 @@ class SeoMeta extends AbstractModel
      * 
      * @param Model $model The model
      */
-    public static  function findByModelOrCreate(Model $model): Model
+    public static function findByModelOrCreate(Model $model, array|callable $fillables = []): Model
     {
-        return self::firstOrCreate([
+        // Is an array with defaults
+        if (!is_callable($fillables)) {
+            return self::firstOrCreate([
+                'object_type' => $model->getTable(),
+                'object_id' => $model->getKey()
+            ], $fillables);
+        }
+
+        return self::where([
             'object_type' => $model->getTable(),
             'object_id' => $model->getKey()
-        ]);
+        ])->firstOr(function () use ($model, $fillables): Model {
+            $data = SeoMeta::build($model->getTable(), $model->getKey());
+
+            $fillables($data);
+
+            $data->save();
+
+            return $data;
+        });
     }
 }
