@@ -6,7 +6,9 @@ use Flarum\Tags\TagRepository;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use V17Development\FlarumSeo\Listeners\SeoMetaListeners\TagListener;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
+use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 class TagPage implements PageDriverInterface
@@ -55,26 +57,22 @@ class TagPage implements PageDriverInterface
             return;
         }
 
-        $lastPostedAt = (new \DateTime($tag->last_posted_at))->format("c");
+        $seoMeta = SeoMeta::findByModelOrCreate(
+            $tag,
+            // Meta didn't exist yet, create one
+            function (SeoMeta $meta) use ($tag) {
+                resolve(TagListener::class)->updateMeta($meta, $tag);
+            }
+        );
 
-        // Get Tag description
-        $tagDescription = $tag->description ?? $this->translator->trans('flarum-tags.forum.tag.meta_description_text', ['{tag}' => $tag->name]);
-
-        // The tag plugin does not set page titles... Then we'll do that
-        $properties
-            ->setTitle($tag->name);
+        $properties->generateTagsFromMetaData($seoMeta);
 
         $properties
             // Add Schema.org metadata: CollectionPage https://schema.org/CollectionPage
             ->setSchemaJson('@type', 'CollectionPage')
-            ->setSchemaJson('about', $tagDescription)
-            ->setUpdatedOn($lastPostedAt)
-
+            ->setSchemaJson('about', $seoMeta->description)
             // Tag URL
             ->setUrl('/t/' . $tag->slug)
-
-            // Description
-            ->setDescription($tagDescription)
 
             // Canonical url
             ->setCanonicalUrl('/t/' . $tag->slug);

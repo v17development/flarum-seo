@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
+use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 class PageExtensionPage implements PageDriverInterface
@@ -31,7 +32,7 @@ class PageExtensionPage implements PageDriverInterface
 
     public function handleRoutes(): array
     {
-        return ['pages.home'];
+        return ['pages.home', 'pages.page'];
     }
 
     /**
@@ -50,34 +51,34 @@ class PageExtensionPage implements PageDriverInterface
             return;
         }
 
-        // Published on
-        $publishedOn = (new \DateTime($page->getAttribute('time')))->format("c");
+        $content = $page->is_html ? $page->content : $page->contentHtml;
 
-        // Modified on
-        $modifiedOn = ($page->getAttribute('edit_time') !== NULL ? (new \DateTime($page->getAttribute('edit_time')))->format("c") : false);
+        $seoMeta = SeoMeta::findByModelOrCreate(
+            $page,
+            // Meta didn't exist yet, create one
+            function (SeoMeta $meta) use ($page, $properties, $content) {
+                $meta->title = $page->title;
 
-        // Description
-        $content = ($page->getAttribute('is_html') ? $page->getAttribute('content') : $page->getAttribute('contentHtml'));
+                $meta->created_at = $page->time ?? new \DateTime();
+
+                $meta->updated_at = $page->edit_time;
+
+                // Get Tag description
+                $meta->description = $properties->generateDescriptionFromContent(e(strip_tags($content)));
+            }
+        );
 
         $properties
             // Add Schema.org metadata: WebPage https://schema.org/WebPage
             ->setSchemaJson('@type', 'WebPage')
             ->setSchemaJson('text', e(strip_tags($content)))
 
-            // Published on
-            ->setPublishedOn($publishedOn)
-
             // Tag URL
             ->setUrl('/p/' . $page->getAttribute('id') . '-' . $page->getAttribute('slug'))
 
-            // Description
-            ->setDescription($content)
-
             // Canonical url
-            ->setCanonicalUrl('/p/' . $page->getAttribute('id'));
+            ->setCanonicalUrl('/p/' . $page->getAttribute('id'))
 
-        if ($modifiedOn) {
-            $this->parent->setUpdatedOn($modifiedOn);
-        }
+            ->generateTagsFromMetaData($seoMeta);
     }
 }

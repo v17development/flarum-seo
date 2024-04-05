@@ -36,6 +36,12 @@ $events
   ->listen(PostEvent\Posted::class, PostListener::class)
   ->listen(PostEvent\Revised::class, PostListener::class);
 
+// Add events for Tag extension
+if (class_exists("Flarum\Tags\Tag")) {
+  $events
+    ->listen(\Flarum\Tags\Event\Deleting::class, TagListener::class)
+    ->listen(\Flarum\Tags\Event\Saving::class, TagListener::class);
+}
 
 return [
   (new Extend\Frontend('forum'))
