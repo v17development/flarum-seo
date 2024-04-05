@@ -409,7 +409,7 @@ class PageListener
         // Check post content is not empty
         if ($content !== null) {
             // Read Post content and filter image url
-            $pattern = '/(?<=src=")((http.*?\.)(jpe?g|png|[tg]iff?|svg))(?=")/';
+            $pattern = '/(?<=src=")((http.*?\.)(jpe?g|png|[tg]iff?|svg|webp)(\?[a-zA-Z0-9\_\-\=\&]*)?)(?=")/';
 
             // Use image from post for social media og:image
             if (preg_match_all($pattern, $content, $matches) && count($matches) > 0) {
