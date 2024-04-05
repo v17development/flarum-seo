@@ -76,11 +76,13 @@ class DiscussionListener implements SeoMetaListenerInterface
             // Set page description
             $meta->description = $this->seoProperties->generateDescriptionFromContent($content);
 
-
-            // Set page image
-            if ($image = $this->seoProperties->getImageFromContent($content)) {
-                $meta->open_graph_image = $image;
-                $meta->open_graph_image_source = 'auto';
+            // Only update image if source was set to auto and is not managed by a different extension
+            if (!$meta->open_graph_image_source || $meta->open_graph_image_source === 'auto') {
+                // Set page image
+                if ($image = $this->seoProperties->getImageFromContent($content)) {
+                    $meta->open_graph_image = $image;
+                    $meta->open_graph_image_source = 'auto';
+                }
             }
         }
     }
