@@ -4,11 +4,13 @@ namespace V17Development\FlarumSeo;
 
 use Flarum\Api\Controller\ShowDiscussionController;
 use Flarum\Api\Serializer\BasicDiscussionSerializer;
+use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Database\AbstractModel;
 use Flarum\Discussion\Discussion as FlarumDiscussion;
 use Flarum\Discussion\Event as DiscussionEvent;
 use Flarum\Post\Event as PostEvent;
 use Flarum\Extend;
+use V17Development\FlarumSeo\Api\AttachForumSerializerAttributes;
 use V17Development\FlarumSeo\ConfigureLinks;
 use V17Development\FlarumSeo\Api\Serializers\SeoMetaSerializer;
 use V17Development\FlarumSeo\Controller\Robots;
@@ -45,7 +47,9 @@ if (class_exists("Flarum\Tags\Tag")) {
 
 return [
   (new Extend\Frontend('forum'))
-    ->content(PageListener::class),
+    ->content(PageListener::class)
+    ->js(__DIR__ . '/js/dist/forum.js')
+    ->css(__DIR__ . '/less/Forum.less'),
 
   (new Extend\Frontend('admin'))
     ->js(__DIR__ . '/js/dist/admin.js')
@@ -84,6 +88,10 @@ return [
     ->addExtender('page_extension', SeoPage\PageExtensionPage::class)
     ->addExtender('discussion', SeoPage\DiscussionPage::class)
     ->addExtender('discussion_best_answer', SeoPage\DiscussionBestAnswerPage::class),
+
+  // Add support ticket language relation to the forum and add attributes to the forum
+  (new Extend\ApiSerializer(ForumSerializer::class))
+    ->attributes(AttachForumSerializerAttributes::class),
 
   // Add events
   $events
