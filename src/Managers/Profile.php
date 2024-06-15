@@ -85,6 +85,7 @@ class Profile
             // Add Schema.org metadata: ProfilePage https://schema.org/ProfilePage
             ->setSchemaJson('@type', 'ProfilePage')
             ->setSchemaJson('name', $user->getAttribute('display_name'))
+            ->setSchemaJson('mainEntity', $user->getAttribute('display_name'))
             ->setSchemaJson('dateCreated', $joinedAt);
 
         // Add avatar
