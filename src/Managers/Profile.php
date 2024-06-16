@@ -77,6 +77,13 @@ class Profile
             'comment_count' => $user->getAttribute('comment_count')
         ]);
 
+                // Schema
+                $mainEntity = [
+                    "@type" => "Person",
+                    'name' => $user->getAttribute('username')
+                ];
+
+                
         $this->parent
             // Page type
             ->setMetaPropertyTag('og:type', 'profile')
@@ -84,9 +91,11 @@ class Profile
 
             // Add Schema.org metadata: ProfilePage https://schema.org/ProfilePage
             ->setSchemaJson('@type', 'ProfilePage')
+            ->setSchemaJson('mainEntity', $mainEntity)
             ->setSchemaJson('name', $user->getAttribute('display_name'))
-            ->setSchemaJson('mainEntity', $user->getAttribute('display_name'))
             ->setSchemaJson('dateCreated', $joinedAt);
+
+
 
         // Add avatar
         if($user->getAttribute('avatar_url') !== null)
