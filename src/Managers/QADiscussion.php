@@ -2,6 +2,7 @@
 namespace V17Development\FlarumSeo\Managers;
 
 use Flarum\Discussion\DiscussionRepository;
+use Flarum\Post\Post;
 use Flarum\User\UserRepository;
 use V17Development\FlarumSeo\Listeners\PageListener;
 
@@ -133,9 +134,9 @@ class QADiscussion
         // Schema
         $mainEntity = [
             '@type' => 'Question',
-            'name' => $discussion->getAttribute('title'),
+            'name' => $discussion->title,
             'text' => strip_tags($this->firstPost !== null ? $content : ''),
-            'dateCreated' => $this->acceptableDate($discussion->getAttribute('created_at')),
+            'dateCreated' => $this->acceptableDate($discussion->created_at),
             'author' => [
                 "@type" => "Person",
                 "name" => $discussion->user() ? $this->getUserName($discussion->user()) : null
@@ -154,18 +155,19 @@ class QADiscussion
         if ($bestAnswerId && array_key_exists($bestAnswerId, $this->posts)) {
             $mainEntity['acceptedAnswer'] = $this->makeAnswerFromPost($this->posts[$bestAnswerId]);
         }
-        
+
         // Go through all posts
         foreach ($this->posts as $key => $post) {
+            // @var $post \Flarum\Post\Post
             // Skip first post and best answer
-            if (in_array($post->getAttribute('id'), [$firstPostId, $bestAnswerId])) {
+            if (in_array($post->id, [$firstPostId, $bestAnswerId])) {
                 continue;
             }
-            
+
             if ($postCounter > $postMaxCount) {
                 break;
             }
-            
+
             $posts[] = $this->makeAnswerFromPost($post);
             $postCounter++;
         }
@@ -186,14 +188,14 @@ class QADiscussion
         $this->parent->setSchemaJson('mainEntity', $mainEntity);
     }
 
-    private function makeAnswerFromPost($post): array
+    private function makeAnswerFromPost(Post $post): array
     {
         static $users = [];
 
-        $userId = $post->getAttribute('user_id');
+        $userId = $post->user_id;
         if (!isset($users[$userId])) {
             $user = $post->user()->first();
-            $users[$userId] = $user ? $user->getAttribute('display_name') : null;
+            $users[$userId] = $user ? $user->display_name : null;
         }
 
         $userName = $users[$userId];
@@ -201,9 +203,9 @@ class QADiscussion
         // Temp post
         $tempPost = [
             '@type' => 'Answer',
-            'text' => strip_tags($post->getAttribute('content')),
-            'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
-            'url' => $fullUrl . '/' . $post->getAttribute('number'),
+            'text' => strip_tags($post->content),
+            'dateCreated' => $this->acceptableDate($post->created_at),
+            'url' => $fullUrl . '/' . $post->number,
             'author' => [
                 "@type" => "Person",
                 "name" => $userName
@@ -216,7 +218,7 @@ class QADiscussion
         }else{
             $tempPost['upvoteCount'] = 0; // Always 0 (to be sure)
         }
-        
+
         return $tempPost;
     }
 
@@ -238,6 +240,6 @@ class QADiscussion
     private function getUserName($user)
     {
         // Return username
-        return $user->first() ? $user->first()->getAttribute('display_name') : null;
+        return $user->first() ? $user->first()->display_name : null;
     }
 }
