@@ -112,13 +112,12 @@ class QADiscussion
         $content = '';
 
         // Set discussion description, only when a first post exists
-        if($this->firstPost !== null) {
+        if ($this->firstPost !== null) {
             $content = $this->firstPost->formatContent();
 
             // Set page description
             $this->parent
                 ->setDescription($content)
-
                 // Set page image
                 ->setImageFromContent($content);
         }
@@ -149,50 +148,26 @@ class QADiscussion
         // ----------------
 
         $posts = [];
-        $users = [];
+        $postCounter = 0;
+        $postMaxCount = 100;
 
+        if ($bestAnswerId && array_key_exists($bestAnswerId, $this->posts)) {
+            $mainEntity['acceptedAnswer'] = $this->makeAnswerFromPost($this->posts[$bestAnswerId]);
+        }
+        
         // Go through all posts
-        foreach ($this->posts as $post) {
-            // Skip first post
-            if ($firstPostId == $post->getAttribute('id')) continue;
-
-            // Ignore 'sticky', 'closed' and 'opened' posts
-            if (get_class($post) !== "Flarum\Post\CommentPost") continue;
-
-            $userId = $post->getAttribute('user_id');
-            if (!isset($users[$userId])) {
-                $user = $post->user()->first();
-                $users[$userId] = $user ? $user->getAttribute('display_name') : null;
+        foreach ($this->posts as $key => $post) {
+            // Skip first post and best answer
+            if (in_array($post->getAttribute('id'), [$firstPostId, $bestAnswerId])) {
+                continue;
             }
-
-            $userName = $users[$userId];
-
-            // Temp post
-            $tempPost = [
-                '@type' => 'Answer',
-                'text' => strip_tags($post->getAttribute('content')),
-                'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
-                'url' => $fullUrl . '/' . $post->getAttribute('number'),
-                'author' => [
-                    "@type" => "Person",
-                    "name" => $userName
-                ]
-            ];
-
-            // Upvote/like count
-            if ($this->enableLikes) {
-                $tempPost['upvoteCount'] = count($post->getAttribute('likes'));
-            } else {
-                $tempPost['upvoteCount'] = 0; // Always 0 (to be sure)
+            
+            if ($postCounter > $postMaxCount) {
+                break;
             }
-
-            // Current answer is the accepted answer
-            if ($bestAnswerId === $post->getAttribute("id")) {
-                $mainEntity['acceptedAnswer'] = $tempPost;
-            } // Normal answers
-            else {
-                $posts[] = $tempPost;
-            }
+            
+            $posts[] = $this->makeAnswerFromPost($post);
+            $postCounter++;
         }
 
         // Flarum tags enabled?
@@ -200,7 +175,7 @@ class QADiscussion
             $this->parent->setSchemaBreadcrumb($discussion);
         }
 
-        // Only add suggested answers property if there are posts and accepted answer
+        // Only add suggested answers property if there are posts
         if (count($posts) > 0) {
             $mainEntity['suggestedAnswer'] = array_merge(
                 array_slice($posts, 0, 10),
@@ -208,9 +183,41 @@ class QADiscussion
             );
         }
 
-        // $discussion->getAttribute('tags')
-
         $this->parent->setSchemaJson('mainEntity', $mainEntity);
+    }
+
+    private function makeAnswerFromPost($post): array
+    {
+        static $users = [];
+
+        $userId = $post->getAttribute('user_id');
+        if (!isset($users[$userId])) {
+            $user = $post->user()->first();
+            $users[$userId] = $user ? $user->getAttribute('display_name') : null;
+        }
+
+        $userName = $users[$userId];
+
+        // Temp post
+        $tempPost = [
+            '@type' => 'Answer',
+            'text' => strip_tags($post->getAttribute('content')),
+            'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
+            'url' => $fullUrl . '/' . $post->getAttribute('number'),
+            'author' => [
+                "@type" => "Person",
+                "name" => $userName
+            ]
+        ];
+
+        // Upvote/like count
+        if ($this->enableLikes) {
+            $tempPost['upvoteCount'] = count($post->getAttribute('likes'));
+        }else{
+            $tempPost['upvoteCount'] = 0; // Always 0 (to be sure)
+        }
+        
+        return $tempPost;
     }
 
     /**
