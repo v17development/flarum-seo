@@ -70,7 +70,7 @@ class QADiscussion
             $discussion = $this->discussionRepository->findOrFail($discussionId);
 
             // Get all posts
-            $this->posts = $discussion->posts()->get()->getDictionary();
+            $this->posts = $discussion->posts()->get(['id', 'user_id', 'created_at', 'number', 'content'])->getDictionary();
 
             // Get first post
             $discussionFirstPost = $discussion->firstPost()->get()->getDictionary();
@@ -135,7 +135,7 @@ class QADiscussion
         $mainEntity = [
             '@type' => 'Question',
             'name' => $discussion->getAttribute('title'),
-            'text' => $this->firstPost !== null ? $content : '',
+            'text' => strip_tags($this->firstPost !== null ? $content : ''),
             'dateCreated' => $this->acceptableDate($discussion->getAttribute('created_at')),
             'author' => [
                 "@type" => "Person",
@@ -149,6 +149,7 @@ class QADiscussion
         // ----------------
 
         $posts = [];
+        $users = [];
 
         // Go through all posts
         foreach ($this->posts as $post) {
@@ -158,22 +159,30 @@ class QADiscussion
             // Ignore 'sticky', 'closed' and 'opened' posts
             if (get_class($post) !== "Flarum\Post\CommentPost") continue;
 
+            $userId = $post->getAttribute('user_id');
+            if (!isset($users[$userId])) {
+                $user = $post->user()->first();
+                $users[$userId] = $user ? $user->getAttribute('display_name') : null;
+            }
+
+            $userName = $users[$userId];
+
             // Temp post
             $tempPost = [
                 '@type' => 'Answer',
-                'text' => $post->formatContent(),
+                'text' => strip_tags($post->getAttribute('content')),
                 'dateCreated' => $this->acceptableDate($post->getAttribute('created_at')),
                 'url' => $fullUrl . '/' . $post->getAttribute('number'),
                 'author' => [
                     "@type" => "Person",
-                    "name" => $post->user() ? $this->getUserName($post->user()) : null
+                    "name" => $userName
                 ]
             ];
 
             // Upvote/like count
             if ($this->enableLikes) {
                 $tempPost['upvoteCount'] = count($post->getAttribute('likes'));
-            }else{
+            } else {
                 $tempPost['upvoteCount'] = 0; // Always 0 (to be sure)
             }
 
@@ -187,14 +196,16 @@ class QADiscussion
         }
 
         // Flarum tags enabled?
-        if ($this->parent->extensionEnabled("flarum-tags"))
-        {
+        if ($this->parent->extensionEnabled("flarum-tags")) {
             $this->parent->setSchemaBreadcrumb($discussion);
         }
 
-        // Only add suggested answers property if there are posts
-        if(count($posts) > 0) {
-            $mainEntity['suggestedAnswer'] = $posts;
+        // Only add suggested answers property if there are posts and accepted answer
+        if (count($posts) > 0) {
+            $mainEntity['suggestedAnswer'] = array_merge(
+                array_slice($posts, 0, 10),
+                array_slice($posts, -10, 10),
+            );
         }
 
         // $discussion->getAttribute('tags')
