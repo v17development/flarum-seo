@@ -153,7 +153,7 @@ class QADiscussion
         $postMaxCount = 100;
 
         if ($bestAnswerId && array_key_exists($bestAnswerId, $this->posts)) {
-            $mainEntity['acceptedAnswer'] = $this->makeAnswerFromPost($this->posts[$bestAnswerId]);
+            $mainEntity['acceptedAnswer'] = $this->makeAnswerFromPost($this->posts[$bestAnswerId], $fullUrl);
         }
 
         // Go through all posts
@@ -168,7 +168,7 @@ class QADiscussion
                 break;
             }
 
-            $posts[] = $this->makeAnswerFromPost($post);
+            $posts[] = $this->makeAnswerFromPost($post, $fullUrl);
             $postCounter++;
         }
 
@@ -188,7 +188,7 @@ class QADiscussion
         $this->parent->setSchemaJson('mainEntity', $mainEntity);
     }
 
-    private function makeAnswerFromPost(Post $post): array
+    private function makeAnswerFromPost(Post $post, string $fullUrl = ''): array
     {
         static $users = [];
 
