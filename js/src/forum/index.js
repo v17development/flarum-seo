@@ -3,6 +3,10 @@ import DiscussionControls from "flarum/forum/utils/DiscussionControls";
 import Button from "flarum/forum/components/Button";
 import { extend } from "flarum/common/extend";
 import MetaSeoModal from "../common/Components/MetaSeoModal";
+import SeoMeta from "../common/Models/SeoMeta";
+import Tag from "flarum/tags/common/models/Tag";
+import Discussion from "flarum/common/models/Discussion";
+import Model from "flarum/common/Model";
 
 app.initializers.add("v17development-flarum-seo", () => {
   extend(
@@ -16,7 +20,11 @@ app.initializers.add("v17development-flarum-seo", () => {
         Button.component(
           {
             icon: "fas fa-search",
-            onclick: () => app.modal.show(MetaSeoModal, { meta: discussion }),
+            onclick: () =>
+              app.modal.show(MetaSeoModal, {
+                objectType: "discussions",
+                objectId: discussion.id(),
+              }),
           },
           app.translator.trans(
             "v17development-flarum-seo.forum.controls.configure_seo"
@@ -26,4 +34,11 @@ app.initializers.add("v17development-flarum-seo", () => {
       );
     }
   );
+
+  // Register SeoMeta model
+  app.store.models.seoMeta = SeoMeta;
+
+  // Register SeoMeta relations
+  Discussion.prototype.seoMeta = Model.hasOne("seoMeta");
+  Tag.prototype.seoMeta = Model.hasOne("seoMeta");
 });

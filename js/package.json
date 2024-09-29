@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "@flarum/prettier-config": "^1.0.0",
+    "clsx": "^2.1.1",
     "flarum-tsconfig": "^1.0.2",
     "flarum-webpack-config": "^2.0.0",
     "webpack": "^5.70.0",

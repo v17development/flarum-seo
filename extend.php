@@ -53,6 +53,7 @@ return [
 
     ->get('/seo_meta', 'seo_meta.overview', Api\Controllers\ListSeoMetaController::class)
     ->get('/seo_meta/{id:\d+}', 'seo_meta.get', Api\Controllers\ShowSeoMetaController::class)
+    ->patch('/seo_meta/{id:\d+}', 'seo_meta.update', Api\Controllers\UpdateSeoMetaController::class)
     ->get('/seo_meta/{object_type}-{id}', 'seo_meta.get_by_type', Api\Controllers\ShowSeoMetaController::class),
 
   new Extend\Locales(__DIR__ . '/locale'),
