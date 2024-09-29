@@ -19,6 +19,7 @@ class SeoMetaSerializer extends AbstractSerializer
         return [
             // Object info
             'objectType'            => $seoMeta->object_type,
+            'objectId'              => $seoMeta->object_id,
 
             // Auto update data
             'autoUpdateData'        => (bool) $seoMeta->auto_update_data,
@@ -45,7 +46,7 @@ class SeoMetaSerializer extends AbstractSerializer
             'openGraphTitle'        => $seoMeta->open_graph_title,
             'openGraphDescription'  => $seoMeta->open_graph_description,
             'openGraphImage'        => $seoMeta->open_graph_image,
-            'openGraphImage_source' => $seoMeta->open_graph_image_source ?? "auto",
+            'openGraphImageSource'  => $seoMeta->open_graph_image_source ?? "auto",
 
             // Extra
             'estimatedReadingTime'  => (int) $seoMeta->estimated_reading_time,

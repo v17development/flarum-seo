@@ -424,6 +424,17 @@ class PageListener
         return null;
     }
 
+    /**
+     * Get estimated reading time
+     */
+    public function getEstimatedReadingTime(string $content = null)
+    {
+        $words = str_word_count(strip_tags($content));
+        $minutes = floor($words / 200);
+        $seconds = floor($words % 200 / (200 / 60));
+
+        return ($minutes * 60) + $seconds;
+    }
 
     /**
      * Set published on

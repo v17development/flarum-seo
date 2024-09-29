@@ -2,17 +2,20 @@
 
 namespace V17Development\FlarumSeo\Page;
 
+use Flarum\Foundation\DispatchEventsTrait;
 use Flarum\Tags\TagRepository;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
+use Illuminate\Contracts\Events\Dispatcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Listeners\SeoMetaListeners\TagListener;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 class TagPage implements PageDriverInterface
 {
+    use DispatchEventsTrait;
+
     /**
      * @var TranslatorInterface
      */
@@ -21,8 +24,11 @@ class TagPage implements PageDriverInterface
     /**
      * @param TagRepository $tagRepository
      */
-    public function __construct(TranslatorInterface $translator)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        Dispatcher $events
+    ) {
+        $this->events = $events;
         $this->translator = $translator;
     }
 
@@ -57,13 +63,10 @@ class TagPage implements PageDriverInterface
             return;
         }
 
-        $seoMeta = SeoMeta::findByModelOrCreate(
-            $tag,
-            // Meta didn't exist yet, create one
-            function (SeoMeta $meta) use ($tag) {
-                resolve(TagListener::class)->updateMeta($meta, $tag);
-            }
-        );
+        $seoMeta = SeoMeta::findByModelOrCreate($tag);
+
+        // Run events in case the model was created
+        $this->dispatchEventsFor($seoMeta);
 
         $properties->generateTagsFromMetaData($seoMeta);
 

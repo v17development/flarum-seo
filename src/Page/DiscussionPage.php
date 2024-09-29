@@ -4,19 +4,22 @@ namespace V17Development\FlarumSeo\Page;
 
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\Extension\ExtensionManager;
+use Flarum\Foundation\DispatchEventsTrait;
 use Flarum\Http\UrlGenerator;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\UserRepository;
 use Illuminate\Support\Arr;
+use Illuminate\Contracts\Events\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Listeners\SeoMetaListeners\DiscussionListener;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 class DiscussionPage implements PageDriverInterface
 {
+    use DispatchEventsTrait;
+
     /**
      * @var SettingsRepositoryInterface
      */
@@ -53,12 +56,14 @@ class DiscussionPage implements PageDriverInterface
         UserRepository $userRepository,
         ExtensionManager $extensionManager,
         UrlGenerator $urlGenerator,
+        Dispatcher $events
     ) {
         $this->settingsRepositoryInterface = $settingsRepositoryInterface;
         $this->discussionRepository = $discussionRepository;
         $this->userRepository = $userRepository;
         $this->extensionManager = $extensionManager;
         $this->urlGenerator = $urlGenerator;
+        $this->events = $events;
     }
 
     public function extensionDependencies(): array
@@ -103,12 +108,11 @@ class DiscussionPage implements PageDriverInterface
 
         // Get seo-meta-date
         $seoMeta = SeoMeta::findByModelOrCreate(
-            $discussion,
-            // Meta didn't exist yet, create one
-            function (SeoMeta $meta) use ($discussion) {
-                resolve(DiscussionListener::class)->updateMeta($meta, $discussion);
-            }
+            $discussion
         );
+
+        // Run events in case the model was created
+        $this->dispatchEventsFor($seoMeta);
 
         // Update ld-json
         $properties

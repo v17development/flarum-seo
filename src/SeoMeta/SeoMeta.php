@@ -4,14 +4,19 @@ namespace V17Development\FlarumSeo\SeoMeta;
 
 use Carbon\Carbon;
 use Flarum\Database\AbstractModel;
+use Flarum\Foundation\EventGeneratorTrait;
 use Illuminate\Database\Eloquent\Model;
+use V17Development\FlarumSeo\SeoMeta\Event\Created;
 
 class SeoMeta extends AbstractModel
 {
+    use EventGeneratorTrait;
+
     protected $table = 'seo_meta';
 
     protected $fillable = [
-        'object_id', 'object_type',
+        'object_id',
+        'object_type',
 
         // Other data
         'title',
@@ -38,6 +43,21 @@ class SeoMeta extends AbstractModel
     }
 
     /**
+     * Boot the model.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (self $seoMeta) {
+            $seoMeta->raise(new Created($seoMeta));
+        });
+    }
+
+
+    /**
      * Find the SEO meta by object type
      * 
      * @param string $objectType Name of the object
@@ -49,6 +69,55 @@ class SeoMeta extends AbstractModel
             'object_type' => $objectType,
             'object_id' => $objectId
         ]);
+    }
+
+    /**
+     * Find the SEO meta by object type
+     * 
+     * @param string $objectType Name of the object
+     * @param string $objectId ID of the object
+     */
+    public static function findByObjectTypeOrFail(string $objectType, int $objectId): Model
+    {
+        return self::where([
+            ['object_type', '=', $objectType],
+            ['object_id', '=', $objectId]
+        ])->firstOrFail();
+    }
+
+    /**
+     * Find the SEO meta by object type
+     * 
+     * @param string $objectType Name of the object
+     * @param string $objectId ID of the object
+     */
+    public static function findByObjectTypeOrCreate(string $objectType, int $objectId, callable|null $fillables = null): Model
+    {
+        $query = self::where([
+            ['object_type', '=', $objectType],
+            ['object_id', '=', $objectId]
+        ]);
+
+        // No fillables
+        if ($fillables === null) {
+            return $query->firstOr(function () use ($objectType, $objectId): Model {
+                $data = SeoMeta::build($objectType, $objectId);
+
+                $data->save();
+
+                return $data;
+            });
+        }
+
+        return $query->firstOr(function () use ($objectType, $objectId, $fillables): Model {
+            $data = SeoMeta::build($objectType, $objectId);
+
+            $fillables($data);
+
+            $data->save();
+
+            return $data;
+        });
     }
 
     /**

@@ -235,9 +235,14 @@ class SeoProperties
         return $this->container->getApplicationPath($path);
     }
 
-    public function getImageFromContent(?string $content): ?string
+    public function getImageFromContent(?string $content = null)
     {
         return $this->container->getImageFromContent($content);
+    }
+
+    public function getEstimatedReadingTime(string $content = null)
+    {
+        return $this->container->getEstimatedReadingTime($content);
     }
 
     /**

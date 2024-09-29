@@ -4,19 +4,22 @@ namespace V17Development\FlarumSeo\Page;
 
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\Extension\ExtensionManager;
+use Flarum\Foundation\DispatchEventsTrait;
 use Flarum\Http\UrlGenerator;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\UserRepository;
 use Illuminate\Support\Arr;
+use Illuminate\Contracts\Events\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Listeners\SeoMetaListeners\DiscussionListener;
 use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 class DiscussionBestAnswerPage implements PageDriverInterface
 {
+    use DispatchEventsTrait;
+
     /**
      * @var SettingsRepositoryInterface
      */
@@ -61,7 +64,8 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         UserRepository $userRepository,
         ExtensionManager $extensionManager,
         UrlGenerator $urlGenerator,
-        DiscussionPage $discussionFallback
+        DiscussionPage $discussionFallback,
+        Dispatcher $events
     ) {
         $this->settingsRepositoryInterface = $settingsRepositoryInterface;
         $this->discussionRepository = $discussionRepository;
@@ -69,6 +73,7 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         $this->extensionManager = $extensionManager;
         $this->urlGenerator = $urlGenerator;
         $this->discussionFallback = $discussionFallback;
+        $this->events = $events;
     }
 
     public function extensionDependencies(): array
@@ -114,13 +119,10 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         $enableLikes = $this->extensionManager->isEnabled('flarum-likes');
 
         // Get seo-meta-date
-        $seoMeta = SeoMeta::findByModelOrCreate(
-            $discussion,
-            // Meta didn't exist yet, create one
-            function (SeoMeta $meta) use ($discussion) {
-                resolve(DiscussionListener::class)->updateMeta($meta, $discussion);
-            }
-        );
+        $seoMeta = SeoMeta::findByModelOrCreate($discussion);
+
+        // Run events in case the model was created
+        $this->dispatchEventsFor($seoMeta);
 
         $firstPost = $discussion->firstPost()->first();
 

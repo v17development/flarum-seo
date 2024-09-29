@@ -1,27 +1,39 @@
 <?php
 
-namespace V17Development\FlarumSeo\Listeners\SeoMetaListeners;
+namespace V17Development\FlarumSeo\Subscribers;
 
 use Flarum\Tags\Event as TagEvent;
+use Flarum\Tags\Tag;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use V17Development\FlarumSeo\SeoMeta\Event\Created;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
 /**
- * Listen to tags creation, update or deleted
+ * Subscribe to tags creation, update or deleted
  */
-class TagListener implements SeoMetaListenerInterface
+class TagSubscriber
 {
-    public function __construct(private SeoProperties $seoProperties)
+    public function __construct(private SeoProperties $seoProperties) {}
+
+    /**
+     * Subscribe function
+     * 
+     * @param $events
+     */
+    public function subscribe($events)
     {
+        $events->listen(\Flarum\Tags\Event\Deleting::class, [$this, 'onModelEvent']);
+        $events->listen(\Flarum\Tags\Event\Saving::class, [$this, 'onModelEvent']);
+        $events->listen(Created::class, [$this, 'onMetaCreated']);
     }
 
     /**
-     * Get triggered
+     * Handle model event
      *
      * @param $event
      */
-    public function handle($event)
+    public function onModelEvent($event)
     {
         // Find meta
         $meta = SeoMeta::findOneByModel($event->tag);
@@ -50,6 +62,24 @@ class TagListener implements SeoMetaListenerInterface
 
         // Update
         $meta->save();
+    }
+
+    /**
+     * Handle meta created event
+     * 
+     * @param Created $event
+     */
+    public function onMetaCreated(Created $event)
+    {
+        // Only update meta data if object type matches
+        if ($event->objectType !== 'tags') return;
+
+        // Find tag
+        $tag = Tag::find($event->objectId);
+
+        $this->updateMeta($event->seoMeta, $tag);
+
+        $event->seoMeta->save();
     }
 
     /**
