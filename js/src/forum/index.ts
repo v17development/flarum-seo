@@ -8,6 +8,8 @@ import Tag from "flarum/tags/common/models/Tag";
 import Discussion from "flarum/common/models/Discussion";
 import Model from "flarum/common/Model";
 
+export * from "../common/extend";
+
 app.initializers.add("v17development-flarum-seo", () => {
   extend(
     DiscussionControls,
