@@ -142,15 +142,11 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         // Update topic url
         $properties->setUrl($this->urlGenerator->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->slug]), false);
 
-        if ($firstPost) {
-            $content = $firstPost->formatContent($request);
-        }
-
         // Schema
         $mainEntity = [
             '@type' => 'Question',
             'name' => $seoMeta->title,
-            'text' => $firstPost !== null ? $content : '',
+            'text' => $firstPost !== null ? strip_tags($firstPost->content) : '',
             'dateCreated' => $seoMeta->created_at,
             'author' => [
                 "@type" => "Person",
@@ -174,17 +170,18 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         $mainEntity['suggestedAnswer'] = [];
 
         // Get all public comments for this discussion
-        $posts = $discussion->posts()->where([
-            'type' => 'comment',
-            'is_private' => false
-        ])
+        $posts = $discussion->posts()
             ->where('number', '>', '1')->get();
 
         foreach ($posts as $post) {
+            if ($post->is_private || $post->type !== 'comment') {
+                continue;
+            }
+
             // Temp post
             $generatedPost = [
                 '@type' => 'Answer',
-                'text' => $post->formatContent(),
+                'text' => strip_tags($post->content),
                 'dateCreated' => (new \DateTime($post->created_at))->format("c"),
                 'url' => $this->urlGenerator->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->slug, 'near' => $post->number]),
                 'author' => [
