@@ -75,6 +75,12 @@ class ProfilePage implements PageDriverInterface
             'comment_count' => $user->getAttribute('comment_count')
         ]);
 
+        // Schema
+        $mainEntity = [
+            "@type" => "Person",
+            'name' => $user->getAttribute('username')
+        ];
+
         $properties
             // Page type
             ->setMetaPropertyTag('og:type', 'profile')
@@ -82,6 +88,7 @@ class ProfilePage implements PageDriverInterface
 
             // Add Schema.org metadata: ProfilePage https://schema.org/ProfilePage
             ->setSchemaJson('@type', 'ProfilePage')
+            ->setSchemaJson('mainEntity', $mainEntity)
             ->setSchemaJson('name', $user->getAttribute('display_name'))
             ->setSchemaJson('dateCreated', $joinedAt);
 
