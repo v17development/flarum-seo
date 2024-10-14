@@ -307,9 +307,10 @@ class PageListener
      * @param $path
      * @return PageListener
      */
-    public function setUrl($path = '', $addApplicationUrl = true)
+    public function setUrl($path = '', $prependApplicationUrl = true)
     {
-        if ($addApplicationUrl) {
+        // Prepend application URL
+        if ($prependApplicationUrl) {
             $path = $this->applicationUrl . $path;
         }
 
@@ -326,9 +327,14 @@ class PageListener
      * @param $path
      * @return PageListener
      */
-    public function setCanonicalUrl($path)
+    public function setCanonicalUrl($path, $prependApplicationUrl = true)
     {
-        $this->canonicalUrl = $this->applicationUrl . $path;
+        // Prepend application URL
+        if ($prependApplicationUrl) {
+            $path = $this->applicationUrl . $path;
+        }
+
+        $this->canonicalUrl = $path;
 
         return $this;
     }

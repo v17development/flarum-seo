@@ -79,11 +79,11 @@ class SeoProperties
      * @param string $url The path or url of the page (if it is the full url, set $addApplicationUrl to false)
      * @param bool $addApplicationUrl Adds application before the URL if true
      */
-    public function setUrl(string $url, bool $addApplicationUrl = true): self
+    public function setUrl(string $url, bool $prependApplicationUrl = true): self
     {
         if ($this->container === null) self::throwError("setUrl");
 
-        $this->container->setUrl($url, $addApplicationUrl);
+        $this->container->setUrl($url, $prependApplicationUrl);
 
         return $this;
     }
@@ -95,11 +95,11 @@ class SeoProperties
      *
      * Example: /topic/5-some-title
      */
-    public function setCanonicalUrl(string $path): self
+    public function setCanonicalUrl(string $path, bool $prependApplicationUrl = true): self
     {
         if ($this->container === null) self::throwError("setCanonicalUrl");
 
-        $this->container->setCanonicalUrl($path);
+        $this->container->setCanonicalUrl($path, $prependApplicationUrl);
 
         return $this;
     }
