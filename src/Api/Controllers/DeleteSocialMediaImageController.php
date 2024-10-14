@@ -1,11 +1,10 @@
 <?php
-namespace V17Development\FlarumSeo\Api;
+
+namespace V17Development\FlarumSeo\Api\Controllers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Filesystem\Cloud;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Flarum\Api\Controller\AbstractDeleteController;

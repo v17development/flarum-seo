@@ -1,0 +1,144 @@
+.Modal-SEO-settings {
+  @media screen and (min-width: 768px) {
+    max-width: 1000px;
+    width: 95%;
+    margin: 30px auto;
+  }
+
+  .FormControl,
+  textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .SeoItemContainer {
+    display: flex;
+    margin-bottom: 15px;
+
+    .SeoItemInfo {
+      width: 200px;
+      flex-grow: 0;
+      flex-shrink: 0;
+      padding-right: 35px;
+
+      .SeoItemInfo-title {
+        font-weight: bold;
+        color: black;
+        margin-bottom: 5px;
+        margin-bottom: 4px;
+      }
+    }
+
+    .SeoItemContent {
+      flex-grow: 1;
+
+      .SeoItemContent-helpertext {
+        margin-top: 5px;
+        font-size: 85%;
+
+        &.invalid {
+          color: var(--validation-error-color);
+        }
+      }
+    }
+  }
+
+  .ManagedContainer {
+    position: relative;
+
+    .FormControl {
+      padding-right: 100px;
+    }
+
+    .ManagedText {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      background-color: rgb(0, 114, 255);
+      color: white;
+      padding: 0.1em 0.5em;
+      border-radius: var(--border-radius);
+      opacity: 0.85;
+    }
+
+    .UploadButton {
+      position: absolute;
+      right: 3px;
+      top: 4px;
+      padding: 4px 10px;
+    }
+  }
+
+  .Checkbox {
+    &.disabled {
+      opacity: 0.5;
+    }
+  }
+
+  .SeoTags {
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    border-radius: var(--border-radius);
+    padding: 8px 13px 3px;
+  }
+
+  .SeoTag {
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    background: var(--tag-bg, var(--control-bg));
+    color: var(--tag-color, var(--control-color));
+    text-transform: none;
+    text-decoration: none !important;
+    font-size: 85%;
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    vertical-align: bottom;
+    margin-right: 5px;
+    margin-bottom: 5px;
+
+    &.SeoTagDisabled {
+      --tag-bg: #ffe2e2;
+      --tag-color: #800000;
+      --border-radius: 3px;
+    }
+  }
+
+  .SeoTags-dropdown-container {
+    position: relative;
+
+    .SeoTags {
+      cursor: pointer;
+    }
+
+    .SeoTags-dropdown {
+      position: absolute;
+      top: 30px;
+      left: 0;
+      right: 0;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 250ms ease-in-out;
+      z-index: 999;
+      background: var(--body-bg);
+      padding: 13px 13px 8px;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+
+      .Checkbox {
+        margin-bottom: 15px;
+      }
+    }
+
+    &.SeoTags-dropdown-open {
+      .SeoTags {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .SeoTags-dropdown {
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
+  }
+}

@@ -1,4 +1,13 @@
 v17development-flarum-seo:
+  admin:
+    permissions:
+      configure_seo: "Allow configuring SEO"
+
   forum:
     profile_title: "Profile of {username}"
     profile_description: "Profile of {username} | {discussion_count} discussions | {comment_count} posts"
+
+    controls:
+      configure_seo: Configure SEO
+      update_seo: Update SEO
+      reset_seo: Reset SEO

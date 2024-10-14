@@ -1,5 +1,6 @@
 <?php
-namespace V17Development\FlarumSeo\Api;
+
+namespace V17Development\FlarumSeo\Api\Controllers;
 
 use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Contracts\Container\Container;
@@ -15,7 +16,6 @@ class UploadSocialMediaImageController extends ShowForumController
 {
     protected SettingsRepositoryInterface $settings;
     protected Cloud $disk;
-
 
     public function __construct(SettingsRepositoryInterface $settings, Container $container)
     {
@@ -34,7 +34,7 @@ class UploadSocialMediaImageController extends ShowForumController
             $this->disk->delete($path);
         }
 
-        $uploadName = 'site-image-'.Str::lower(Str::random(8)).'.png';
+        $uploadName = 'site-image-' . Str::lower(Str::random(8)) . '.png';
 
         $this->disk->put($uploadName, $file->getStream()->getContents());
 

@@ -1,49 +1,49 @@
 {
-    "name": "v17development/flarum-seo",
-    "description": "Adds SEO tags for your Flarum forum",
-    "type": "flarum-extension",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "V17 Development",
-            "email": "info@v17.dev"
-        }
-    ],
-    "homepage": "https://v17.dev/projects/flarum-seo",
-    "support": {
-        "forum": "https://discuss.flarum.org/d/18316",
-        "issues": "https://github.com/v17development/flarum-seo/issues",
-        "source": "https://github.com/v17development/flarum-seo",
-        "docs": "https://community.v17.dev/knowledgebase/category/flarum-seo"
-    },
-    "autoload": {
-        "psr-4": {
-            "V17Development\\FlarumSeo\\": "src/"
-        }
-    },
-    "require": {
-        "flarum/core": "^1.0.0",
-        "ext-json": "*"
-    },
-    "conflict": {
-        "zerosonesfun/elint": "*",
-        "franzl/flarum-open-links-in-new-tab": "*"
-    },
-    "suggest": {
-        "fof/sitemap": "Allows you to generate powerful sitemap.xml files"
-    },
-    "extra": {
-        "flarum-extension": {
-            "title": "SEO",
-            "category": "feature",
-            "icon": {
-                "name": "fas fa-check",
-                "backgroundColor": "#0072ff",
-                "color": "#ffffff"
-            }
-        },
-        "flagrow": {
-            "discuss": "https://discuss.flarum.org/d/18316"
-        }
+  "name": "v17development/flarum-seo",
+  "description": "Adds SEO tags for your Flarum forum",
+  "type": "flarum-extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "V17 Development",
+      "email": "info@v17.dev"
     }
+  ],
+  "homepage": "https://v17.dev/projects/flarum-seo",
+  "support": {
+    "forum": "https://discuss.flarum.org/d/18316",
+    "issues": "https://github.com/v17development/flarum-seo/issues",
+    "source": "https://github.com/v17development/flarum-seo",
+    "docs": "https://community.v17.dev/knowledgebase/category/flarum-seo"
+  },
+  "autoload": {
+    "psr-4": {
+      "V17Development\\FlarumSeo\\": "src/"
+    }
+  },
+  "require": {
+    "flarum/core": "^1.0.0",
+    "ext-json": "*"
+  },
+  "conflict": {
+    "zerosonesfun/elint": "*",
+    "franzl/flarum-open-links-in-new-tab": "*"
+  },
+  "suggest": {
+    "fof/sitemap": "Allows you to generate powerful sitemap.xml files"
+  },
+  "extra": {
+    "flarum-extension": {
+      "title": "SEO",
+      "category": "feature",
+      "icon": {
+        "name": "fas fa-check",
+        "backgroundColor": "#0072ff",
+        "color": "#ffffff"
+      }
+    },
+    "flagrow": {
+      "discuss": "https://discuss.flarum.org/d/18316"
+    }
+  }
 }
