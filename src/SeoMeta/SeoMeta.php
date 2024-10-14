@@ -121,6 +121,21 @@ class SeoMeta extends AbstractModel
     }
 
     /**
+     * Find by slug
+     * 
+     * Could be used to add dynamic tags to pages that do not have a database row
+     * For example: a blog home/overview page, knowledge base page, tags overview page etc.
+     * 
+     * @param string $objectType Name of the object
+     * @param string $objectId ID of the object
+     */
+    public static function findOrCreateBySlug(string $pageSlug, callable|null $fillables = null): Model
+    {
+        return self::findByObjectTypeOrCreate(str_replace("-", "_", $pageSlug), -1, $fillables);
+    }
+
+
+    /**
      * Find the SEO meta of an object from a model
      * 
      * @param Model $model The model
