@@ -111,7 +111,7 @@ class SeoProperties
      *
      * Example: ["keyword 1", "flarum", "site", "blog"]
      */
-    public function setKeywords(array $keywords): self
+    public function setKeywords(array|string $keywords): self
     {
         if ($this->container === null) self::throwError("setKeywords");
 
