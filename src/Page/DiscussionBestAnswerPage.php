@@ -150,7 +150,7 @@ class DiscussionBestAnswerPage implements PageDriverInterface
             'dateCreated' => $seoMeta->created_at,
             'author' => [
                 "@type" => "Person",
-                "name" => $discussion->user() ? $discussion->user()->first()->getDisplayNameAttribute() : null
+                "name" => ($discussion->user() && !is_null($discussion->user()->first())) ? $discussion->user()->first()->getDisplayNameAttribute() : null
             ],
             'answerCount' => $discussion->comment_count - 1
         ];
