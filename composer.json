@@ -45,5 +45,9 @@
     "flagrow": {
       "discuss": "https://discuss.flarum.org/d/18316"
     }
+  },
+  "require-dev": {
+    "flarum/tags": "^1.8",
+    "fof/pages": "^1.0"
   }
 }
