@@ -2,12 +2,10 @@
 
 namespace V17Development\FlarumSeo\Page;
 
-use Flarum\Tags\TagRepository;
 use Flarum\User\UserRepository;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoProperties;
 
 class ProfilePage implements PageDriverInterface
@@ -61,8 +59,6 @@ class ProfilePage implements PageDriverInterface
             return;
         }
 
-        $joinedAt = (new \DateTime($user->getAttribute('joined_at')))->format("c");
-
         // Profile title
         $profileTitle = $this->translator->trans("v17development-flarum-seo.forum.profile_title", [
             'username' => $user->getAttribute('display_name'),
@@ -90,7 +86,7 @@ class ProfilePage implements PageDriverInterface
             ->setSchemaJson('@type', 'ProfilePage')
             ->setSchemaJson('mainEntity', $mainEntity)
             ->setSchemaJson('name', $user->getAttribute('display_name'))
-            ->setSchemaJson('dateCreated', $joinedAt);
+            ->setSchemaJson('dateCreated', $user->joined_at->toIso8601String());
 
         // Add avatar
         if ($user->getAttribute('avatar_url') !== null) {

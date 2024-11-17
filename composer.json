@@ -28,6 +28,7 @@
   "require-dev": {
     "flarum/tags": "^1.8",
     "fof/pages": "^1.0",
+    "fof/best-answer": "^1.6",
     "flarum/phpstan": "^1.0"
   },
   "conflict": {

@@ -4,11 +4,10 @@ namespace V17Development\FlarumSeo\Page;
 
 use Flarum\Foundation\DispatchEventsTrait;
 use Flarum\Tags\TagRepository;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
-use Illuminate\Contracts\Events\Dispatcher;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
