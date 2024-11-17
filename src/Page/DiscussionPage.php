@@ -145,14 +145,13 @@ class DiscussionPage implements PageDriverInterface
         }
 
         // Generate a breadcrum if discussion has tags
-        if ($tagsEnabled && $discussion->tags()->count() >= 1) {
-            $tags = $discussion->tags()->get()->all();
-            $properties->generateSchemaBreadcrumb(array_map(function ($tag) {
-                return [
+        if ($tagsEnabled && $discussion->tags->count() >= 1) {
+            $properties->generateSchemaBreadcrumb(
+                $discussion->tags->map(fn($tag) => [
                     'name' => $tag->name,
                     'url' => $this->urlGenerator->to('forum')->route('tag', ['slug' => $tag->slug])
-                ];
-            }, $tags));
+                ])->toArray()
+            );
         }
     }
 }
