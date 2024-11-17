@@ -8,6 +8,38 @@ use Flarum\Foundation\EventGeneratorTrait;
 use Illuminate\Database\Eloquent\Model;
 use V17Development\FlarumSeo\SeoMeta\Event\Created;
 
+/**
+ * @property int $id
+ * @property int $object_id
+ * @property string $object_type
+ *
+ * @property bool $auto_update_data
+ *
+ * @property ?string $title
+ * @property ?string $description
+ * @property ?string $keywords
+ *
+ * @property bool $robots_noindex
+ * @property bool $robots_nofollow
+ * @property bool $robots_noarchive
+ * @property bool $robots_noimageindex
+ * @property bool $robots_nosnippet
+ *
+ * @property ?string $twitter_title
+ * @property ?string $twitter_description
+ * @property ?string $twitter_image
+ * @property ?string $twitter_image_source
+ *
+ * @property ?string $open_graph_title
+ * @property ?string $open_graph_description
+ * @property ?string $open_graph_image
+ * @property ?string $open_graph_image_source
+ *
+ * @property ?int $estimated_reading_time
+ *
+ * @property Carbon $created_at
+ * @property Carbon|null $updated_at
+ */
 class SeoMeta extends AbstractModel
 {
     use EventGeneratorTrait;
