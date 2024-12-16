@@ -2,17 +2,19 @@
 
 namespace V17Development\FlarumSeo\Page;
 
+use Flarum\Database\Eloquent\Collection;
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\Extension\ExtensionManager;
 use Flarum\Foundation\DispatchEventsTrait;
 use Flarum\Http\UrlGenerator;
+use Flarum\Post\Post;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\Tags\Tag;
 use Flarum\User\UserRepository;
-use Illuminate\Support\Arr;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
@@ -111,7 +113,10 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         // Fallback to simple discussions for not-answer tags
         $enableBestAnswer = $this->extensionManager->isEnabled('fof-best-answer');
 
-        if ($enableBestAnswer && $discussion->tags()->where('is_qna', true)->count() === 0) {
+        /** @var Collection<Tag> $discussionTags */
+        $discussionTags = $discussion->tags;
+
+        if ($enableBestAnswer && $discussionTags->contains(fn(Tag $tag) => (bool)$tag->is_qna )) {
             $this->discussionFallback->handle($request, $properties);
             return;
         }
@@ -124,7 +129,7 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         // Run events in case the model was created
         $this->dispatchEventsFor($seoMeta);
 
-        $firstPost = $discussion->firstPost()->first();
+        $firstPost = $discussion->firstPost;
 
         // Update ld-json
         $properties
@@ -150,30 +155,31 @@ class DiscussionBestAnswerPage implements PageDriverInterface
             'dateCreated' => $seoMeta->created_at,
             'author' => [
                 "@type" => "Person",
-                "name" => $discussion->user() ? $discussion->user()->first()->getDisplayNameAttribute() : null
+                "name" => $discussion->user?->getDisplayNameAttribute()
             ],
             'answerCount' => $discussion->comment_count - 1
         ];
 
-        // Generate a breadcrum if discussion has tags
-        if ($discussion->tags()->count() >= 1) {
-            $tags = $discussion->tags()->get()->all();
-            $properties->generateSchemaBreadcrumb(array_map(function ($tag) {
-                return [
+        // Generate a breadcrumb if discussion has tags
+        if ($discussionTags->count() >= 1) {
+            $properties->generateSchemaBreadcrumb(
+                $discussionTags->map(fn(Tag $tag) => [
                     'name' => $tag->name,
                     'url' => $this->urlGenerator->to('forum')->route('tag', ['slug' => $tag->slug])
-                ];
-            }, $tags));
+                ])->toArray()
+            );
         }
 
         // Only add suggested answers property if there are posts
         $mainEntity['suggestedAnswer'] = [];
 
         // Get all public comments for this discussion
+        /** @var Collection<Post> $posts */
         $posts = $discussion->posts()
             ->where('number', '>', '1')->get();
 
         foreach ($posts as $post) {
+            /** @var Post $post */
             if ($post->is_private || $post->type !== 'comment') {
                 continue;
             }
@@ -182,7 +188,7 @@ class DiscussionBestAnswerPage implements PageDriverInterface
             $generatedPost = [
                 '@type' => 'Answer',
                 'text' => strip_tags($post->content),
-                'dateCreated' => (new \DateTime($post->created_at))->format("c"),
+                'dateCreated' => $post->created_at->toIso8601String(),
                 'url' => $this->urlGenerator->to('forum')->route('discussion', ['id' => $discussion->id . '-' . $discussion->slug, 'near' => $post->number]),
                 'author' => [
                     "@type" => "Person",

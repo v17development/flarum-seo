@@ -2,17 +2,18 @@
 
 namespace V17Development\FlarumSeo\Page;
 
+use Flarum\Database\Eloquent\Collection;
 use Flarum\Discussion\DiscussionRepository;
 use Flarum\Extension\ExtensionManager;
 use Flarum\Foundation\DispatchEventsTrait;
 use Flarum\Http\UrlGenerator;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\Tags\Tag;
 use Flarum\User\UserRepository;
-use Illuminate\Support\Arr;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use V17Development\FlarumSeo\Page\PageDriverInterface;
 use V17Development\FlarumSeo\SeoMeta\SeoMeta;
 use V17Development\FlarumSeo\SeoProperties;
 
@@ -98,10 +99,13 @@ class DiscussionPage implements PageDriverInterface
         $tagsEnabled = $this->extensionManager->isEnabled('flarum-tags');
         $enableBestAnswer = $this->extensionManager->isEnabled('fof-best-answer');
 
+        /** @var Collection<Tag> $discussionTags */
+        $discussionTags = $discussion->tags;
+
         // Do not continue discussion matches a FriendsOfFlarum BestAnswer discussion (if enabled)
         if (
             $this->settingsRepositoryInterface->get('seo_post_crawler', 0) == 1 &&
-            $tagsEnabled && (!$enableBestAnswer || ($enableBestAnswer && $discussion->tags()->where('is_qna', true)->count() >= 1))
+            $tagsEnabled && (!$enableBestAnswer || ($enableBestAnswer && $discussionTags->contains(fn(Tag $tag) => (bool)$tag->is_qna )))
         ) {
             return;
         }
@@ -129,7 +133,7 @@ class DiscussionPage implements PageDriverInterface
 
         try {
             // Add author to the page meta data
-            $user = $discussion->user()->first();
+            $user = $discussion->user;
 
             // Set author data if found
             if ($user !== null) {
@@ -145,14 +149,13 @@ class DiscussionPage implements PageDriverInterface
         }
 
         // Generate a breadcrum if discussion has tags
-        if ($tagsEnabled && $discussion->tags()->count() >= 1) {
-            $tags = $discussion->tags()->get()->all();
-            $properties->generateSchemaBreadcrumb(array_map(function ($tag) {
-                return [
+        if ($tagsEnabled && $discussionTags->count() >= 1) {
+            $properties->generateSchemaBreadcrumb(
+                $discussionTags->map(fn(Tag $tag) => [
                     'name' => $tag->name,
                     'url' => $this->urlGenerator->to('forum')->route('tag', ['slug' => $tag->slug])
-                ];
-            }, $tags));
+                ])->toArray()
+            );
         }
     }
 }

@@ -1,0 +1,12 @@
+includes:
+  - vendor/flarum/phpstan/extension.neon
+
+parameters:
+  level: 5
+  paths:
+    - src
+    - extend.php
+  excludePaths:
+    - *.blade.php
+  checkMissingIterableValueType: false
+  databaseMigrationsPath: ['migrations']
