@@ -4,7 +4,6 @@ import Button from "flarum/forum/components/Button";
 import { extend } from "flarum/common/extend";
 import MetaSeoModal from "../common/Components/MetaSeoModal";
 import SeoMeta from "../common/Models/SeoMeta";
-import Tag from "flarum/tags/common/models/Tag";
 import Discussion from "flarum/common/models/Discussion";
 import Model from "flarum/common/Model";
 
@@ -42,5 +41,4 @@ app.initializers.add("v17development-flarum-seo", () => {
 
   // Register SeoMeta relations
   Discussion.prototype.seoMeta = Model.hasOne("seoMeta");
-  Tag.prototype.seoMeta = Model.hasOne("seoMeta");
 });
