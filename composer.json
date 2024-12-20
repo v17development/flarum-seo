@@ -43,6 +43,9 @@
     "flarum-extension": {
       "title": "SEO",
       "category": "feature",
+      "optional-dependencies": [
+        "flarum/tags"
+      ],
       "icon": {
         "name": "fas fa-check",
         "backgroundColor": "#0072ff",
