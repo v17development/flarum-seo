@@ -10,6 +10,7 @@ import countKeywords from '../../utils/countKeywords';
 import Stream from 'flarum/utils/Stream';
 import DoFollowListModal from '../Modals/DoFollowListModal';
 import Select from 'flarum/components/Select';
+import ItemList from 'flarum/common/utils/ItemList';
 
 export default class SeoSettings extends Component {
   oninit(vnode) {
