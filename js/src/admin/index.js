@@ -42,3 +42,6 @@ app.initializers.add("v17development-flarum-seo", () => {
     );
   });
 });
+
+export * from "./components";
+export * from "./Pages";
