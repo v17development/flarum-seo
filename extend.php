@@ -66,7 +66,7 @@ return [
   (new Extend\Model(FlarumDiscussion::class))
     ->relationship('seoMeta', function (AbstractModel $model) {
       return $model->hasOne(SeoMeta::class, 'object_id', 'id')
-        ->whereObjectType('discussion');
+        ->where('object_type', 'discussions');
     }),
 
   (new Extend\ApiSerializer(BasicDiscussionSerializer::class))
