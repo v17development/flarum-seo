@@ -2,6 +2,7 @@
 
 namespace V17Development\FlarumSeo;
 
+use Flarum\Api\Controller\ListDiscussionsController;
 use Flarum\Api\Controller\ShowDiscussionController;
 use Flarum\Api\Serializer\BasicDiscussionSerializer;
 use Flarum\Api\Serializer\ForumSerializer;
@@ -66,7 +67,7 @@ return [
   (new Extend\Model(FlarumDiscussion::class))
     ->relationship('seoMeta', function (AbstractModel $model) {
       return $model->hasOne(SeoMeta::class, 'object_id', 'id')
-        ->whereObjectType('discussion');
+        ->where('object_type', 'discussions');
     }),
 
   (new Extend\ApiSerializer(BasicDiscussionSerializer::class))
@@ -74,6 +75,9 @@ return [
 
   (new Extend\ApiController(ShowDiscussionController::class))
     ->addInclude('seoMeta'),
+
+  (new Extend\ApiController(ListDiscussionsController::class))
+    ->addOptionalInclude('seoMeta'),
 
   (new SEO())
     ->addExtender('index', SeoPage\IndexPage::class)
