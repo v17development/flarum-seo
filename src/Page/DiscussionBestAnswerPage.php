@@ -116,7 +116,7 @@ class DiscussionBestAnswerPage implements PageDriverInterface
         /** @var Collection<Tag> $discussionTags */
         $discussionTags = $discussion->tags;
 
-        if ($enableBestAnswer && $discussionTags->contains(fn(Tag $tag) => (bool)$tag->is_qna )) {
+        if (!$enableBestAnswer || !$discussionTags->contains(fn(Tag $tag) => (bool)$tag->is_qna )) {
             $this->discussionFallback->handle($request, $properties);
             return;
         }
